@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8921-01" author="dzgursky">
+        <comment>Add new QC metrics for Pano Controls</comment>
+        <sql>
+            insert ignore into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`)
+            values ('Copy number for chromosome 13 of positive Panorama control', 'POS_CONTROL_COPY_NUMBER_CHR13', 'GENOMIC');
+            insert ignore into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`)
+            values ('Copy number for chromosome 18 of positive Panorama control', 'POS_CONTROL_COPY_NUMBER_CHR18', 'GENOMIC');
+            insert ignore into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`)
+            values ('Copy number for chromosome 21 of positive Panorama control', 'POS_CONTROL_COPY_NUMBER_CHR21', 'GENOMIC');
+
+            insert ignore into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`)
+            values ('Copy number for chromosome 13 of negative Panorama control', 'NEG_CONTROL_COPY_NUMBER_CHR13', 'GENOMIC');
+            insert ignore into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`)
+            values ('Copy number for chromosome 18 of negative Panorama control', 'NEG_CONTROL_COPY_NUMBER_CHR18', 'GENOMIC');
+            insert ignore into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`)
+            values ('Copy number for chromosome 21 of negative Panorama control', 'NEG_CONTROL_COPY_NUMBER_CHR21', 'GENOMIC');
+
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('GENOMIC', 'Copy number for chromosome 13 of positive Panorama control', 'POS_CONTROL_COPY_NUMBER_CHR13', false);
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('GENOMIC', 'Copy number for chromosome 18 of positive Panorama control', 'POS_CONTROL_COPY_NUMBER_CHR18', false);
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('GENOMIC', 'Copy number for chromosome 21 of positive Panorama control', 'POS_CONTROL_COPY_NUMBER_CHR21', false);
+
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('GENOMIC', 'Copy number for chromosome 13 of negative Panorama control', 'NEG_CONTROL_COPY_NUMBER_CHR13', false);
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('GENOMIC', 'Copy number for chromosome 18 of negative Panorama control', 'NEG_CONTROL_COPY_NUMBER_CHR18', false);
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('GENOMIC', 'Copy number for chromosome 21 of negative Panorama control', 'NEG_CONTROL_COPY_NUMBER_CHR21', false);
+        </sql>
+        <rollback>
+            delete from `prodlims`.`qc_statistics_type` where `name` in ('POS_CONTROL_COPY_NUMBER_CHR13', 'POS_CONTROL_COPY_NUMBER_CHR18', 'POS_CONTROL_COPY_NUMBER_CHR21', 'NEG_CONTROL_COPY_NUMBER_CHR13', 'NEG_CONTROL_COPY_NUMBER_CHR18', 'NEG_CONTROL_COPY_NUMBER_CHR21');
+            delete from `prodlims`.`qc_type` where `name` in ('POS_CONTROL_COPY_NUMBER_CHR13', 'POS_CONTROL_COPY_NUMBER_CHR18', 'POS_CONTROL_COPY_NUMBER_CHR21', 'NEG_CONTROL_COPY_NUMBER_CHR13', 'NEG_CONTROL_COPY_NUMBER_CHR18', 'NEG_CONTROL_COPY_NUMBER_CHR21');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

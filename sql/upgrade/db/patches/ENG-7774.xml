@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7774-01" author="hharidas">
+        <comment>
+            The following tables were created as backup tables for ENG-6038, ENG-6004, ENG-5408. As the changes were successful, deleting the backup tables.
+        </comment>
+        <sql>
+            DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng6038`;
+        </sql>
+    </changeSet>
+    <changeSet id="ENG-7774-02" author="hharidas">
+        <sql>
+            DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng6004`;
+        </sql>
+    </changeSet>
+    <changeSet id="ENG-7774-03" author="hharidas">
+        <sql>
+            DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng5408`;
+        </sql>
+    </changeSet>
+    <changeSet id="ENG-7774-04" author="hharidas">
+        <sql>
+            DROP TABLE IF EXISTS `prodlims`.`horizondisease_backup_eng5408`;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

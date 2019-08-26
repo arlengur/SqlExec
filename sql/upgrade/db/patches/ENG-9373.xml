@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9373-01" author="dzgursky">
+        <comment>Copy barcodes for pano controls</comment>
+        <sql>
+            INSERT INTO hts.sequencingbarcode (groupkey, idx, sequence, defunct) VALUES ('NS2', 1102, 'TAGGGCCGT', false);
+            INSERT INTO hts.sequencingbarcode (groupkey, idx, sequence, defunct) VALUES ('NS2', 1103, 'GCGATACTT', false);
+            INSERT INTO hts.sequencingbarcode (groupkey, idx, sequence, defunct) VALUES ('NS3', 1102, 'TAGGGCCGT', false);
+            INSERT INTO hts.sequencingbarcode (groupkey, idx, sequence, defunct) VALUES ('NS3', 1103, 'GCGATACTT', false);
+        </sql>
+        <rollback>
+            delete from hts.sequencingbarcode where groupkey in ('NS2', 'NS3') and idx in (1102, 1103);
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6598" author="tmcfarlin">
+        <comment>Vistara Diseases</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            ALTER TABLE `prodlims`.`testcondition`
+            DROP COLUMN hl7Code;
+
+            ALTER TABLE `prodlims`.`testcondition`
+            ADD COLUMN detectionrate varchar(50) NULL;
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation, description, detectionrate)
+            VALUES
+            ('BRAF-related-disorder','BRAF','Cardiofaciocutaneous syndrome 1','>96%'),
+            ('CBL-related-disorder','CBL','Noonan syndrome-like disorder with or without juvenile myelomonocytic leukemia (NSLL)','>86%'),
+            ('CDKL5-related-disorder','CDKL5','Epileptic encephalopathy, early infantile, 2','>84%'),
+            ('CHD7-related-disorder','CHD7','CHARGE syndrome','>91%'),
+            ('COL1A1-related-disorder','COL1A1','Osteogenesis imperfecta, types I,II, III, IV; Ehlers-Danlos syndrome, classic and type VIIA','>92%'),
+            ('COL1A2-related-disorder','COL1A2','Osteogenesis imperfecta, types I,II, III, IV; Ehlers-Danlos syndrome, classic and type VIIB','>92%'),
+            ('FGFR2-related-disorder','FGFR2','Apert syndrome; Crouzon syndrome; Jackson-Weiss syndrome; Pfeiffer syndrome types 1, 2, 3; Antley-Bixler syndrome without genital anomalies or disordered steroidogenesis','>96%'),
+            ('FGFR3-related-disorder','FGFR3','Achondroplasia; CATHSL syndrome; Crouzon syndrome with acanthosis nigricans; Hypochondroplasia; Muenke syndrome; Thanatophoric dysplasia, types 1, 2','>96%'),
+            ('HDAC8-related-disorder','HDAC8','Cornelia de Lange syndrome 5','>66%'),
+            ('HRAS-related-disorder','HRAS','Noonan syndrome; Costello syndrome','>92%'),
+            ('JAG1-related-disorder','JAG1','Alagille syndrome','>79%'),
+            ('KRAS-related-disorder','KRAS','Noonan syndrome','>96%'),
+            ('MAP2K1-related-disorder','MAP2K1','Cardiofaciocutaneous syndrome 3','>96%'),
+            ('MAP2K2-related-disorder','MAP2K2','Cardiofaciocutaneous syndrome 4','>96%'),
+            ('MECP2-related-disorder','MECP2','Rett syndrome; MECP2-related syndromes','>78%'),
+            ('NIPBL-related-disorder','NIPBL','Cornelia de Lange syndrome 1','>94%'),
+            ('NRAS-related-disorder','NRAS','Noonan syndrome 6','>96%'),
+            ('NSD1-related-disorder','NSD1','Sotos syndrome 1','>87%'),
+            ('PTPN11-related-disorder','PTPN11','Noonan syndrome 1; LEOPARD syndrome','>96%'),
+            ('RAD21-related-disorder','RAD21','Cornelia de Lange syndrome 4','>43%'),
+            ('RAF1-related-disorder','RAF1','Noonan syndrome 5; LEOPARD syndrome 2','>96%'),
+            ('RIT1-related-disorder','RIT1','Noonan syndrome 8','>96%'),
+            ('SHOC2-related-disorder','SHOC2','Noonan syndrome-like disorder with loose anagen hair','>96%'),
+            ('SMC1A-related-disorder','SMC1A','Cornelia de Lange syndrome 2','>96%'),
+            ('SMC3-related-disorder','SMC3','Cornelia de Lange syndrome 3','>96%'),
+            ('SYNGAP1-related-disorder','SYNGAP1','Intellectual disability','>89%'),
+            ('TSC1-related-disorder','TSC1','Tuberous sclerosis 1','>96%'),
+            ('TSC2-related-disorder','TSC2','Tuberous sclerosis 2','>82%');
+
+            update `prodlims`.`testcondition`
+            set name = 'SOS1-related-disorder',
+            description = 'Noonan syndrome 4',
+            detectionrate = '>96%'
+            where mutation = 'SOS1';
+
+            update `prodlims`.`testcondition`
+            set name = 'SOS2-related-disorder',
+            description = 'Noonan syndrome 9',
+            detectionrate = '>96%'
+            where mutation = 'SOS2';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`testcondition`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6598-02" author="kzakharov">
+        <comment>Vistara Diseases - link to the panel</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (`panel_id`, `testcondition_id`)
+            SELECT
+            (SELECT id
+            FROM `prodlims`.`sendoutpanel`
+            WHERE name = 'SNV_MAIN') AS panel_id,
+            id
+            FROM `prodlims`.`testcondition`
+            WHERE mutation IN
+            ('BRAF', 'CBL', 'CDKL5', 'CHD7', 'COL1A1', 'COL1A2', 'FGFR2', 'FGFR3', 'HDAC8', 'HRAS', 'JAG1', 'KRAS', 'MAP2K1', 'MAP2K2', 'MECP2', 'NIPBL', 'NRAS', 'NSD1', 'PTPN11', 'RAD21', 'RAF1', 'RIT1', 'SHOC2', 'SMC1A', 'SMC3', 'SYNGAP1', 'TSC1', 'TSC2');
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`sendoutpanel_testcondition`
+            WHERE panel_id = (SELECT id
+            FROM `prodlims`.`sendoutpanel`
+            WHERE name = 'SNV_MAIN')
+            AND
+            testcondition_id IN (SELECT id
+            FROM testcondition
+            WHERE mutation IN
+            ('BRAF', 'CBL', 'CDKL5', 'CHD7', 'COL1A1', 'COL1A2', 'FGFR2', 'FGFR3', 'HDAC8', 'HRAS', 'JAG1', 'KRAS', 'MAP2K1', 'MAP2K2', 'MECP2', 'NIPBL', 'NRAS', 'NSD1', 'PTPN11', 'RAD21', 'RAF1', 'RIT1', 'SHOC2', 'SMC1A', 'SMC3', 'SYNGAP1', 'TSC1', 'TSC2'));
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

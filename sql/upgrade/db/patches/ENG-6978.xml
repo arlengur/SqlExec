@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6978-01" author="dchettupuzha">
+        <comment>Add QC type for NGS</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SEQUENCING_RUN', 'Pass Filter Reads Count', 'PASS_FILTER_READS', 0);
+        </sql>
+
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM  `prodlims`.`qc_type` where name = 'PASS_FILTER_READS';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

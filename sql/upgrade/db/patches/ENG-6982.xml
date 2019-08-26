@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6982-01" author="mdaly">
+        <comment>Load variants and exon information for Natera-based HorizonDiseases based on values from Sinai-based HorizonDiseases</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`horizondisease` d JOIN
+            (SELECT `variationsAndExons`, `mutation` FROM `prodlims`.`horizondisease` WHERE `provider` = 'MTSINAI') as sinai
+            SET d.`variationsAndExons` = sinai.`variationsAndExons`
+            WHERE sinai.`mutation` = d.`mutation` AND d.`provider` = 'NATERA_LAB';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`horizondisease`
+            SET `variationsAndExons` = NULL
+            WHERE `provider` = 'NATERA_LAB';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

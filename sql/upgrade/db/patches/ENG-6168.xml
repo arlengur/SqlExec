@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6168-01" author="dchettupuzha">
+        <comment>Create Horizon Plate table</comment>
+        <sql>
+            create table `prodlims`.`horizon_plate` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `barcode` varchar(255) NOT NULL,
+            `createdby_id` bigint(20) NOT NULL,
+            `createtime` datetime NOT NULL,
+            `instrument_name` varchar(255),
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `barcode` (`barcode`),
+            CONSTRAINT `FK_CREATOR_IDX` FOREIGN KEY (`createdby_id`) REFERENCES `prodlims`.`user` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`horizon_plate`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6168-02" author="dchettupuzha">
+        <comment>Create Horizon Plate Info table</comment>
+        <sql>
+            create table `prodlims`.`horizonplate_info` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `sequencingrun_id` bigint(20) NOT NULL,
+            `plate_id` bigint(20) NOT NULL,
+            `quadrant` varchar(255) NOT NULL,
+            `assay` varchar(255) NOT NULL,
+            PRIMARY KEY (`sequencingrun_id`, `plate_id`),
+            KEY(`id`),
+            CONSTRAINT `FK_SEQRUN_IDX` FOREIGN KEY (`sequencingrun_id`) REFERENCES `hts`.`sequencingrun` (`id`),
+            CONSTRAINT `FK_PLATE_IDX` FOREIGN KEY (`plate_id`) REFERENCES `prodlims`.`horizon_plate` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`horizonplate_info`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6168-03" author="dchettupuzha">
+        <comment>Create Horizon Sequencing Sample Info table</comment>
+        <sql>
+            create table `prodlims`.`horizonsequencingsample_info` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `sequencingsample_id` bigint(20) NOT NULL,
+            `filename` varchar(255) NOT NULL,
+            `plate_position` varchar(255) NOT NULL,
+            `variant_id` bigint(20) DEFAULT NULL,
+            PRIMARY KEY (`sequencingsample_id`),
+            UNIQUE KEY `filename` (`filename`),
+            KEY(`id`),
+            CONSTRAINT `FK_HZNSEQSMPL_IDX` FOREIGN KEY (`sequencingsample_id`) REFERENCES `hts`.`sequencingsample` (`id`),
+            CONSTRAINT `FK_VRNT_IDX` FOREIGN KEY (`variant_id`) REFERENCES `prodlims`.`horizonvariant` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`horizonsequencingsample_info`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6168-04" author="dchettupuzha">
+        <comment>Modify createdBy to type varchar</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizon_plate` DROP FOREIGN KEY `FK_CREATOR_IDX`;
+            ALTER TABLE `prodlims`.`horizon_plate` CHANGE COLUMN `createdby_id` `createdby` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

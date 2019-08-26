@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7148-01" author="dchettupuzha">
+        <comment>Change CATEGORY to SAMPLE for Sample level metrics</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_type` set `category` = 'SAMPLE' where `name` IN ('LADDER_CORRELATION', 'LADDER_PEAKS_COUNT', 'NTC_PEAK_THRESHOLD',
+            'PRE_MUT_RFU_CUTOFF', 'MUT_RFU_CUTOFF', 'Q_FRAGMENT_HIGH_COUNT', 'D_FRAGMENT_LOW_COUNT', 'PROBE_SIGNAL_STRENGTH', 'Q_FRAGMENT_MAX_HEIGHT_DIFF', 'FLOATING_LADDER', 'DEEP_SLOPING');
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <!-- Rollback: rows are deleted in rollback for ENG-6158.xml -->
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

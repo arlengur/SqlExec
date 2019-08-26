@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5960-01" author="mdaly">
+        <comment>Create new table for storing TSE value (for HorizonDiseaseResutls.tseValuesMap)</comment>
+        <sql>
+            <![CDATA[
+            CREATE TABLE `prodlims`.`horizonDiseaseResult_tsevaluesmap` (
+                `horizonDiseaseResult_id` BIGINT(20) NOT NULL,
+                `tsevaluesmap` VARCHAR(255),
+                `tseValuesMap_KEY` VARCHAR(255),
+
+                INDEX `FK_horizonDiseaseResult_tsevaluesmap_horizonDiseaseResult` (`horizonDiseaseResult_id`),
+                CONSTRAINT `FK_horizonDiseaseResult_tsevaluesmap_horizonDiseaseResult_id` FOREIGN KEY (`horizonDiseaseResult_id`) REFERENCES `prodlims`.`horizondiseaseresult` (`id`),
+
+                PRIMARY KEY (`horizonDiseaseResult_id`, `tseValuesMap_KEY`)
+            ) ENGINE=InnoDB;
+            ]]>
+        </sql>
+        <rollback>
+            DROP TABLE `horizonDiseaseResult_tsevaluesmap`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5960-02" author="mdaly">
+        <comment>Add link from TSEResult (superclass: HorizonCloudResult) to HorizonDiseaseResult</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonCloudResult`
+            ADD COLUMN `hl7diseaseresult_id` bigint(20),
+            ADD INDEX `FK_horizoncloudresult_hl7diseaseresult` (`hl7diseaseresult_id`),
+            ADD CONSTRAINT `FK_horizoncloudresult_horizondiseaseresult_id` FOREIGN KEY (`hl7diseaseresult_id`) REFERENCES `prodlims`.`horizondiseaseresult`(`id`);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`HorizonCloudResult`
+            DROP FOREIGN KEY `FK_horizoncloudresult_horizondiseaseresult_id`,
+            DROP COLUMN `hl7diseaseresult_id`;
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

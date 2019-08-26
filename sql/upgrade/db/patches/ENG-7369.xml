@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7369-01" author="tmcfarlin">
+        <comment>Capture Visit Number for EPIC integration</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`subject`
+            ADD COLUMN `thirdpartyvisitnumber` VARCHAR(1024) AFTER `thirdpartypatientid`;
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`subject`
+            DROP COLUMN `thirdpartyvisitnumber`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7369-02" author="tmcfarlin">
+        <comment>Capture Visit Number for EPIC integration</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`casefile`
+            ADD COLUMN `resultcopiesto` VARCHAR(5000);
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`casefile`
+            DROP COLUMN `resultcopiesto`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7369-03" author="tmcfarlin">
+        <comment>Capture Visit Number for EPIC integration</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`npt_report`
+            ADD COLUMN `third_party_visit_number` VARCHAR(1024);
+
+            ALTER TABLE `prodlims`.`cs_report`
+            ADD COLUMN `third_party_visit_number` VARCHAR(1024);
+
+            ALTER TABLE `prodlims`.`horizon_report`
+            ADD COLUMN `third_party_visit_number` VARCHAR(1024);
+
+            ALTER TABLE `prodlims`.`embryo_report`
+            ADD COLUMN `third_party_visit_number` VARCHAR(1024);
+
+            ALTER TABLE `prodlims`.`npt_report`
+            ADD COLUMN `result_copies_to` VARCHAR(5000);
+
+            ALTER TABLE `prodlims`.`cs_report`
+            ADD COLUMN `result_copies_to` VARCHAR(5000);
+
+            ALTER TABLE `prodlims`.`horizon_report`
+            ADD COLUMN `result_copies_to` VARCHAR(5000);
+
+            ALTER TABLE `prodlims`.`embryo_report`
+            ADD COLUMN `result_copies_to` VARCHAR(5000);
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`npt_report`
+            DROP COLUMN `third_party_visit_number`;
+
+            ALTER TABLE `prodlims`.`cs_report`
+            DROP COLUMN `third_party_visit_number`;
+
+            ALTER TABLE `prodlims`.`horizon_report`
+            DROP COLUMN `third_party_visit_number`;
+
+            ALTER TABLE `prodlims`.`embryo_report`
+            DROP COLUMN `third_party_visit_number`;
+
+            ALTER TABLE `prodlims`.`npt_report`
+            DROP COLUMN `result_copies_to`;
+
+            ALTER TABLE `prodlims`.`cs_report`
+            DROP COLUMN `result_copies_to`;
+
+            ALTER TABLE `prodlims`.`horizon_report`
+            DROP COLUMN `result_copies_to`;
+
+            ALTER TABLE `prodlims`.`embryo_report`
+            DROP COLUMN `result_copies_to`;
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
+
+

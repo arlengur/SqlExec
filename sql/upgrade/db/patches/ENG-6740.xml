@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6740-01" author="tmcfarlin">
+        <comment>Vistara Results change for data model</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `resultSummary` varchar(5000) NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` CHANGE COLUMN `sendoutLabAccessionId` `referenceLabCasefileNumber` varchar(255) NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` CHANGE COLUMN `resultNote` `resultNote` text NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `DTYPE` varchar(50) NOT NULL FIRST;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `resultStatus` varchar(10) NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `resultDate` DATETIME NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `indication` varchar(5000)  NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `interpretation` varchar(5000) NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` ADD COLUMN `fetalFraction` varchar(50) NULL;
+
+
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN resultCode;
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN resultName;
+
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `DTYPE` varchar(50) NOT NULL FIRST;
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `omim` varchar(255) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `change` varchar(255) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `location` varchar(255) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `reference` varchar(255) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `comment` varchar(255) NULL;
+
+
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `resultunit` `unit` varchar(50) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `resultflag` `abnormalFlag` VARCHAR(25) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `resultstatus` `status` varchar(25) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `resultnote` `note` text NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `resulttext` `text` text NULL;
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN resultSummary;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` CHANGE COLUMN `referenceLabCasefileNumber` `sendoutLabAccessionId` varchar(50) NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` CHANGE COLUMN `resultNote` `resultNote` text NULL;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN DTYPE;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN resultStatus;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN resultDate;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN indication;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN interpretation;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` DROP COLUMN fetalFraction;
+
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `resultCode` VARCHAR(255) NOT NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` ADD COLUMN `resultName` VARCHAR(255) NOT NULL;
+
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN DTYPE;
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN omim;
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN `change`;
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN location;
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN reference;
+            ALTER TABLE `prodlims`.`testconditionresult` DROP COLUMN `comment`;
+
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `unit` `resultunit` varchar(50) NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `abnormalFlag` `resultflag` VARCHAR(25) NOT NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `status` `resultstatus` varchar(25) NOT NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `note` `resultnote` text NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` CHANGE COLUMN `text` `resulttext` text NULL;
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8929-01" author="tmcfarlin">
+        <comment>Added new field to store disabled value to casesharingconsent table</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`reportformat` ADD COLUMN `hl7ReportLevel` varchar(50) DEFAULT 'FULL_REPORT';
+            ALTER TABLE `prodlims`.`reportformat` ADD COLUMN `includeAoe` bit(1) DEFAULT b'0';
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`reportformat` DROP COLUMN `hl7ReportLevel`;
+            ALTER TABLE `prodlims`.`reportformat` DROP COLUMN `includeAoe`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

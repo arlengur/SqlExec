@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5235-01" author="mdaly">
+        <comment>Increase the length of horizon_report.amendedNote</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizon_report` MODIFY `amendednote` TEXT DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizon_report` MODIFY `amendednote` VARCHAR(255) DEFAULT NULL;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

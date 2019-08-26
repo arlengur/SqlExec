@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6230-01" author="dchettupuzha">
+        <comment>Add new columns in horizon_plate</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizon_plate`
+            ADD COLUMN `type` VARCHAR(255) DEFAULT NULL,
+            ADD COLUMN `note` VARCHAR(255) DEFAULT NULL,
+            ADD COLUMN `totalquadrants` TINYINT(1) NOT NULL DEFAULT '0';
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizon_plate`
+            DROP COLUMN `note`,
+            DROP COLUMN `type`,
+            DROP COLUMN `totalquadrants`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6230-02" author="dchettupuzha">
+        <comment>Add new columns in horizonplate_info</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonplate_info`
+            ADD COLUMN `resequence_reason` VARCHAR(255) DEFAULT NULL,
+            ADD COLUMN `resequence_point` VARCHAR(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizonplate_info`
+            DROP COLUMN `resequence_reason`,
+            DROP COLUMN `resequence_point`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6230-03" author="dchettupuzha">
+        <comment>Drop table resequence_request</comment>
+        <sql>
+            DROP TABLE IF EXISTS `hts`.`resequence_request`;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="ENG-6230-04" author="dchettupuzha">
+        <comment>Add column resequence_point to horizonsequencingsample_info</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonsequencingsample_info`
+            ADD COLUMN `resequence_point` VARCHAR(255) DEFAULT NULL;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="ENG-6230-05" author="dchettupuzha">
+        <comment>Remove unwanted target set for now</comment>
+        <sql>
+            SET sql_safe_updates=0;
+
+            delete from `hts`.`sequencingtargetset` where name = 'hzn_ngs_v1';
+
+            SET sql_safe_updates=1;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

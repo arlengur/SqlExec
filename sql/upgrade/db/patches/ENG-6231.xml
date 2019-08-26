@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6231-01" author="dchettupuzha">
+        <comment>Rename column in resequence_request table</comment>
+        <sql>
+            ALTER TABLE `hts`.`resequence_request` CHANGE COLUMN `run_type` `workflow` VARCHAR(255);
+        </sql>
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-6231-02" author="dchettupuzha">
+        <comment>Drop column runType from SequencingRun table</comment>
+        <sql>
+            ALTER TABLE `hts`.`sequencingrun` DROP COLUMN `runtype`;
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

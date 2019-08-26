@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6482-01" author="dchettupuzha">
+        <comment>Insert new Sample type for MLPA again</comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_SMA_7_8_DEL_1', 'NA23687', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_SMA_7_8_DEL_2', 'NA23688', null, null, '','');
+
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD_49_52_DEL', 'MLPA_DMD_49_52_DEL', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD_35_43_DEL', 'MLPA_DMD_35_43_DEL', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD_8_17_DUP', 'MLPA_DMD_8_17_DUP', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD_2_30_DUP', 'MLPA_DMD_2_30_DUP', null, null, '','');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_SMA_7_8_DEL_1' AND `displayname` = 'NA23687';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_SMA_7_8_DEL_2' AND `displayname` = 'NA23688';
+
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_49_52_DEL' AND `displayname` = 'MLPA_DMD_49_52_DEL';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_35_43_DEL' AND `displayname` = 'MLPA_DMD_35_43_DEL';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_8_17_DUP' AND `displayname` = 'MLPA_DMD_8_17_DUP';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_2_30_DUP' AND `displayname` = 'MLPA_DMD_2_30_DUP';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6482-02" author="dchettupuzha">
+        <comment>Remove unwanted types from sampletype table again</comment>
+        <sql>
+            SET sql_safe_updates=0;
+
+            delete from `prodlims`.`sampletype` where name = 'MLPA_SMA_7_8_DEL';
+
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD1_49_52_DEL';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD1_35_43_DEL';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD1_8_17_DUP';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD1_2_30_DUP';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD2_49_52_DEL';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD2_35_43_DEL';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD2_8_17_DUP';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD2_2_30_DUP';
+
+            SET sql_safe_updates=1;
+        </sql>
+        <!-- Rollback: rows deleted in rollback for ENG-6394.xml -->
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="ENG-6482-03" author="dchettupuzha">
+        <comment>Modify display name for MLPA</comment>
+        <sql>
+            SET sql_safe_updates=0;
+
+            update `prodlims`.`sampletype` set displayname = 'NA04099' where name = 'MLPA_DMD_49_52_DEL';
+            update `prodlims`.`sampletype` set displayname = 'NA23094' where name = 'MLPA_DMD_35_43_DEL';
+            update `prodlims`.`sampletype` set displayname = 'NA23099' where name = 'MLPA_DMD_8_17_DUP';
+            update `prodlims`.`sampletype` set displayname = 'NA23087' where name = 'MLPA_DMD_2_30_DUP';
+
+            SET sql_safe_updates=1;
+        </sql>
+        <!-- Rollback: rows were added in changeSet -01 -->
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

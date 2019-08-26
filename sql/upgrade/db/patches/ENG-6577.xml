@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6577-01" author="irazin">
+        <comment>
+            Columns to store partner signature, egg donor signature answers
+        </comment>
+        <sql>
+            alter table `prodlims`.`paternity_fields` add column `egg_donor_signature` bit(1) DEFAULT NULL;
+            alter table `prodlims`.`paternity_fields` add column `partner_signature` bit(1) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`paternity_fields` drop column `egg_donor_signature`;
+            alter table `prodlims`.`paternity_fields` drop column `partner_signature`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

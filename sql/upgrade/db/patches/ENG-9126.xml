@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9126-01" author="nfleming">
+        <comment>Update sample QC types for Signatera WES metrics</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            -- Update QC Names
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'PERCENT_GDNA' WHERE name = 'PERCENT_INPUT_DNA_GEL';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'EXTRACTED_GDNA' WHERE name = 'EXTRACTED_QUBIT_QUANTIT_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'PRE_CAPTURE_QUANT' WHERE name = 'PRE_CAPTURE_QUBIT_QUANTIT_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'PRE_CAPTURE_BIOANALYZER_SIZE' WHERE name = 'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POST_CAPTURE_QUANT' WHERE name = 'POST_CAPTURE_QUBIT_QUANTIT_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POST_CAPTURE_BIOANALYZER_SIZE' WHERE name = 'POST_CAPTURE_GEL_TRACE_PEAK_SIZE';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'GC_CONTENT' WHERE name = 'GC_PERCENT';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'TUMOR_BLOCK_SIZE' WHERE name = 'FFPE_SLIDES_TRACED_TUMOR_VOLUME_MM3';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'ON_TARGET_DEDUPLICATED_AVERAGE_DP' WHERE name = 'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP';
+
+            UPDATE `prodlims`.`qc_type` SET name = 'PERCENT_GDNA' WHERE name = 'PERCENT_INPUT_DNA_GEL';
+            UPDATE `prodlims`.`qc_type` SET name = 'PRE_CAPTURE_QUANT' WHERE name = 'PRE_CAPTURE_QUBIT_QUANTIT_METRIC';
+            UPDATE `prodlims`.`qc_type` SET name = 'PRE_CAPTURE_BIOANALYZER_SIZE' WHERE name = 'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE';
+            UPDATE `prodlims`.`qc_type` SET name = 'POST_CAPTURE_QUANT' WHERE name = 'POST_CAPTURE_QUBIT_QUANTIT_METRIC';
+            UPDATE `prodlims`.`qc_type` SET name = 'POST_CAPTURE_BIOANALYZER_SIZE' WHERE name = 'POST_CAPTURE_GEL_TRACE_PEAK_SIZE';
+            UPDATE `prodlims`.`qc_type` SET name = 'ON_TARGET_DEDUPLICATED_AVERAGE_DP' WHERE name = 'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP';
+
+            -- Add QC Result Type for EXTRACTED_GDNA
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Extracted Qubit-QuantIt Metrics (total ng)', 'EXTRACTED_GDNA', 0);
+
+            -- Add QC Result Type for TUMOR_BLOCK_SIZE
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Tumor Block Size', 'TUMOR_BLOCK_SIZE', 0);
+
+            -- Add Percent Q30 QC
+            INSERT INTO `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) VALUES
+            ('Percent Q30', 'PERCENT_Q30', 'GENOMIC');
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Percent Q30', 'PERCENT_Q30', 0);
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'PERCENT_INPUT_DNA_GEL' WHERE name = 'PERCENT_GDNA';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'EXTRACTED_QUBIT_QUANTIT_METRIC' WHERE name = 'EXTRACTED_GDNA';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'PRE_CAPTURE_QUBIT_QUANTIT_METRIC' WHERE name = 'PRE_CAPTURE_QUANT';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE' WHERE name = 'PRE_CAPTURE_BIOANALYZER_SIZE';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POST_CAPTURE_QUBIT_QUANTIT_METRIC' WHERE name = 'POST_CAPTURE_QUANT';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POST_CAPTURE_GEL_TRACE_PEAK_SIZE' WHERE name = 'POST_CAPTURE_BIOANALYZER_SIZE';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'GC_PERCENT' WHERE name = 'GC_CONTENT';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'FFPE_SLIDES_TRACED_TUMOR_VOLUME_MM3' WHERE name = 'TUMOR_BLOCK_SIZE';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP' WHERE name = 'ON_TARGET_DEDUPLICATED_AVERAGE_DP';
+
+            UPDATE `prodlims`.`qc_type` SET name = 'PERCENT_INPUT_DNA_GEL' WHERE name = 'PERCENT_GDNA';
+            UPDATE `prodlims`.`qc_type` SET name = 'PRE_CAPTURE_QUBIT_QUANTIT_METRIC' WHERE name = 'PRE_CAPTURE_QUANT';
+            UPDATE `prodlims`.`qc_type` SET name = 'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE' WHERE name = 'PRE_CAPTURE_BIOANALYZER_SIZE';
+            UPDATE `prodlims`.`qc_type` SET name = 'POST_CAPTURE_QUBIT_QUANTIT_METRIC' WHERE name = 'POST_CAPTURE_QUANT';
+            UPDATE `prodlims`.`qc_type` SET name = 'POST_CAPTURE_GEL_TRACE_PEAK_SIZE' WHERE name = 'POST_CAPTURE_BIOANALYZER_SIZE';
+            UPDATE `prodlims`.`qc_type` SET name = 'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP' WHERE name = 'ON_TARGET_DEDUPLICATED_AVERAGE_DP';
+
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'EXTRACTED_GDNA';
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'TUMOR_BLOCK_SIZE';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` = 'PERCENT_Q30';
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'PERCENT_Q30';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

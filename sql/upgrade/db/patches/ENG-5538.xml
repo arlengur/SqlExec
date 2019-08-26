@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5538-01" author="dchettupuzha">
+        <comment>Add new insurance carriers to insuranceproviderdetail table</comment>
+        <sql>
+            <![CDATA[
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values("Superior CHIP|SuperiorCHIP|Superior Health Plan|Superior HealthPlan|Superior Children's Health Insurance Plan|Superior Medicaid|Superior Health Medicaid", null, '2016-07-01');
+            ]]>
+        </sql>
+        <rollback>
+            delete from `prodlims`.`insuranceproviderdetail` where `id` > 22 and `insuranceprovider_name` like '%Superior Health Plan%';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5946-01" author="nfleming">
+        <comment>
+            Columns to store Constellation URL per cloud project
+        </comment>
+        <sql>
+            alter table `prodlims`.`cloudproject` add column `constellationUrl` VARCHAR(100) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`cloudproject` drop column `constellationUrl`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5946-02" author="nfleming">
+        <comment>
+            Columns to store Constellation URL on a ConstellationJob
+        </comment>
+        <sql>
+            alter table `prodlims`.`constellationjob` add column `baseUrl` VARCHAR(100) DEFAULT NULL;
+            alter table `prodlims`.`constellationarchivejob` add column `baseUrl` VARCHAR(100) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`constellationjob` drop column `baseUrl`;
+            alter table `prodlims`.`constellationarchivejob` drop column `baseUrl`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

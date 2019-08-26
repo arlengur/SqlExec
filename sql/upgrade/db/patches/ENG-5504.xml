@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5504-01" author="jdavid">
+        <comment>Add routeInHouse column to organization table</comment>
+        <sql>
+            alter table `prodlims`.`organization` add column `routeInHouse` bit(1) NOT NULL default false after `routeToBaylor`;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`organization` drop column `routeInHouse`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5504-02" author="jdavid">
+        <comment>Create baylorroutingrule table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`baylorroutingrule` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `gender` varchar(255) NOT NULL,
+            `baylorClinic` bit(1) NOT NULL DEFAULT b'0',
+            `disabled` bit(1) NOT NULL DEFAULT b'0',
+            PRIMARY KEY (`id`))
+            ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`baylorroutingrule`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5504-03" author="jdavid">
+        <comment>Create baylorroutingrule_panel table</comment>
+        <sql>
+            CREATE TABLE `baylorroutingrule_panel` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `baylorroutingrule_id` bigint(20) NOT NULL,
+            `panel_id` bigint(20) NOT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FK1BRRPROUTINGRULEID_idx` (`baylorroutingrule_id`),
+            KEY `FK2BRRPPANELID_idx` (`panel_id`),
+            CONSTRAINT `FK1BRRPROUTINGRULEID` FOREIGN KEY (`baylorroutingrule_id`) REFERENCES `baylorroutingrule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT `FK2BRRPPANELID` FOREIGN KEY (`panel_id`) REFERENCES `panel` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`baylorroutingrule_panel`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5504-04" author="jdavid">
+        <comment>Add name column into baylorroutingrule table</comment>
+        <sql>
+            alter table `prodlims`.`baylorroutingrule` add column `name` varchar(255) DEFAULT NULL after id;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`baylorroutingrule` drop column `name`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5504-05" author="jdavid">
+        <comment>Add active production baylor routing rules as of 8/29/16</comment>
+        <sql>
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("H_F,SMA_SMN1:FEMALE", "FEMALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "H_F,SMA_SMN1:FEMALE" and panel.name in ("H_F", "SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("H_M,SMA_SMN1:MALE", "MALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "H_M,SMA_SMN1:MALE" and panel.name in ("H_M", "SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF:FEMALE", "FEMALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF:FEMALE" and panel.name = "CF"
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF:MALE", "MALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF:MALE" and panel.name = "CF"
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF,FRAX_F,SMA_SMN1:FEMALE", "FEMALE", true, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF,FRAX_F,SMA_SMN1:FEMALE" and panel.name in ("CF", "FRAX_F","SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF,SMA_SMN1:MALE", "MALE", true, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF,SMA_SMN1:MALE" and panel.name in ("CF","SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF,DMD_F,FRAX_F,SMA_SMN1:FEMALE", "FEMALE", true, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF,DMD_F,FRAX_F,SMA_SMN1:FEMALE" and panel.name in ("CF", "DMD_F", "FRAX_F","SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

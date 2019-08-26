@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6930-01" author="mdaly">
+        <comment>To allow for automatic selection using the DefaultProcessor, change the lookupCode for
+            PATHOGENIC_VARIANT_BETA_HEMO (id: 65) and
+            LIKELY_PATHOGENIC_BETA_HEMO (id: 69)
+            to PATHOGENIC and LIKELY_PATHOGENIC, respectively.
+            GCs have stated that these two templates should be used by default for HBB (cf. the two *_BETA_THAL templates)
+        </comment>
+        <sql>
+            UPDATE horizondiseaseresulttemplate set lookupCode = 'PATHOGENIC' where id = 65;
+            UPDATE horizondiseaseresulttemplate set lookupCode = 'LIKELY_PATHOGENIC' where id = 69;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

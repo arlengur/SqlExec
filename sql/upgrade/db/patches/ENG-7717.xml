@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7717-01" author="jdavid">
+        <comment>add CS3 test type to the console script</comment>
+        <sql>
+
+            SET SQL_SAFE_UPDATES=0;
+
+            <![CDATA[
+            update `prodlims`.`script` set code =
+'
+/*
+ * ENG-4846: Ability to send test result delay notification for Panorama cases. JD
+ * Revised for the code change in ENG-5675 Efax Modification. 6OCT16 MG
+ * ENG-7717: Script should be able to handle CS3 cases
+ */
+
+import com.natera.lims.datamodel.core.*
+import org.apache.commons.lang.*
+import com.natera.lims.datamodel.ivf.prod.*
+import net.genesecurity.mail.util.*
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName)
+def user = currentUserBean.getCurrentUser()
+def deliveryDestinations = new HashSet()
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+
+        caseFile = caseFileDAO.get(caseFileId)
+        if (caseFile.testType.isCarrierScreening2() || caseFile.testType.isCarrierScreening3()) {
+
+            emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+            if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+                println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for a Horizon test type. Case is skipped, and note is not sent to ordering provider."
+                return
+            }
+
+            gcReport = new GCReport()
+            gcReport.setGcTemplate(gcTemplate)
+            gcReport.setNotes(gcTemplate.text)
+            gcReport.caseFile = caseFile
+            gcReport.setCreatedBy(user)
+            gcReport.setCreated(new Date())
+
+            GCReportPublisher.publishGCReport(gcReport)
+            GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm)
+            caseFileDAO.update(caseFile)
+        } else {
+            println "Case " + caseFileId + " is not a Horizon case. Case is skipped, and note is not sent."
+            return
+        }
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+    }
+}
+
+println "Script ran successfully!"
+'
+WHERE name = 'Horizon Test Result Delay Notification';
+
+            ]]>
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+
+            SET SQL_SAFE_UPDATES=0;
+
+            <![CDATA[
+            update `prodlims`.`script` set code =
+'
+/*
+ * ENG-4846: Ability to send test result delay notification for Panorama cases. JD
+ * Revised for the code change in ENG-5675 Efax Modification. 6OCT16 MG
+ * ENG-7717: Script should be able to handle CS3 cases
+ */
+
+import com.natera.lims.datamodel.core.*
+import org.apache.commons.lang.*
+import com.natera.lims.datamodel.ivf.prod.*
+import net.genesecurity.mail.util.*
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName)
+def user = currentUserBean.getCurrentUser()
+def deliveryDestinations = new HashSet()
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+
+        caseFile = caseFileDAO.get(caseFileId)
+        if (!caseFile.testType.isCarrierScreening2()) {
+            println "Case " + caseFileId + " is not a CARRIER_SCREENING_2 case. Case is skipped, and note is not sent."
+            return
+        }
+
+        emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+        if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+            println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for CARRIER_SCREENING_2 test type. Case is skipped, and note is not sent to ordering provider."
+            return
+        }
+
+        gcReport = new GCReport()
+        gcReport.setGcTemplate(gcTemplate)
+        gcReport.setNotes(gcTemplate.text)
+        gcReport.caseFile = caseFile
+        gcReport.setCreatedBy(user)
+        gcReport.setCreated(new Date())
+
+        GCReportPublisher.publishGCReport(gcReport)
+        GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm)
+        caseFileDAO.update(caseFile)
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+    }
+}
+
+println "Script ran successfully!"
+'
+WHERE name = 'Horizon Test Result Delay Notification';
+
+            ]]>
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

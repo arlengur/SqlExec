@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6844-01" author="jdavid">
+        <comment>Add apiToken column to the horizoninitrecord table</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizoninitrecord`
+            ADD COLUMN `apitoken` varchar(255) NOT NULL AFTER `casefile_id`;
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`horizoninitrecord`
+            DROP COLUMN `apitoken`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

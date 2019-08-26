@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="eng-5385-01" author="hharidas">
+        <comment>ENG-5385 is for modifying the disease supplement information for horizon reports. As a part of these changes, the names of some of the diseases are being modified and hence the supplemental document names have changed.This SQL script is to update the supplemental doc name in horizondiseasetemplate table.</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/zellweger-spectrum-disorders-pex1-related.xml' WHERE `gene`= 'PEX1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/spondylothoracic-dysostosis-mesp2-related.xml' WHERE `gene`= 'MESP2'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/severe-combined-immunodeficiency-x-linked.xml' WHERE `gene`= 'IL2RG' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/severe-combined-immunodeficiency-ada-related.xml' WHERE `gene`= 'ADA' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/segawa-syndrome-th-related.xml' WHERE `gene`= 'TH' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/pyruvate-dehydrogenase-deficiency-pdhb-related.xml' WHERE `gene`= 'PDHB' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/propionic-acidemia-pccb-related.xml' WHERE `gene`= 'PCCB' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/propionic-acidemia-pcca-related.xml' WHERE `gene`= 'PCCA' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/pontocerebellar-hypoplasia-type-2d.xml' WHERE `gene`= 'SEPSECS'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/omenn-syndrome-rag2-related.xml' WHERE `gene`= 'RAG2'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/nemaline-myopathy-neb-related.xml' WHERE `gene`= 'NEB'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/mitochondrial-complex-i-deficiency-acad9-related.xml' WHERE `gene`= 'ACAD9' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/metachromatic-leukodystrophy-psap-related.xml' WHERE `gene`= 'PSAP' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/menkes-syndrome.xml' WHERE `gene`= 'ATP7A' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/juvenile-retinoschisis-x-linked.xml' WHERE `gene`= 'RS1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/hypophosphatasia-alpl-related.xml' WHERE `gene`= 'ALPL' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/hepatocerebral-mitochondrial-dna-depletion-syndrome-mpv17-related.xml' WHERE `gene`= 'MPV17' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/glutaric-acidemia-type-1.xml' WHERE `gene`= 'GCDH' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/familial-nephrogenic-diabetes-insipidus-aqp2-related.xml' WHERE `gene`= 'AQP2' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/familial-hyperinsulinism-abcc8-related.xml' WHERE `gene`= 'ABCC8'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/ellis-van-creveld-syndrome-evc-related.xml' WHERE `gene`= 'EVC'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/dystrophic-epidermolysis-bullosa-col7a1-related.xml' WHERE `gene`= 'COL7A1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/costeff-syndrome.xml' WHERE `gene`= 'OPA3'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/chronic-granulomatous-disease-cyba-related.xml' WHERE `gene`= 'CYBA' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/bare-lymphocyte-syndrome-ciita-related.xml' WHERE `gene`= 'CIITA'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/alpha-thalassemia-intellectual-disability-syndrome.xml' WHERE `gene`= 'ATRX'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/adrenoleukodystrophy-x-linked.xml' WHERE `gene`= 'ABCD1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/walker-warburg-syndrome-fktn-related.xml' WHERE `gene`= 'FKTN'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/autoimmune-polyglandular-syndrome-type1.xml' WHERE `gene`= 'AIRE'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/congenital-hyperinsulinism-kcnj11-related.xml' WHERE `gene`= 'KCNJ11'AND `supplementpath` IS NOT NULL;
+
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/zellweger-spectrum-disorder-pex1-related.xml' WHERE `gene`= 'PEX1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/spondylothoracic-dysostosis.xml' WHERE `gene`= 'MESP2'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/x-linked-sever-combined-immunodeficiency.xml' WHERE `gene`= 'IL2RG' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/severe-combined-immunodeficiency-adenosine-deaminase-deficiency.xml' WHERE `gene`= 'ADA' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/segawa-syndrome-autosomal-recessive.xml' WHERE `gene`= 'TH' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/pyruvate-dehydrogenase-deficiency-autosomal-recessive.xml' WHERE `gene`= 'PDHB' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/propionic-acidemia-beta-subunit.xml' WHERE `gene`= 'PCCB' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/propionic-acidemia-alpha-subunit.xml' WHERE `gene`= 'PCCA' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/progressive-cerebello-cerebral-atrophy.xml' WHERE `gene`= 'SEPSECS'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/omenn-syndrome.xml' WHERE `gene`= 'RAG2'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/nemaline-myopathy.xml' WHERE `gene`= 'NEB'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/riboflavin-responsive-complex-1-deficiency.xml' WHERE `gene`= 'ACAD9' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/metachromatic-leukodystrophy-gaucher-disease-atypical.xml' WHERE `gene`= 'PSAP' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/occipital-horn-syndrome-menkes-syndrome-distal-motor-neuropathy.xml' WHERE `gene`= 'ATP7A' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/x-linked-juvenile-retinoschisis.xml' WHERE `gene`= 'RS1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/hypophosphatasia.xml' WHERE `gene`= 'ALPL' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/mitochondrial-dna-depletion-syndrome-6.xml' WHERE `gene`= 'MPV17' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/glutaryl-coa-dehydrogenase-deficiency.xml' WHERE `gene`= 'GCDH' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/familial-neurohypophyseal-diabetes-insipidus-autosomal-recessive.xml' WHERE `gene`= 'AQP2' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/familial-hyperinsulinism.xml' WHERE `gene`= 'ABCC8'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/ellis-van-creveld-syndrome.xml' WHERE `gene`= 'EVC'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/dystrophic-epidermolysis-bullosa-autosomal-recessive.xml' WHERE `gene`= 'COL7A1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/costeff-disease-optic-atrophy.xml' WHERE `gene`= 'OPA3'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/chronic-granulomatous-disease-cytochrome-b-negative.xml' WHERE `gene`= 'CYBA' AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/bare-lymphocyte-syndrome-type-ii.xml' WHERE `gene`= 'CIITA'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/alpha-thalassemia-and-intellectual-disability-syndrome.xml' WHERE `gene`= 'ATRX'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/adrenoleukodystrophy.xml' WHERE `gene`= 'ABCD1'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/walker-warburg-syndrome.xml' WHERE `gene`= 'FKTN'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/polyglandular-autoimmune-syndrome.xml' WHERE `gene`= 'AIRE'AND `supplementpath` IS NOT NULL;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath`= 'com/natera/lims/service/horizon/report/supplements/hyperinsulinemic-hypoglycemia.xml' WHERE `gene`= 'KCNJ11'AND `supplementpath` IS NOT NULL;
+
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

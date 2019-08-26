@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7861-01" author="irazin">
+        <comment>Add Signatera categories</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`category` (name, deleted)
+            VALUES
+            ('Needs Clinical Review',0);
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`category`
+            WHERE name IN (
+            'Needs Clinical Review'
+            );
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7861-02" author="irazin">
+        <comment>Add Signatera Hold Reasons group and add applicable categories to it</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`categorygroup` (`name`, `fordisplay`) VALUES ('Signatera Hold Reasons', 0);
+
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT
+            (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Hold Reasons') AS categorygroup_id
+            ,id
+            FROM `prodlims`.`category` WHERE name IN (
+            'Identifier Discrepancy',
+            'Missing Requisition',
+            'Verify Test Order',
+            'Verify Clinic',
+            'Verify patient name order (FN/LN)',
+            'Billing',
+            'Other hold reason',
+            'GENERIC HOLD (enter case note with hold reason)'
+            );
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE categorygroup_id = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Hold Reasons');
+
+            DELETE FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Hold Reasons';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7861-03" author="irazin">
+        <comment>Add Signatera Testing group and add applicable categories to it</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`categorygroup` (`name`, `fordisplay`) VALUES ('Signatera Testing', 0);
+
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT
+            (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Testing') AS categorygroup_id
+            ,id
+            FROM `prodlims`.`category` WHERE name IN (
+            'Candidate for TNP',
+            'No ICD code',
+            'Consultation Case',
+            'Don''t Dispose',
+            'Legal Hold',
+            'Lab Hold',
+            'Needs Clinical Review',
+            'NOT for research use'
+            );
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE categorygroup_id = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Testing');
+
+            DELETE FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Testing';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7861-04" author="irazin">
+        <comment>Add patient_status column to the paternity_fields table</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`paternity_fields` add column `patient_status` VARCHAR(40) default NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`paternity_fields` drop column `patient_status`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

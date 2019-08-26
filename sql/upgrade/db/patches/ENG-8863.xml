@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8863-01" author="irazin">
+        <comment>Add new sample type for Signatera controls</comment>
+        <sql>
+            INSERT INTO `prodlims`.`sampletype` (`name`, `displayname`)
+            values ('POSITIVE_CONTROL', 'Positive control'), ('NEGATIVE_CONTROL', 'Negative control'), ('SEQ_RUN_CONTROL', 'Sequencing run control');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`sampletype` WHERE name IN ('POSITIVE_CONTROL', 'NEGATIVE_CONTROL', 'SEQ_RUN_CONTROL');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8863-02" author="irazin">
+        <comment>Add QC run level metrics for positive and negative controls</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SEQUENCING_RUN', 'Result of plasma test on a positive control sample', 'POSITIVE_CONTROL_CALL_METRIC', 0),
+            ('SEQUENCING_RUN', 'Result of plasma test on a negative control sample', 'NEGATIVE_CONTROL_CALL_METRIC', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'POSITIVE_CONTROL_CALL_METRIC',
+            'NEGATIVE_CONTROL_CALL_METRIC'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

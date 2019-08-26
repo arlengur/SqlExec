@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5952-01" author="nfleming">
+        <comment>
+            Columns to store additional zygosity, fetal sex, and fetal fraction for twins handcalls
+        </comment>
+        <sql>
+            alter table `prodlims`.`npt_handcall_result` add column `zygosity` VARCHAR(50) DEFAULT NULL;
+            alter table `prodlims`.`npt_handcall_result` add column `fetalFraction2` DOUBLE DEFAULT NULL;
+            alter table `prodlims`.`npt_handcall_result` add column `gender2` VARCHAR(50) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`npt_handcall_result` drop column `zygosity`;
+            alter table `prodlims`.`npt_handcall_result` drop column `fetalFraction2`;
+            alter table `prodlims`.`npt_handcall_result` drop column `gender2`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5952-02" author="nfleming">
+        <comment>
+            Columns to store additional zygosity, fetal sex, and fetal fraction for twins cloud reports
+        </comment>
+        <sql>
+            alter table `prodlims`.`cloudpanoramareport` add column `testReport_zygosity` VARCHAR(50) DEFAULT NULL;
+            alter table `prodlims`.`cloudpanoramareport` add column `testReport_fetalFraction2` DOUBLE DEFAULT NULL;
+            alter table `prodlims`.`cloudpanoramareport` add column `testReport_gender2` VARCHAR(50) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`cloudpanoramareport` drop column `testReport_zygosity`;
+            alter table `prodlims`.`cloudpanoramareport` drop column `testReport_fetalFraction2`;
+            alter table `prodlims`.`cloudpanoramareport` drop column `testReport_gender2`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5952-02.1" author="nfleming">
+        <comment>
+            Fix incorrectly named column
+        </comment>
+        <sql>
+            ALTER TABLE `prodlims`.`cloudpanoramareport` CHANGE COLUMN `testReport_gender2` `testReport_fetusgender2` VARCHAR(50) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`cloudpanoramareport` CHANGE COLUMN `testReport_fetusgender2` `testReport_gender2` VARCHAR(50) DEFAULT NULL;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5952-03" author="nfleming">
+        <comment>
+            Columns to store discriminator value for NPT result (now single table hierarchy)
+        </comment>
+        <sql>
+            alter table `prodlims`.`cloudpanoramareport` add column `DTYPE` VARCHAR(50) NOT NULL DEFAULT 'PanoramaTestResult' FIRST;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`cloudpanoramareport` drop column `DTYPE`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

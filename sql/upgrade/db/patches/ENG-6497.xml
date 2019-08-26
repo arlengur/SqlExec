@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6497-01" author="apotekhin">
+        <comment>Shipping refactoring</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            alter table `prodlims`.`outboundshipper` add column testType VARCHAR(255);
+            update `prodlims`.`outboundshipper` set testType='CARRIER_SCREENING_2' where state != 'ARCHIVE';
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`outboundshipper` drop column testType;
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

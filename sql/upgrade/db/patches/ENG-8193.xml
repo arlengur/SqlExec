@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8193-01" author="mdaly">
+        <comment>Associate the "Positive for Alpha-Thalassemia" supplement with the
+            three point mutation and deletion Alpha-Thalassemia templates.
+
+            Supplement ID (from HorizonDiseaseSupplement.xml)
+            "Positive Alpha-Thalassemia": 137
+
+            Template IDs (from HorizonDiseaseResultTemplate.xml)
+            ONE_DEL_ONE_MUT_CIS: 141
+            ONE_DEL_ONE_MUT_TRANS: 142
+            ONE_DEL_ONE_MUT_UNKNOWN: 143
+        </comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondisease_horizondiseasesupplement`
+            (`supplement_id`, `template_id`, `disease_id`)
+            VALUES
+            (137, 141, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL')),
+            (137, 142, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL')),
+            (137, 143, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL'));
+        </sql>
+
+        <rollback>
+            DELETE FROM `prodlims`.`horizondisease_horizondiseasesupplement` WHERE
+            `supplement_id` = 137 AND
+            `template_id` IN (141, 142, 143) AND
+            `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

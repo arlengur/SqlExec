@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6713-01" author="irazin">
+        <comment>Vistara - Add the 'Verify Egg Donor Case' to the 'Vistara Awaiting Support' group</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`categorygroup_category` (`categorygroup_id`, `category_id`)
+            SELECT
+            (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Awaiting Support') AS categorygroup_id
+            ,id
+            FROM `prodlims`.`category` WHERE name = 'Verify Egg Donor Case';
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE category_id = (SELECT id FROM `prodlims`.`category` WHERE name = 'Verify Egg Donor Case')
+            AND categorygroup_id = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Awaiting Support');
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

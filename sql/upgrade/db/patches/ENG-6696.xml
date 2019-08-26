@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6696-01" author="dchettupuzha">
+        <comment>Insert new Control Sample types for NGS</comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`)
+            values ('NA00852', 'NA00852', null, null, '',''),
+                   ('NA03770', 'NA03770', null, null, '',''),
+                   ('NA04330', 'NA04330', null, null, '',''),
+                   ('NA04408', 'NA04408', null, null, '',''),
+                   ('NA07732', 'NA07732', null, null, '',''),
+                   ('NA11283', 'NA11283', null, null, '',''),
+                   ('NA11285', 'NA11285', null, null, '',''),
+                   ('NA11287', 'NA11287', null, null, '',''),
+                   ('NA11288', 'NA11288', null, null, '',''),
+                   ('NA11370', 'NA11370', null, null, '',''),
+                   ('NA11468', 'NA11468', null, null, '',''),
+                   ('NA12794', 'NA12794', null, null, '',''),
+                   ('NA12878', 'NA12878', null, null, '',''),
+                   ('NA16193', 'NA16193', null, null, '',''),
+                   ('NA17821', 'NA17821', null, null, '',''),
+                   ('NA18929', 'NA18929', null, null, '',''),
+                   ('NA20737', 'NA20737', null, null, '',''),
+                   ('NA20741', 'NA20741', null, null, '',''),
+                   ('NA20745', 'NA20745', null, null, '',''),
+                   ('NA20836', 'NA20836', null, null, '',''),
+                   ('NA20924', 'NA20924', null, null, '',''),
+                   ('NA20925', 'NA20925', null, null, '','');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            delete from `prodlims`.`sampletype` where name in ('NA00852',
+            'NA03770',
+            'NA04330',
+            'NA04408',
+            'NA07732',
+            'NA11283',
+            'NA11285',
+            'NA11287',
+            'NA11288',
+            'NA11370',
+            'NA11468',
+            'NA12794',
+            'NA12878',
+            'NA16193',
+            'NA17821',
+            'NA18929',
+            'NA20737',
+            'NA20741',
+            'NA20745',
+            'NA20836',
+            'NA20924',
+            'NA20925');
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

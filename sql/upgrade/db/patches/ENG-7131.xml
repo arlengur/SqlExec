@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7131-01" author="mdaly">
+        <comment>Drop now useless collection table for FragileXResult.alleleCounts </comment>
+        <sql>
+            DROP TABLE `prodlims`.`FragileXResult_alleleCounts`;
+        </sql>
+
+        <rollback>
+            CREATE TABLE `prodlims`.`FragileXResult_alleleCounts` (
+            `FragileXResult_id` BIGINT(20) NOT NULL,
+            `alleleCounts` INTEGER,
+
+            KEY `FK_FragileXResult_alleleCounts_FragileXResult_id` (`FragileXResult_id`),
+            CONSTRAINT `FK_FragileXResult_alleleCounts_horizoncloudresult_id` FOREIGN KEY (`FragileXResult_id`) REFERENCES `HorizonCloudResult` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7131-02" author="mdaly">
+        <comment>Create table to store Fragile X allele repeat entities (single and interval)</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`FragileXAllele` (
+            `DTYPE` VARCHAR(31) NOT NULL,
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `allelesize` INTEGER,
+            `end` INTEGER,
+            `start` INTEGER,
+            `result_id` BIGINT,
+
+            PRIMARY KEY (`id`),
+
+            KEY `FK_fragilexallele_fragilexresult` (`result_id`),
+            CONSTRAINT `FK_fragilexallele_id__fragilexresult_id` FOREIGN KEY (`result_id`) REFERENCES `HorizonCloudResult` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+
+        <rollback>
+            DROP TABLE `prodlims`.`FragileXAllele`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

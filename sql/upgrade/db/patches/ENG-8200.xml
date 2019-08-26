@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8200-01" author="mdaly">
+        <comment>Remove AGG reflex text from 45-54 templates (CS3). The ids for affected templates are:
+            "45-54 CGG repeats": 26
+            ">Two CGG alleles detected, one allele intermediate (45-54)": 30
+            "Two alleles intermediate (45-54)": 35
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'An intermediate size ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal size ${(results[0].cggRepeats[1])!"cgg2"} allele were detected in the FMR1 genes. This individual is not at increased risk to have a child with Fragile X Syndrome. In some cases, intermediate size repeat alleles can expand to a premutation (carrier status) in future generations.'
+            WHERE `id` = 26;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'An intermediate sized ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal sized ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat allele were detected in the FMR1 gene. An additional allele in the normal range with ${(results[0].cggRepeats[2])!"cgg3"} CGG repeats was also detected. The presence of three alleles in this individual''s sample may be due to X chromosome aneuploidy, a duplication on the X chromosome, a somatic change in one of the alleles, or a PCR artifact. Karyotype and/or chromosomal microarray may be considered to clarify these results. This individual is not at increased risk to have a child with Fragile X Syndrome. In some cases, intermediate size repeat alleles can expand to a premutation (carrier status) in future generations.'
+            WHERE `id` = 30;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'One intermediate size ${(results[0].cggRepeats[0])!"cgg1"} and one intermediate size ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. This individual is not at increased risk to have a child with Fragile X Syndrome. In some cases, intermediate size repeat alleles can expand to a premutation (carrier status) in future generations.'
+            WHERE `id` = 35;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'An intermediate size ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal size ${(results[0].cggRepeats[1])!"cgg2"} allele were detected in the FMR1 genes. This individual is not at increased risk to have a child with Fragile X Syndrome. In some cases, intermediate size repeat alleles can expand to a premutation (carrier status) in future generations. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 26;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'An intermediate sized ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal sized ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat allele were detected in the FMR1 gene. An additional allele in the normal range with ${(results[0].cggRepeats[2])!"cgg3"} CGG repeats was also detected. The presence of three alleles in this individual''s sample may be due to X chromosome aneuploidy, a duplication on the X chromosome, a somatic change in one of the alleles, or a PCR artifact. Karyotype and/or chromosomal microarray may be considered to clarify these results. This individual is not at increased risk to have a child with Fragile X Syndrome. In some cases, intermediate size repeat alleles can expand to a premutation (carrier status) in future generations. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 30;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'One intermediate size ${(results[0].cggRepeats[0])!"cgg1"} and one intermediate size ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. This individual is not at increased risk to have a child with Fragile X Syndrome. In some cases, intermediate size repeat alleles can expand to a premutation (carrier status) in future generations. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 35;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8200-02" author="mdaly">
+        <comment>Remove AGG reflex text from 45-54 templates for CS2.
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `variant` = REPLACE(`variant`, ' AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.', '')
+            WHERE `gene` = 'FMR1' AND `templatecode` IN (
+            '45-54 CGG repeats',
+            '>2 CGG alleles detected, one allele intermediate (45-54)',
+            'Two alleles intermediate (45-54)'
+            );
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `variant` = CONCAT(`variant`, ' AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.')
+            WHERE `gene` = 'FMR1' AND `templatecode` IN (
+            '45-54 CGG repeats',
+            '>2 CGG alleles detected, one allele intermediate (45-54)',
+            'Two alleles intermediate (45-54)'
+            );
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8200-03" author="mdaly">
+        <comment>There are duplicate CS2 templates for intermediate results. Edit the text so users don't use them.
+            Removing is more complicated because of FKs with HorizonTemplateVariable and HorizonReportDiseaseResult
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templatecode` = CONCAT('DO NOT USE. ', `templatecode`)
+            WHERE
+            `gene` = 'FMR1' AND
+            `templateCode` IN (
+            '1 CGG allele detected, intermediate (45-54)',
+            '1 CGG allele detected, premutation (55-90 repeats)',
+            '1 CGG allele detected, premutation (91-200 repeats)');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templatecode` = REPLACE(`templatecode`, 'DO NOT USE. ', '')
+            WHERE
+            `gene` = 'FMR1' AND
+            `templateCode` IN (
+            'DO NOT USE. 1 CGG allele detected, intermediate (45-54)',
+            'DO NOT USE. 1 CGG allele detected, premutation (55-90 repeats)',
+            'DO NOT USE. 1 CGG allele detected, premutation (91-200 repeats)');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

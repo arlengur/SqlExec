@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7266-01" author="mdaly">
+        <comment>Generic templates and ids (autosomal recessive).
+            Path: 12
+            Likely Path: 13
+            2 unknown: 14
+            2 cis: 15
+            2 trans: 16
+        </comment>
+        <sql>
+            -- New templates for BLM
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (149, 6, 'PATHOGENIC', 'Pathogenic variant detected', 'CARRIER for Bloom Syndrome', 'Positive for the pathogenic variant ${results[0].variantName} in the BLM gene. Some recent studies have suggested that carriers of Bloom Syndrome may have a slightly increased risk for certain cancers including, but not limited to, breast cancer and colon cancer. However, other studies show no increased risk for cancer. The actual risk for cancer in carriers of Bloom Syndrome, if increased, is not clear. If this individual''s partner is a carrier for Bloom Syndrome, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (150, 7, 'LIKELY_PATHOGENIC', 'Likely pathogenic variant detected', 'CARRIER for Bloom Syndrome', 'Positive for the likely pathogenic variant ${results[0].variantName} in the BLM gene. Some recent studies have suggested that carriers of Bloom Syndrome may have a slightly increased risk for certain cancers including, but not limited to, breast cancer and colon cancer. However, other studies show no increased risk for cancer. The actual risk for cancer in carriers of Bloom Syndrome, if increased, is not clear. If this individual''s partner is a carrier for Bloom Syndrome, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (152, 8, 'TWO_CIS', 'Two variants detected (cis)', 'CARRIER for Bloom Syndrome', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in cis (on the same chromosome) in the BLM gene. Some recent studies have suggested that carriers of Bloom Syndrome may have a slightly increased risk for certain cancers including, but not limited to, breast cancer and colon cancer. However, other studies show no increased risk for cancer. The actual risk for cancer in carriers of Bloom Syndrome, if increased, is not clear. If this individual''s partner is a carrier for Bloom Syndrome, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+
+            -- Copies of generic; done to totally break BLM from the generics
+            (151, 8, 'TWO_UNKNOWN', 'Two variants detected (cis or trans unknown)', 'POSITIVE for two variants in the gene associated with Bloom Syndrome', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the BLM gene. This individual may be affected with Bloom Syndrome. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This analysis cannot determine if the BLM variants are on the same (in cis) or opposite (in trans) chromosomes in this individual. Testing of parents or other close family members may assist in determining the phase of these variants. If this individual''s partner is a carrier for Bloom Syndrome, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.'),
+            (153, 8, 'TWO_TRANS', 'Two variants detected (trans)', 'POSITIVE for two variants in the gene associated with Bloom Syndrome', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the BLM gene. This individual is predicted to be affected with Bloom Syndrome. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Bloom Syndrome, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.');
+
+            -- Update any existing BLM HorizonLdtDiseaseResults using the generic template
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 149 WHERE `template_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 150 WHERE `template_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 151 WHERE `template_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 152 WHERE `template_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 153 WHERE `template_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+
+            -- Update association between BLM HorizonDisease and generic templates.
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 149 WHERE `diseaseResultTemplate_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 150 WHERE `diseaseResultTemplate_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 151 WHERE `diseaseResultTemplate_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 152 WHERE `diseaseResultTemplate_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 153 WHERE `diseaseResultTemplate_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+
+            -- Update the template-supplement association
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 149 WHERE `template_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 150 WHERE `template_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 151 WHERE `template_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 152 WHERE `template_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 153 WHERE `template_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'BLM');
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

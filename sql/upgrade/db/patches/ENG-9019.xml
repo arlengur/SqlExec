@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9019-01" author="mdaly">
+        <comment>Undo the updates from changeset ENG-8200-03</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templatecode` = REPLACE(`templatecode`, 'DO NOT USE. ', '')
+            WHERE
+            `gene` = 'FMR1' AND
+            `templateCode` IN (
+            'DO NOT USE. 1 CGG allele detected, intermediate (45-54)',
+            'DO NOT USE. 1 CGG allele detected, premutation (55-90 repeats)',
+            'DO NOT USE. 1 CGG allele detected, premutation (91-200 repeats)');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+
+        <!-- no rollback: "DO NOT USE. " never should have been added so don't add it if a RB is triggered. -->
+
+    </changeSet>
+
+
+    <changeSet id="ENG-9019-02" author="mdaly">
+        <comment>Remove send out text from intermediate scenario</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `variant` = REPLACE(`variant`, ' AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.', '')
+            WHERE `gene` = 'FMR1' AND `templatecode` IN (
+            '1 CGG allele detected, intermediate (45-54)'
+            );
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `variant` = CONCAT(`variant`, ' AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.')
+            WHERE `gene` = 'FMR1' AND `templatecode` IN (
+            '1 CGG allele detected, intermediate (45-54)',
+            );
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

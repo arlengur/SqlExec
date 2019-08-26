@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5821-01" author="jdavid">
+        <comment>Update MTSI TSE Horizon disease's cloud id</comment>
+        <sql>
+            update `prodlims`.`horizondisease` set cloudId = 'TSE' where name = 'Tay-Sachs Disease (enzyme only)' and provider = 'MTSINAI';
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

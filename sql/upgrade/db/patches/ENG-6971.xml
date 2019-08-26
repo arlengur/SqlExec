@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6971-01" author="mdaly">
+        <comment>Associate the positive FANCC templates with the positive FANCC supplement.
+            Template IDs (144, 145, 146, 147, 148) are in ENG-6846.xml and supplement ID (104) is in ENG-6747.xml</comment>
+        <sql>
+            -- First remove the incorrect associations.
+            DELETE FROM `prodlims`.`horizondisease_horizondiseasesupplement` WHERE `supplement_id` = 104;
+
+            -- Insert the correct ones.
+            INSERT INTO `prodlims`.`horizondisease_horizondiseasesupplement`
+            (`supplement_id`, `template_id`, `disease_id`)
+            VALUES
+            (104, 144, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 145, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 146, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 147, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 148, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC'));
+        </sql>
+
+        <rollback>
+            DELETE FROM `prodlims`.`horizondisease_horizondiseasesupplement` WHERE `supplement_id` = 104;
+
+            INSERT INTO `prodlims`.`horizondisease_horizondiseasesupplement`
+            (`supplement_id`, `template_id`, `disease_id`)
+            VALUES
+            (104, 13, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 12, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 14, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 15, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (104, 16, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC'));
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

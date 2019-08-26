@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6794-01" author="mdaly">
+        <comment>If a DeliveryDestination is applicable for CARRIER_SCREENING_2 TestTypes (ie, CS2 is in it's testTypes set),
+            add CARRIER_SCREENING_3 to that testTypes set. (Effectively we're "copying" the CS2 delivery destinations to CS3.</comment>
+        <sql>
+            INSERT INTO `prodlims`.`deliverydestination_testtypes` (`DeliveryDestination_id`, `testtypes`)
+                SELECT `DeliveryDestination_id`, 'CARRIER_SCREENING_3' FROM `prodlims`.`deliverydestination_testtypes` WHERE `testtypes` = 'CARRIER_SCREENING_2';
+        </sql>
+
+        <rollback>
+            DELETE FROM `prodlims`.`deliverydestination_testtypes` WHERE `testtypes` = 'CARRIER_SCREENING_3';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="ENG-9682-01" author="mdaly">
+        <comment>Insert the first Horizon Version (for CNV). When launched, a Groovy script can be used to set
+            the correct effective date--or a liquibase changeset if so desired.</comment>
+        <sql>
+            INSERT INTO `prodlims`.`version`
+            (`testType`, `effectiveDate`, `directory`, `displayedValue`, `description`, `conditionClassName`)
+            VALUES
+            ('CARRIER_SCREENING_3', '2019-03-15', '3.1.0', '3.1.0', 'NGS_CNV T&amp;M', 'com.natera.lims.datamodel.report.HasCnvAssayCondition');
+        </sql>
+        <!-- manually delete on rollback -->
+        <rollback>
+            DELETE FROM `prodlims`.`version` WHERE
+            `testType` = 'CARRIER_SCREENING_3' AND
+            `directory` ='3.1.0';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

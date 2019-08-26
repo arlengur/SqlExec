@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6846-01" author="mdaly">
+        <comment>Corrections to tempaltes</comment>
+        <sql>
+            -- Negative Fragile X is template 23
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = '${(results[0].cggRepeats[0])!"cgg1"} and ${(results[0].cggRepeats[1])!"cgg2"} CGG repeats were detected in the FMR1 genes.'
+            WHERE `id` = 23;
+
+            -- Add default text for Fragile X point mutation variantName
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic variant ${(results[0].variantName)!"[name of variant]"} in the FMR1 gene. Normal CGG repeats detected. ${(results[0].cggRepeats[0])!"cgg1"} and ${(results[0].cggRepeats[1])!"cgg2"} CGG repeats. The individual is at increased risk to have a child with Fragile X Syndrome.'
+            WHERE `id` = 39;
+
+            -- Remove generic templates for HBB
+            DELETE FROM `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` WHERE `diseaseResultTemplate_id` IN (12, 13, 14, 15, 16) AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'HBB');
+
+            -- Missing comma after disease name for generic pathogenic templates
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic variant ${results[0].variantName} in the ${gene} gene. If this individual''s partner is a carrier for ${diseaseName}, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 12;
+
+            -- FANCC has disease-specific notes. Drop association with generic path, likely path, and the 2 var templates, add new templates, and associate with HorizonDisease
+            DELETE FROM `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate`WHERE `diseaseResultTemplate_id` IN (12, 13, 14, 15, 16) AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC');
+
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (144, 6, 'PATHOGENIC', 'Pathogenic variant detected', 'CARRIER for ${diseaseName}', 'Positive for the pathogenic variant ${results[0].variantName} in the FANCC gene. Female carriers may have an increased risk for breast cancer. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (145, 7, 'LIKELY_PATHOGENIC', 'Likely pathogenic variant detected', 'CARRIER for ${diseaseName}', 'Positive for the likely pathogenic variant ${results[0].variantName} in the FANCC gene. Female carriers may have an increased risk for breast cancer. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (146, 8, 'TWO_UNKNOWN', 'Two variants detected (cis or trans unknown)', 'POSITIVE for two variants in the gene associated with ${diseaseName}', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the FANCC gene. This individual may be affected with Fanconi Anemia, Group C and/or have an increased risk for breast cancer. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This analysis cannot determine if the FANCC variants are on the same (in cis) or opposite (in trans) chromosomes in this individual. Testing of parents or other close family members may assist in determining the phase of these variants. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.'),
+            (147, 8, 'TWO_CIS', 'Two variants detected (cis)', 'CARRIER for ${diseaseName}', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in cis (on the same chromosome) in the FANCC gene. Female carriers may have an increased risk for breast cancer. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (148, 8, 'TWO_TRANS', 'Two variants detected (trans)', 'POSITIVE for two variants in the gene associated with ${diseaseName}', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the FANCC gene. This individual is predicted to be affected with Fanconi Anemia, Group C. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.');
+
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`)
+            VALUES
+            (144, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (145, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (146, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (147, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC')),
+            (148, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FANCC'));
+            -- END FANCC
+
+            -- Fix affected percentage for likely path/indeter enz
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = '${_tsd_likely_pathogenic} ${_tse_indeterminate_enzyme} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'
+            WHERE `id` = 117;
+
+            -- Correct intro text for neg DNA/(indeter and pos enz)
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Negative DNA analysis. ${_tse_indeterminate_enzyme} Redraw recommended.'
+            WHERE `id` = 114;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Negative DNA analysis. ${_tse_positive_enzyme} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'
+            WHERE `id` = 113;
+
+            -- Remove text about false positives from pseudo/neg enz
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = '${_tsd_pseudodeficient} ${_tse_negative_enzyme} This benign variant does not increase the risk for Tay-Sachs Disease in this individual''s children.'
+            WHERE `id` = 121;
+
+            -- Add redraw text for pseudo/indeter enz
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = '${_tsd_pseudodeficient} Indeterminate enzyme analysis; Redraw not recommended. ${_enzyme_details} This pseudodeficiency allele is known to cause false positive results on enzyme-based Tay-Sachs Disease carrier screening. This benign variant does not increase the risk for Tay-Sachs Disease in this individual''s children.'
+            WHERE `id` = 122;
+
+            -- Fix lookupCode for Duarte variant on GALT and assign to pathogenic call
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `lookupCode` = 'GALT_c.940A>G', `associatedCall_id` = 6
+            WHERE `id` = 8;
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

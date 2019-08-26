@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5940-01" author="jdavid">
+        <comment>Add baylor routing rule for H27, DMD a la carte for male patient </comment>
+        <sql>
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("DMD_F,H_M,SMA_SMN1:MALE", "MALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "DMD_F,H_M,SMA_SMN1:MALE" and panel.name in ("DMD_F","H_M","SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

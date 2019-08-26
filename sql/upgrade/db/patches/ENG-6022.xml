@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6022-01" author="mdaly">
+        <comment>Add associations between Workflows and HorizonDiseases (for the initial 27 diseases)</comment>
+        <sql>
+            -- NGS workflows
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'ATHAL';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'CLN3';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'HBB';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'BLM';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'ASPA';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'ASS1';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'CFTR';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'DMD';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'IKBKAP';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'FANCC';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'GALT';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'GBA';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'G6PC';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'IVD';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'ACADM';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'MMACHC';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'MCOLN1';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'IDUA';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'SMPD1';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'PKHD1';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'PEX7';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'DHCR7';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'SMN1';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'HEXA';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'FAH';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'NGS' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'PEX1';
+
+            -- Hard Target
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'CFTR';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'CLN3';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'GALT';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'GBA';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'HBB';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'HEXA';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'MCOLN1';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'HT' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'PEX7';
+
+            -- MLPA
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'MLPA' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'ATHAL';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'MLPA' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'DMD';
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'MLPA' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'SMN1';
+
+            -- Fragile X
+            INSERT INTO `prodlims`.`horizondiseases_workflows` (`horizondisease_id`, `workflows`) SELECT `id`, 'FRAX' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'FMR1';
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizondiseases_workflows`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

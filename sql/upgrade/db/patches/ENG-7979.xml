@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7979-01" author="mdaly">
+        <comment></comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'POSITIVE for a >200 CGG repeat allele and a normal ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat allele in the FMR1 genes. This individual has an increased chance to have some cognitive, behavioral and/or physical characteristics of Fragile X Syndrome. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual has a 50% chance of passing on the expanded CGG allele.'
+            WHERE `lookupCode` = 'MUT' and `id` = 29;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'POSITIVE for a >200 CGG repeat allele and a normal ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele in the FMR1 genes. This individual has an increased chance to have some cognitive, behavioral and/or physical characteristics of Fragile X Syndrome. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual has a 50% chance of passing on the expanded CGG allele.'
+            WHERE `lookupCode` = 'MUT' and `id` = 29;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

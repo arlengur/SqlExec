@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9399-01" author="vkomlev">
+        <comment>HL7 Cases Without Parent Kits</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+INSERT INTO `prodlims`.`script` (name, code)
+VALUES ('HL7 Cases Without Parent Kits',
+        '
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.commons.lang3.StringUtils
+
+
+def cases = new HashSet()
+
+def dateFormat = "\\\\d{4}-\\\\d{2}-\\\\d{2}"
+
+if (StringUtils.isEmpty(fromDate) || !fromDate.matches(dateFormat) || StringUtils.isEmpty(toDate) || !toDate.matches(dateFormat)) {
+        return "Incorrect date format, please specify both fromDate and toDate in the yyyy-MM-dd format"
+}
+
+def sqlQuery = """
+SELECT DISTINCT cf.id                 AS CaseID,
+                cf.opened             AS CaseOpenDateTime,
+                cf.clinic_id          AS ClinicID,
+                org.name              AS ClinicName,
+                sub.lastname          AS PatientLastName,
+                sub.firstname         AS PatientFirstName,
+                DATE(sub.dateofbirth) AS PatientDOB
+FROM prodlims.casefile cf
+       LEFT JOIN prodlims.parentkit pk ON pk.casefile_id = cf.id
+       LEFT JOIN prodlims.organization org ON cf.clinic_id = org.id
+       LEFT JOIN prodlims.family family ON cf.family_id = family.id
+       LEFT JOIN prodlims.family_subject fs ON fs.families_id = family.id
+       LEFT JOIN prodlims.subject sub ON fs.members_id = sub.id
+       LEFT JOIN prodlims.user u ON cf.owner_id = u.id
+WHERE pk.id IS NULL
+  AND cf.closed IS NULL
+  AND u.email = ''hl7user@natera.com''
+  AND DATE(cf.opened) BETWEEN ''${fromDate}'' AND ''${toDate}''
+  AND fs.familyPosition = ''patient'';
+"""
+
+cases.addAll(caseFileDAO.session.createSQLQuery(sqlQuery).list())
+if (cases.size() > 0) {
+    if (mailTo.length > 0) {
+        Workbook workbook = sqlReportService.createWorkbook("SheetTitle", sqlQuery, true)
+        sqlReportService.emailWorkbook(mailTo as List, "HL7 Cases without parent kits", "HL7 Cases without parent kits", "HL7_Cases_Without_Parent_Kits.xlsx", workbook)
+        println("Results sent to ${mailTo}")
+    } else {
+        println("No e-mail addresses specified.")
+    }
+
+    println("""<table style="width:100%" border="1">
+  <tr>
+    <th>CaseID</th>
+    <th>CaseOpenDateTime</th>
+    <th>ClinicID</th>
+    <th>ClinicName</th>
+    <th>PatientLastName</th>
+    <th>PatientFirstName</th>
+    <th>PatientDOB</th>
+  </tr>""")
+
+    cases.each { caze ->
+        println("<tr>")
+        caze.each { cell ->
+            println("<td>${cell}</td>")
+        }
+        println("</tr>")
+    }
+    println("</table>")
+}
+
+return "Total ${cases.size()} results found"
+        ');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE
+            FROM `prodlims`.`script`
+            WHERE name = 'HL7 Cases Without Parent Kits';
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="ENG-9399-02" author="vkomlev">
+        <comment>Add script parameters for HL7 Cases Without Parent Kits</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 1, 'mailTo',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'HL7 Cases Without Parent Kits'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'toDate',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'HL7 Cases Without Parent Kits'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'fromDate',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'HL7 Cases Without Parent Kits'));
+
+        </sql>
+        <rollback>
+            DELETE `prodlims`.`scriptparameter`
+            FROM `prodlims`.`scriptparameter`
+            JOIN `prodlims`.`script` ON `prodlims`.`scriptparameter`.`script_id` = `prodlims`.`script`.`id`
+            WHERE `prodlims`.`script`.`name` = 'HL7 Cases Without Parent Kits';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

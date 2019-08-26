@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7710-01" author="irazin">
+        <comment>Add FFPE Tissue sample type</comment>
+        <sql>
+            INSERT INTO `prodlims`.`sampletype` (`name`, `displayname`, `tissuetype_id`)
+            VALUES ('ffpe_tissue', 'FFPE Tissue', (SELECT id FROM `prodlims`.`tissuetype` WHERE name='unknown'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`sampletype` WHERE name IN ('ffpe_tissue');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

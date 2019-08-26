@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7884-01" author="kzakharov">
+        <comment>
+            Configure the default delivery destinations for Vistara
+        </comment>
+
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            INSERT INTO prodlims.deliverydestination_testtypes (DeliveryDestination_id, testtypes)
+            SELECT
+            dd.id,
+            'SNV_SENDOUT'
+            FROM deliverydestination dd
+            JOIN deliverydestination_testtypes dd_t ON dd.id = dd_t.DeliveryDestination_id
+            JOIN organization_deliverydestination o_dd ON dd.id = o_dd.deliverydestinations_id
+            JOIN organization o ON o_dd.Organization_id = o.id
+            WHERE dd.deliverymethod IN ('SECURE_EMAIL', 'FAX') AND dd_t.testtypes = 'NPT' AND o.deleted IS FALSE;
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM prodlims.deliverydestination_testtypes
+            WHERE testtypes = 'SNV_SENDOUT';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

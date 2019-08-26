@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7992-01" author="jdavid">
+        <comment>Create asuragen sample location table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`asuragensamplelocation` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `sample_id` bigint(20) DEFAULT NULL,
+            `rackname` varchar(125) DEFAULT NULL,
+            `position` varchar(125) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FK_ASL_SAMPLE_idx` (`sample_id`),
+            CONSTRAINT `FK_ASL_SAMPLE_idx` FOREIGN KEY (`sample_id`) REFERENCES `sample` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`asuragensamplelocation`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

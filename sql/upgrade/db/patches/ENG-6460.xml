@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6460-01" author="dchettupuzha">
+        <comment>Insert new Sample type SMA </comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_SMA_7_8_DEL', 'NA23687 NA23688', null, null, '','');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_SMA_7_8_DEL' AND `displayname` = 'NA23687 NA23688';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6460-02" author="dchettupuzha">
+        <comment>Remove unwanted types from sampletype table</comment>
+        <sql>
+            SET sql_safe_updates=0;
+
+            delete from `prodlims`.`sampletype` where name = 'MLPA_SMA_7_8_DEL_1';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_SMA_7_8_DEL_2';
+
+            SET sql_safe_updates=1;
+        </sql>
+        <!-- Rollback: rows deleted in rollback for ENG-6158.xml  -->
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

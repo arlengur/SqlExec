@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20170206-01" author="apotekhin">
+        <comment>
+            Columns to store chorionicity, ivf_used, genetic_mother_age
+        </comment>
+        <sql>
+            alter table `prodlims`.`paternity_fields` add column `chorionicity` VARCHAR(255) DEFAULT NULL;
+            alter table `prodlims`.`paternity_fields` add column `ivf_used` VARCHAR(255) DEFAULT NULL;
+            alter table `prodlims`.`parentKit` add column `genetic_mother_age` INT(11) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`paternity_fields` drop column `chorionicity`;
+            alter table `prodlims`.`paternity_fields` drop column `ivf_used`;
+            alter table `prodlims`.`parentKit` drop column `genetic_mother_age`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

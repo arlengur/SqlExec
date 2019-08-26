@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6576-01" author="apotekhin">
+        <comment>Vistara changes according to Extranet Referral page</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`paternity_fields` ADD COLUMN `abnormal_ultrasound_findings` VARCHAR(255) DEFAULT NULL;
+            ALTER TABLE `prodlims`.`contactinfo` ADD COLUMN `nyOptIn` BIT(1) NOT NULL DEFAULT 0;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`contactinfo` DROP COLUMN `nyOptIn`;
+            ALTER TABLE `prodlims`.`paternity_fields` DROP COLUMN `abnormal_ultrasound_findings`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

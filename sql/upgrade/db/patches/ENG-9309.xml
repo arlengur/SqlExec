@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9309-01" author="apotekhin">
+        <comment>Support SCA opt-out flag on report level</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`npt_report` ADD COLUMN `sca_ordered` BIT(1) NOT NULL DEFAULT true AFTER `gender_ordered`;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`npt_report` DROP COLUMN `sca_ordered`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

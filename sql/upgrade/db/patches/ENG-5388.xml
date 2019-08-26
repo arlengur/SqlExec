@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5388-01" author="mjoshi">
+        <sql>
+            create table `prodlims`.`lv_diseaseids` (
+            limsdiseaseid bigint(20) NOT NULL,
+            lvdiseaseid varchar(255) NOT NULL,
+            testtype varchar(255) NOT NULL ,
+            PRIMARY KEY  (`limsdiseaseid`,`testtype`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`lv_diseaseids`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

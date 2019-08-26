@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7552-01" author="kzakharov">
+        <comment>Add new script to find Vistara cases that can be combo linked</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            INSERT INTO `prodlims`.`script` (name, code)
+            VALUES ('Groovy script to identify Vistara combo kits',
+'
+/*
+ * ENG-7552 Groovy script to identify Vistara combo kits
+ */
+
+
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
+import org.apache.commons.lang3.StringUtils
+
+def sdf = "\\\\d{4}-\\\\d{2}-\\\\d{2}";
+
+if(StringUtils.isEmpty(receivedFrom) || !receivedFrom.matches(sdf) || StringUtils.isEmpty(receivedTo) || !receivedTo.matches(sdf)) {
+    println("bad dates format, please specify both receivedFrom and receivedTo in the yyyy-MM-dd format");
+    return;
+}
+receivedTo = receivedTo + " 23:59:59";
+
+def prefix = "Vistara Cases that can be combo linked"
+def body = "Vistara Cases with maternal kit received from " + receivedFrom + " to " + receivedTo + ", that can be combo linked"
+
+def sql = """SELECT DISTINCT
+  subj.firstname   AS `First name`,
+  subj.lastname    AS `Last name`,
+  subj.dateOfBirth AS `Date of birth`,
+  snv.id           AS `Vistara case`,
+  cf.id            AS `Candidate case`,
+  CASE WHEN cf.clinic_id = snv.clinic_id
+    THEN ''Yes''
+  ELSE ''No'' END    AS ''Same clinic?''
+FROM casefile cf
+  JOIN parentkit pk ON cf.id = pk.casefile_id
+  JOIN family_subject f_s ON cf.family_id = f_s.families_id
+  JOIN subject subj ON f_s.members_id = subj.id
+  JOIN (SELECT
+          cf.id,
+          cf.clinic_id,
+          pk.received,
+          subj.id AS subj_id,
+          subj.firstname,
+          subj.lastname,
+          subj.dateOfBirth
+        FROM casefile cf
+          JOIN family_subject f_s ON cf.family_id = f_s.families_id
+          JOIN subject subj ON f_s.members_id = subj.id
+          JOIN parentkit pk ON cf.id = pk.casefile_id
+          JOIN parentkit_sample pk_s ON pk.id = pk_s.parentkit_id
+          JOIN sample smp ON pk_s.sample_id = smp.id AND subj.id = smp.subject_id
+        WHERE cf.testtype = ''SNV_SENDOUT'' AND
+              pk.received BETWEEN date(''${receivedFrom}%'') AND timestamp(''${receivedTo}%'')) snv
+    ON snv.firstname = subj.firstname AND snv.lastname = subj.lastname AND
+       ABS(DATEDIFF(snv.received, pk.received)) < 4 AND snv.subj_id <> subj.id
+WHERE cf.testtype IN (''NPT'', ''CARRIER_SCREENING_2'', ''CARRIER_SCREENING_3'') AND f_s.familyPosition = ''patient'' AND
+      pk.received BETWEEN date_add(''${receivedFrom}%'', INTERVAL -3 DAY) AND date_add(''${receivedTo}%'', INTERVAL 4 DAY)
+      AND NOT EXISTS(SELECT *
+                     FROM casefile_casebundling b1
+                       JOIN casefile_casebundling b2 ON b1.casebundling_id = b2.casebundling_id
+                     WHERE b1.casefile_id = snv.id AND b2.casefile_id = cf.id);
+"""
+
+if (StringUtils.isEmpty(mailTo)) {
+    def work = { conn ->
+        ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
+        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        if (!resultSet.isBeforeFirst()) {
+            println("no data");
+        } else {
+            int columnCount = resultSetMetaData.getColumnCount();
+            for (int i = 0; i < columnCount; i++) {
+                if (i != 0) {
+                    print(", ");
+                }
+                print(resultSetMetaData.getColumnLabel(i + 1));
+            }
+            while (resultSet.next()) {
+                println();
+                for (int i = 0; i < columnCount; i++) {
+                    if (i != 0) {
+                        print(", ");
+                    }
+                    print(resultSet.getObject(i + 1)?.toString());
+                }
+            }
+        }
+    } as org.hibernate.jdbc.Work
+    caseFileDAO.getSession().doWork(work);
+} else {
+    wb = sqlReportService.createWorkbook("${prefix}", sql, true)
+    sqlReportService.emailWorkbook(java.util.Arrays.asList(mailTo), "${prefix}", body, "${prefix}.xlsx", wb)
+}
+');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`script` WHERE name = 'Groovy script to identify Vistara combo kits';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7552-02" author="kzakharov">
+        <comment>insert parameters for Groovy script to identify Vistara combo kits'</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'receivedFrom',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Groovy script to identify Vistara combo kits'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'receivedTo',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Groovy script to identify Vistara combo kits'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'mailTo',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Groovy script to identify Vistara combo kits'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`scriptparameter`
+            WHERE script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Groovy script to identify Vistara combo kits');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

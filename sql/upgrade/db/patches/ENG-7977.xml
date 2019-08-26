@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7977-01" author="mdaly">
+        <comment>Set the associated call to negative for the requested Tay-Sachs templates (see HorizonDiseaseResultTemplate.xml)
+            DNA-only:
+            PSEUDODEFICIENT: 106
+
+            Combined:
+            NEGATIVE__INDETERMINATE_SANDHOFF: 115
+            PSEUDODEFICIENT__NEGATIVE: 121
+            PSEUDODEFICIENT__POSITIVE: 120
+            TWO_PSEUDODEFICIENT__INDETERMINATE: 126
+            TWO_PSEUDODEFICIENT__NEGATIVE: 127
+            TWO_PSEUDODEFICIENT__POSITIVE: 128
+
+            Result Call Ids (see ResultCall.xml)
+            NEGATIVE: 2
+
+            for rollback:
+            PATHOGENIC: 6
+            "2 variants detected": 8
+            POSSIBLE_SANDHOFF_ELEVATED: 34
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `associatedCall_id` = 2
+            WHERE `id` IN (106, 115, 121, 120, 126, 127, 128);
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `associatedCall_id` = 6
+            WHERE `id` IN (106, 121, 120);
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `associatedCall_id` = 8
+            WHERE `id` IN (126, 127, 128);
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `associatedCall_id` = 34
+            WHERE `id` = 115;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7977-02" author="mdaly">
+        <comment>Set the associated call to negative for the requested Tay-Sachs template (see HorizonDiseaseResultTemplate.xml)
+            Combined:
+            PSEUDODEFICIENT__INDETERMINATE: 122
+
+            Result Call Ids (see ResultCall.xml)
+            NEGATIVE: 2
+
+            for rollback:
+            PATHOGENIC: 6
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `associatedCall_id` = 2
+            WHERE `id` = 122;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `associatedCall_id` = 6
+            WHERE `id` = 122;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7977-03" author="mdaly">
+        <comment>Change the resultType for POSSIBLE_SANDHOFF_ELEVATED call to NEGATIVE. (see ResultCall.xml) (This makes
+            the enzyme-only ENZYME_INDETERMINATE_SANDHOFF template negative.)
+
+            Id
+            POSSIBLE_SANDHOFF_ELEVATED: 34
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`horizonresultcall` SET
+            `resultType` = 'NEGATIVE'
+            WHERE `id` = 34;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`horizonresultcall` SET
+            `resultType` = 'OTHER'
+            WHERE `id` = 34;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

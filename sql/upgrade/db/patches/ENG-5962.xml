@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5962-01" author="jdavid">
+        <comment>Create case sharing table</comment>
+        <sql>
+            CREATE TABLE `casesharing` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `casefile_id` bigint(20) NOT NULL,
+            `subject_id` bigint(20) NOT NULL,
+            `casesharingtype` varchar(255) NOT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`casefile_id`, `subject_id`, `casesharingtype`),
+            KEY `FKcasesharing_casefile` (`casefile_id`),
+            KEY `FKcasesharing_subject` (`subject_id`),
+            CONSTRAINT `FKcasesharing_casefile` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`),
+            CONSTRAINT `FKcasesharing_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casesharing`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5962-02" author="jdavid">
+        <comment>Create case sharing consent table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`casesharingconsent` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `firstname` varchar(255) DEFAULT NULL,
+            `middlename` varchar(255) DEFAULT NULL,
+            `lastname` varchar(255) DEFAULT NULL,
+            `dateofbirth` datetime DEFAULT NULL,
+            `hassinglename` bit(1) DEFAULT b'0',
+            `casefile_id` bigint(20) NOT NULL,
+            `casesharing_id` bigint(20) DEFAULT NULL,
+            `casesharingtype` varchar(255) NOT NULL,
+
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`casesharing_id`),
+            KEY `FKcasesharingconsent_casefile` (`casefile_id`),
+            KEY `FKcasesharingconsent_casesharing` (`casesharing_id`),
+
+            CONSTRAINT `FKcasesharingconsent_casefile` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`),
+            CONSTRAINT `FKcasesharingconsent_casesharing` FOREIGN KEY (`casesharing_id`) REFERENCES `casesharing` (`id`)
+
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casesharingconsent`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

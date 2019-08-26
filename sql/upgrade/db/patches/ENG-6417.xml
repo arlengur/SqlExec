@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6417-01" author="apotekhin">
+        <comment>Sendout report framework - part 2</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`sendoutreport` MODIFY reportStatus VARCHAR(255) NULL DEFAULT NULL;
+            ALTER TABLE `prodlims`.`patientInfoReportView` DROP FOREIGN KEY patientInfoReportView_report;
+            ALTER TABLE `prodlims`.`testInfoReportView` DROP FOREIGN KEY testInfoReportView_report;
+            ALTER TABLE `prodlims`.`sampleInfoReportView` DROP FOREIGN KEY sampleInfoReportView_report;
+            ALTER TABLE `prodlims`.`resultSummaryReportView` DROP FOREIGN KEY resultSummaryReportView_report;
+            ALTER TABLE `prodlims`.`detailedFindingsReportView` DROP FOREIGN KEY detailedFindingsReportView_report;
+            ALTER TABLE `prodlims`.`diseaseSupplementReportView` DROP FOREIGN KEY diseaseSupplementReportView_report;
+
+            ALTER TABLE `prodlims`.`patientInfoReportView` ADD COLUMN sendoutreport_id BIGINT(20);
+            ALTER TABLE `prodlims`.`patientInfoReportView` ADD CONSTRAINT patientInfoReportView_report FOREIGN KEY(`sendoutreport_id`) REFERENCES `sendoutreport` (`id`);
+            ALTER TABLE `prodlims`.`testInfoReportView` ADD COLUMN sendoutreport_id BIGINT(20);
+            ALTER TABLE `prodlims`.`testInfoReportView` ADD CONSTRAINT testInfoReportView_report FOREIGN KEY(`sendoutreport_id`) REFERENCES `sendoutreport` (`id`);
+            ALTER TABLE `prodlims`.`sampleInfoReportView` ADD COLUMN sendoutreport_id BIGINT(20);
+            ALTER TABLE `prodlims`.`sampleInfoReportView` ADD CONSTRAINT sampleInfoReportView_report FOREIGN KEY(`sendoutreport_id`) REFERENCES `sendoutreport` (`id`);
+            ALTER TABLE `prodlims`.`resultSummaryReportView` ADD COLUMN sendoutreport_id BIGINT(20);
+            ALTER TABLE `prodlims`.`resultSummaryReportView` ADD CONSTRAINT resultSummaryReportView_report FOREIGN KEY(`sendoutreport_id`) REFERENCES `sendoutreport` (`id`);
+            ALTER TABLE `prodlims`.`detailedFindingsReportView` ADD COLUMN sendoutreport_id BIGINT(20);
+            ALTER TABLE `prodlims`.`detailedFindingsReportView` ADD CONSTRAINT detailedFindingsReportView_report FOREIGN KEY(`sendoutreport_id`) REFERENCES `sendoutreport` (`id`);
+            ALTER TABLE `prodlims`.`diseaseSupplementReportView` ADD COLUMN sendoutreport_id BIGINT(20);
+            ALTER TABLE `prodlims`.`diseaseSupplementReportView` ADD CONSTRAINT diseaseSupplementReportView_report FOREIGN KEY(`sendoutreport_id`) REFERENCES `sendoutreport` (`id`);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

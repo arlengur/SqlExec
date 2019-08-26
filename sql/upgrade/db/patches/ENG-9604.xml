@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9604-01" author="irazin">
+        <comment>Add Report Hold to Signatera Hold Reasons group</comment>
+        <sql>
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT
+            (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Hold Reasons') AS categorygroup_id
+            ,id
+            FROM `prodlims`.`category` WHERE name = 'Report Hold';
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE categorygroup_id = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Signatera Hold Reasons')
+            AND category_id = (SELECT id FROM `prodlims`.`category` WHERE name = 'Report Hold');
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="ENG-6091-01" author="jdavid">
+        <comment>Set all clinics' routeInHouse to true</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`organization`
+            set routeInHouse = true;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`organization`
+            set routeInHouse = false;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6091-02" author="jdavid">
+        <comment>Add routeInHouse column in the contactinfo table</comment>
+        <sql>
+            alter table `prodlims`.`contactinfo` add column `routeInHouse` bit(1) NOT NULL default false;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`contactinfo` drop column `routeInHouse`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6091-03" author="jdavid">
+        <comment>Set all satellites' routeInHouse to true </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`contactinfo`
+            set routeInHouse = true;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`contactinfo`
+            set routeInHouse = false;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6091-04" author="jdavid">
+        <comment>Set routeInHouse of main contact info of NY clinics to false</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`organization` o
+            join `prodlims`.`contactinfo` c on
+            o.address_id = c.id
+            set c.routeInHouse = false where c.state in ('New York', 'NY', 'N.Y.', 'Newyork');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`organization` o
+            join `prodlims`.`contactinfo` c on
+            o.address_id = c.id
+            set o.routeInHouse = true where c.state in ('New York', 'NY', 'N.Y.', 'Newyork');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6091-05" author="jdavid">
+        <comment>Set routeInHouse to false for NY satellites of clinics</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`organization` o
+            join `prodlims`.`organization_contactinfo` oc on
+            o.id = organization_id
+            join `prodlims`.`contactinfo` c on
+            oc.satelites_id = c.id
+            set c.routeInHouse = false
+            where c.state in ('New York', 'NY', 'N.Y.', 'Newyork');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`organization` o
+            join `prodlims`.`organization_contactinfo` oc on
+            o.id = organization_id
+            join `prodlims`.`contactinfo` c on
+            oc.satelites_id = c.id
+            set c.routeInHouse = true
+            where c.state in ('New York', 'NY', 'N.Y.', 'Newyork');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6091-06" author="jdavid">
+        <comment>Drop routeInHouse column for contactInfo</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            alter table `prodlims`.`contactinfo` drop column `routeInHouse`;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

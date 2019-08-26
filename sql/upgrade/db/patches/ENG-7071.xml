@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7071-01" author="mdaly">
+        <comment>Add new template for DMD:c.1724T>C.</comment>
+        <sql>
+            -- New template
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (164, 7, 'DMD_c.1724T>C', 'c.1724T>C (p.L575P)', 'CARRIER for DMD-Related Dystrophinopathy', 'Positive for the likely pathogenic variant c.1724T>C (p.L575P) in the DMD gene. This variant has been reported to cause a DMD-Related Dystrophinopathy with rhabdomyolysis and child onset dytrophinopathy (PMID: 21104870). Female carriers may be at an increased chance to develop cardiomyopathy. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. DMD-Related Dystrophinopathy is an X-linked disorder. Each of this individual''s sons has a 50% chance of being affected and each of her daughters has a 50% chance of being a carrier.');
+
+            -- Associate disease with new template
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`)
+            VALUES
+            (164, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'DMD'));
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-7071-02" author="mdaly">
+        <comment>Add new templates for Alpha-Thalassema: a4.2 and HBA1_c.223G>C; a3.7 and HB_c.207C>G.</comment>
+        <sql>
+            -- New template
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (165, 6, 'DEL_A42_c.223G>C', '1 copy alpha 4.2 deletion and 1 copy HBA1 gene variant c.223G>C', 'POSITIVE for multiple variants in the gene associated with Alpha-Thalassemia.', 'Positive for the likely pathogenic variant c.223G>C and the pathogenic alpha 4.2 deletion of the HBA1 (HbQ - Thailand). Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'),
+            (166, 6, 'DEL_A37_c.207C>G', '1 copy alpha 3.7 deletion and 1 copy HBA gene variant c.207C>G', 'POSITIVE for multiple variants in the gene associated with Alpha-Thalassemia.', 'Positive for the HbG-Philadelphia variant c.207C>G and the pathogenic alpha 3.7 deletion of the HBA1 and HBA2 genes (- aG/aa). Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.');
+
+            -- Associate disease with new template
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`)
+            VALUES
+            (165, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL')),
+            (166, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL'));
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-7071-03" author="mdaly">
+        <comment>Add new template for HBB:c316-7C>A.</comment>
+        <sql>
+            -- New template
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (167, 6, 'HBB_c.316-7C>A', 'c.316-7C>A', 'CARRIER for Beta-Thalassemia', 'Positive for the pathogenic variant c.316-7C>A in the HBB gene. Carriers of Beta-Thalassemia can have mild to moderate anemia. This variant is a mild B+ thalassemia variant that is associated with Liver-Sickle Cell disease when in trans with HbS (PMID: 17565724). Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Beta-Hemoglobinopathy or Beta-Thalassemia, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.');
+
+            -- Associate disease with new template
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`)
+            VALUES
+            (167, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'HBB'));
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-7071-04" author="mdaly">
+        <comment>Add new template for Mucopolysaccharidosis, Type I (IDUA) pseudodeficiency variants (c.898G>A (p.A300T), c.235G>A (p.A79T), c.246C>G (p.H82Q), and c.965T>A (p.V322E)).
+        Assign to pathogenic call (id: 6)--in line with HEXA pseudodeficiency variants</comment>
+        <sql>
+            -- New template
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (168, 6, 'IDUA_PSEUDODEFICIENT', 'pseudodeficiency variant detected: c.898G>A (p.A300T), c.235G>A (p.A79T), c.246C>G (p.H82Q), or c.965T>A (p.V322E)', 'Pseudodeficiency VARIANT DETECTED for Mucopolysaccharidosis, Type I (Hurler Syndrome)', 'The pseudodeficiency variant ${results[0].variantName} was detected in the IDUA gene. This pseudodeficiency allele is known to cause false positive results on enzyme-based Mucopolysaccharidosis, Type I (Hurler Syndrome) carrier screening. This benign variant does not increase the risk for Mucopolysaccharidosis, Type I (Hurler Syndrome) in this individual''s children.');
+
+            -- Associate disease with new template
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`)
+            VALUES
+            (168, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'IDUA'));
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

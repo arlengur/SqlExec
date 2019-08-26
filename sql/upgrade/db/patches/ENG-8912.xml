@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8912-01" author="mdaly">
+        <comment>Add H14 panel to HL7 panels</comment>
+        <insert tableName="horizoncustompanel">
+            <column name="ce_id">HCS_14</column>
+            <column name="ce_text">Horizon 14 (PAN-ETHNIC STANDARD)</column>
+            <column name="ce_system">L</column>
+        </insert>
+
+        <rollback>
+            DELETE FROM `prodlims`.`horizoncustompanel` WHERE
+            `ce_id` =  'HCS_14' AND
+            `ce_text` = 'Horizon 14 (PAN-ETHNIC STANDARD)' AND
+            `ce_system` = 'L';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8912-02" author="mdaly">
+        <comment>Associate HL7 H14 with the H14 HorizonLdtPanel</comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES  ((SELECT `id` FROM `prodlims`.`horizoncustompanel` WHERE `ce_id` = 'HCS_14'),
+            (SELECT `id` FROM `prodlims`.`panel` WHERE `name` = 'H14'));
+        </sql>
+
+        <rollback>
+            DELETE FROM `prodlims`.`horizoncustompanel_panels`
+            WHERE `horizoncustompanel_id` = (SELECT `id` FROM `prodlims`.`horizoncustompanel` WHERE `ce_id` = 'HCS_14') AND
+            `horizonpanel_id` = (SELECT `id` FROM `prodlims`.`panel` WHERE `name` = 'H14');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

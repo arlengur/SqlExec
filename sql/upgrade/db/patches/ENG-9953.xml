@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="ENG-9953-01" author="mdaly">
+        <comment>Update the condition class name</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`version` SET
+            `conditionClassName` = 'com.natera.lims.datamodel.report.UseNgsCnvTextCondition'
+            WHERE
+            `conditionClassName` = 'com.natera.lims.datamodel.report.HasCnvAssayCondition';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`version` SET
+            `conditionClassName` = 'com.natera.lims.datamodel.report.HasCnvAssayCondition'
+            WHERE
+            `conditionClassName` = 'com.natera.lims.datamodel.report.UseNgsCnvTextCondition';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

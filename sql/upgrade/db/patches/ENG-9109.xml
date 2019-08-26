@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9109" author="ashabanov" >
+        <comment>Read-only view for Sample Preparation that looks up a root source of the sample.
+            Used purposely to speed up Sample Preparation UI to show "number of samples in states" quickly.
+            Looks down through 2 levels of preparations to properly idenfify Product type
+        </comment>
+        <createView schemaName="prodlims" replaceIfExists="true" viewName="parentsample_aggregate_view">
+            SELECT
+            sample.id as sample_id,
+            sample.state,
+            sample_type.name as sample_type,
+            sample.plasmaisolationstate,
+            case
+              when leveltwo_sample.id is not null then leveltwo_casefile.microdelpanel
+              when levelone_sample.id is not null then levelone_casefile.microdelpanel
+              else casefile.microdelpanel
+            end as microdelpanel,
+            case
+              when leveltwo_sample.id is not null then leveltwo_casefile.testtype
+              when levelone_sample.id is not null then levelone_casefile.testtype
+              else casefile.testtype
+            end as testtype
+            FROM Sample sample
+            LEFT JOIN SampleType sample_type ON sample.sampletype_id = sample_type.id
+            LEFT JOIN family_subject family_subj ON family_subj.members_id = sample.subject_id
+            LEFT JOIN CaseFile casefile ON family_subj.families_id = casefile.family_id
+            LEFT JOIN sample_preparation sample_prep ON sample.id = sample_prep.prep_id AND sample_prep.isprimary = 1
+            LEFT JOIN Sample levelone_sample ON sample_prep.source_id = levelone_sample.id
+            LEFT JOIN family_subject levelone_family_subj ON levelone_sample.subject_id = levelone_family_subj.members_id
+            LEFT JOIN CaseFile levelone_casefile ON levelone_family_subj.families_id = levelone_casefile.family_id
+            LEFT JOIN sample_preparation levelone_sample_prep ON levelone_sample.id = levelone_sample_prep.prep_id AND levelone_sample_prep.isprimary = 1
+            LEFT JOIN Sample leveltwo_sample ON levelone_sample_prep.source_id = leveltwo_sample.id
+            LEFT JOIN family_subject leveltwo_family_subj ON leveltwo_sample.subject_id = leveltwo_family_subj.members_id
+            LEFT JOIN CaseFile leveltwo_casefile ON levelone_family_subj.families_id = leveltwo_casefile.family_id
+            WHERE
+            sample.DTYPE in ('ParentSample', 'SemenSample')
+            AND (
+            (
+            leveltwo_sample.id IS NOT NULL
+            and leveltwo_casefile.id IS NOT NULL
+            and leveltwo_casefile.closed IS NULL
+            )
+            OR (
+            leveltwo_sample.id IS NULL
+            and levelone_sample.id IS NOT NULL
+            and levelone_casefile.id IS NOT NULL
+            and levelone_casefile.closed IS NULL
+            )
+            OR (
+            leveltwo_sample.id IS NULL
+            and levelone_sample.id IS NULL
+            and casefile.id IS NOT NULL
+            and casefile.closed IS NULL
+            )
+            )
+        </createView>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8407-01" author="nfleming">
+        <comment>Update API Token for CONTRIBUTE to Signatera CLIA Stage, and VIEW to Test Natera Datasource</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`cloudproject`
+            SET `apitoken` = '6zz2vB4ZfwDi3r9UpIk0rcZRTVeM5gzu'
+            WHERE `name` = 'Signatera CLIA Stage';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`cloudproject`
+            SET `apitoken` = 'nuqPdTHqRy5t0AuFGx9DtLiLBCQ1c6vX'
+            WHERE `name` = 'Signatera CLIA Stage';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

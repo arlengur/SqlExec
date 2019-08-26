@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8545-01" author="irazin">
+        <comment>Create Signatera case info table</comment>
+        <sql>
+            create table `prodlims`.`rmcasefileinfo` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `casefile_id` BIGINT(20) NOT NULL,
+            `phase` VARCHAR(255) DEFAULT NULL,
+            `pgst_ord_physn` BIT(1) DEFAULT NULL,
+            `institution_id` BIGINT(20) DEFAULT NULL,
+            `institutionaddress_id` BIGINT(20) DEFAULT NULL,
+            `dnt_cnct_phgst` BIT(1) DEFAULT NULL,
+            `dateofdiagnosis` DATETIME DEFAULT NULL,
+            `hastransplanttype` BIT(1) DEFAULT NULL,
+            `tumortype` VARCHAR(255) DEFAULT NULL,
+            `tumorsubtype` VARCHAR(255) DEFAULT NULL,
+            `tnmstage` VARCHAR(255) DEFAULT NULL,
+            `has_treatment` BIT(1) DEFAULT NULL,
+            `cancer_treatment` DATETIME DEFAULT NULL,
+            `has_study` BIT(1) DEFAULT NULL,
+            `recent_study` DATETIME DEFAULT NULL,
+            `ecograting` TINYINT(1) DEFAULT NULL,
+            `has_note_or_report` BIT(1) DEFAULT NULL,
+            `has_pthg_report` BIT(1) DEFAULT NULL,
+            `block_id` VARCHAR(255) DEFAULT NULL,
+            `surgical_id_num` VARCHAR(255) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            CONSTRAINT `FK_rmcasefileinfo_casefile` FOREIGN KEY(`casefile_id`) REFERENCES `casefile` (`id`),
+            CONSTRAINT `FK_rmcasefileinfo_institution` FOREIGN KEY (`institution_id`) REFERENCES `organization` (`id`),
+            CONSTRAINT `FK_rmcasefileinfo_institutionaddr` FOREIGN KEY (`institutionaddress_id`) REFERENCES `contactinfo` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`rmcasefileinfo`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8545-02" author="irazin">
+        <comment>Remove cancer type from tissuesampleinfo table</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`tissuesampleinfo` DROP COLUMN `cancerType`;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`tissuesampleinfo` ADD COLUMN `cancerType` VARCHAR(255) DEFAULT NULL;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

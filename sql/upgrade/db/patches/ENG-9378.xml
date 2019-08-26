@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9378-01" author="jdavid">
+        <comment>Create new table resequencingtask</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`resequencingtask` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `casefile_id` bigint(20) DEFAULT NULL,
+            `resequencingworkflow` varchar(255) DEFAULT NULL,
+            `resequencepoint` varchar(255) DEFAULT NULL,
+            `status` varchar(125) DEFAULT NULL,
+            `lvworkflowid` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FK_RESEQUENCING_TASK_CASEID_idx` (`casefile_id`),
+            CONSTRAINT `FK_RESEQUENCING_TASK_CASEID_idx` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`resequencingtask`;
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="ENG-9378-02" author="jdavid">
+        <comment>Create new table resequencingtaskmlpareflexinfo</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`resequencingtaskmlpareflexinfo` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `resequencingtask_id` bigint(20) DEFAULT NULL,
+            `jobid` varchar(255) DEFAULT NULL,
+            `diseasecloudid` varchar(125) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FK_MLPAREFLEXINFO_RESEQUENCINGTASKID_idx` (`resequencingtask_id`),
+            CONSTRAINT `FK_MLPAREFLEXINFO_RESEQUENCINGTASKID_idx` FOREIGN KEY (`resequencingtask_id`) REFERENCES `resequencingtask` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`resequencingtaskmlpareflexinfo`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

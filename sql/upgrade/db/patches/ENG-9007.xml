@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9007-01" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <indexExists schemaName="prodlims" indexName="FK48BF1237CA97B517"
+                         tableName="CNCReportShipmentRecord"/>
+        </preConditions>
+        <comment>
+            Cleanup.
+            Drop duplicate index on `CNCReportShipmentRecord`
+            ...
+            ***KEY `FK48BF1237CA97B517` (`report_id`), *** does not have related constraint
+            KEY `FK_c427acdccdd0447cb6bda44e47a` (`report_id`)
+            ...
+            CONSTRAINT `FK_c427acdccdd0447cb6bda44e47a` FOREIGN KEY (`report_id`) REFERENCES `report_report` (`id`),
+            ...
+        </comment>
+        <sql>
+            DROP INDEX `FK48BF1237CA97B517` ON `prodlims`.`CNCReportShipmentRecord`;
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-9007-02" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists schemaName="prodlims" indexName="CNCReportShipmentRecord_senton_idx"
+                             tableName="CNCReportShipmentRecord"/>
+            </not>
+        </preConditions>
+
+        <comment>
+            Create index: CNCReportShipmentRecord(senton)
+        </comment>
+        <sql>
+            CREATE INDEX `CNCReportShipmentRecord_senton_idx` ON `prodlims`.`CNCReportShipmentRecord` (`senton`);
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-9007-03" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists schemaName="prodlims" indexName="parentkit_received_idx" tableName="parentkit"/>
+            </not>
+        </preConditions>
+        <comment>
+            Create index: ParentKit(received)
+        </comment>
+        <sql>
+            CREATE INDEX `parentkit_received_idx` ON `prodlims`.`parentkit` (`received`);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8975-01" author="nfleming">
+        <comment>Add sample statistics for Signatera WES vendor metrics</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) VALUES
+            ('Percent Tumor Fraction', 'PERCENT_TUMOR_FRACTION', 'GENOMIC'),
+            ('FFPE Slides traced tumor volume (mm3)', 'FFPE_SLIDES_TRACED_TUMOR_VOLUME_MM3', 'GENOMIC'),
+            ('Extracted Qubit-QuantIt Metrics (total ng)', 'EXTRACTED_QUBIT_QUANTIT_METRIC', 'GENOMIC'),
+            ('Input DNA Gel (percent gDNA > 0.5Kb)', 'PERCENT_INPUT_DNA_GEL', 'GENOMIC'),
+            ('Nanodrop Metrics (A260/A280)', 'A260_A280_NANODROP_METRIC', 'GENOMIC'),
+            ('Pre-Capture Library Qubit/QuantIt Metrics (total ng)', 'PRE_CAPTURE_QUBIT_QUANTIT_METRIC', 'GENOMIC'),
+            ('PreCapture Gel Trace Peak Size (bp)', 'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE', 'GENOMIC'),
+            ('Post-Capture Library Qubit/QuantIt Metrics (After PCR total ng)', 'POST_CAPTURE_QUBIT_QUANTIT_METRIC', 'GENOMIC'),
+            ('PostCapture Library Gel Trace Peak Size (bp)', 'POST_CAPTURE_GEL_TRACE_PEAK_SIZE', 'GENOMIC');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'PERCENT_TUMOR_FRACTION',
+            'FFPE_SLIDES_TRACED_TUMOR_VOLUME_MM3',
+            'EXTRACTED_QUBIT_QUANTIT_METRIC',
+            'PERCENT_INPUT_DNA_GEL',
+            'A260_A280_NANODROP_METRIC',
+            'PRE_CAPTURE_QUBIT_QUANTIT_METRIC',
+            'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE',
+            'POST_CAPTURE_QUBIT_QUANTIT_METRIC',
+            'POST_CAPTURE_GEL_TRACE_PEAK_SIZE'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8975-02" author="nfleming">
+        <comment>Add sample QC types for Signatera WES vendor metrics</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Percent Tumor Fraction', 'PERCENT_TUMOR_FRACTION', 0),
+            ('SAMPLE', 'Input DNA Gel (percent gDNA > 0.5Kb)', 'PERCENT_INPUT_DNA_GEL', 0),
+            ('SAMPLE', 'Nanodrop Metrics (A260/A280)', 'A260_A280_NANODROP_METRIC', 0),
+            ('SAMPLE', 'Pre-Capture Library Qubit/QuantIt Metrics (total ng)', 'PRE_CAPTURE_QUBIT_QUANTIT_METRIC', 0),
+            ('SAMPLE', 'PreCapture Gel Trace Peak Size (bp)', 'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE', 0),
+            ('SAMPLE', 'Post-Capture Library Qubit/QuantIt Metrics (After PCR total ng)', 'POST_CAPTURE_QUBIT_QUANTIT_METRIC', 0),
+            ('SAMPLE', 'PostCapture Library Gel Trace Peak Size (bp)', 'POST_CAPTURE_GEL_TRACE_PEAK_SIZE', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'PERCENT_TUMOR_FRACTION',
+            'PERCENT_INPUT_DNA_GEL',
+            'A260_A280_NANODROP_METRIC',
+            'PRE_CAPTURE_QUBIT_QUANTIT_METRIC',
+            'PRE_CAPTURE_GEL_TRACE_PEAK_SIZE',
+            'POST_CAPTURE_QUBIT_QUANTIT_METRIC',
+            'POST_CAPTURE_GEL_TRACE_PEAK_SIZE'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8975-03" author="nfleming">
+        <comment>Add sample QC types for Signatera WES vendor metrics</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'ON_TARGET_DEDUPLICATED_COVERAGE_MATCHED_NORMAL' WHERE name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'ON_TARGET_DEDUPLICATED_COVERAGE_TUMOR' WHERE name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X';
+            UPDATE `prodlims`.`qc_type` SET name = 'ON_TARGET_DEDUPLICATED_COVERAGE_MATCHED_NORMAL' WHERE name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X';
+            UPDATE `prodlims`.`qc_type` SET name = 'ON_TARGET_DEDUPLICATED_COVERAGE_TUMOR' WHERE name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X';
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X' WHERE name = 'ON_TARGET_DEDUPLICATED_COVERAGE_MATCHED_NORMAL';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X' WHERE name = 'ON_TARGET_DEDUPLICATED_COVERAGE_TUMOR';
+            UPDATE `prodlims`.`qc_type` SET name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X' WHERE name = 'ON_TARGET_DEDUPLICATED_COVERAGE_MATCHED_NORMAL';
+            UPDATE `prodlims`.`qc_type` SET name = 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X' WHERE name = 'ON_TARGET_DEDUPLICATED_COVERAGE_TUMOR';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

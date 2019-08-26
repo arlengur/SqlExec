@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5583-01" author="jdavid">
+        <comment>Create HorizonLDT panels for SMA, TSE, CF, H3, H4 and H27</comment>
+        <sql>
+            <![CDATA[
+            insert into `prodlims`.`panel` (dtype, shipdestinationtype, name, hl7code, hl7name, description, ce_id, ce_text, ce_system, single_option) VALUES
+            ("HorizonLDTPanel","NA","H3",null,null,"3 (SMA, CF, Fragile X)","HCS_3","Horizon 3 (SMA, CF, FRAGILE X)","L",0),
+            ("HorizonLDTPanel","NA","H4",null,null,"4 (SMA, CF, Fragile X, DMD)","HCS_4","Horizon 4 (SMA, CF, FRAGILE X, DMD)","L",0),
+            ("HorizonLDTPanel","NA","H27",null,null,"27 (Pan-ethnic standard)","HCS_27","Horizon 27 (PAN-ETHNIC STANDARD)","L",0),
+            ("HorizonLDTPanel","NA","CF",null,null,"Cystic Fibrosis","HCS_CF","Horizon CF","L",1),
+            ("HorizonLDTPanel","NA","SMA",null,null,"Spinal Muscular Atrophy","HCS_SMA","Horizon SMA","L",1),
+            ("HorizonLDTPanel","NA","TSE","BIOTAYSAC","BIOTAYSAC","Tay-Sachs Enzyme","HCS_TSE","Horizon TAY-SACHS ENZYME","L",1);
+            ]]>
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            delete from `prodlims`.`panel` where DTYPE = 'HorizonLDTPanel';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5583-02" author="jdavid">
+        <comment>Add CS3 horizon disease by using CS2 MTSI horizon disease data</comment>
+        <sql>
+            insert into `prodlims`.`horizondisease` (name, mutation, refSeqNumber, provider, inheritancePattern, ce_id, ce_text, ce_system)
+            select h.name, mutation, refSeqNumber, 'NATERA_LAB', inheritancePattern, ce_id, ce_text, ce_system from `prodlims`.`horizondisease` h where provider = 'MTSINAI';
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            delete from `prodlims`.`horizondisease` where `provider` = 'NATERA_LAB';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5583-03" author="jdavid">
+        <comment>Create mapping between CS3 panels (CF, SMA, TSE, H3, H4) and their diseases</comment>
+        <sql>
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "CF" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name = (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name = 'CF' and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "SMA" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name = (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name = 'SMA_SMN1' and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "TSE" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name = (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name = 'TSE' and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "H3" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('CF', 'FRAX_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "H4" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('CF', 'DMD_F','FRAX_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "H4" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('H_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            delete from `prodlims`.`panel_disease`
+            where disease_id in (select id from `prodlims`.`horizondisease` where provider = 'NATERA_LAB');
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5583-04" author="jdavid">
+        <comment>Fixing error in the last change set.</comment>
+        <sql>
+
+            delete from `prodlims`.`panel_disease` where id in (select * from (select pd.id from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            where p.name = 'H4') as t);
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "H4" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('CF', 'DMD_F','FRAX_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "H27" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('H_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

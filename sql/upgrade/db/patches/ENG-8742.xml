@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8742-01" author="jdavid">
+        <comment>Create H14 HorizonLDTPanel</comment>
+        <sql>
+            INSERT INTO `prodlims`.`panel` (`dtype`, `shipdestinationtype`, `name`, `hl7code`, `hl7name`, `description`, `ce_id`, `ce_text`, `ce_system`, `single_option`)
+            VALUES ('HorizonLDTPanel','NA','H14',null,null,'14 (Pan-ethnic Basic)','HCS_14','Horizon 14 (PAN-ETHNIC BASIC)','L',0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`panel` WHERE `name` = 'H14' AND `DTYPE` = 'HorizonLDTPanel';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8742-02" author="jdavid">
+        <comment>Associate H14 Horizon diseases with H14 Horizon LDT panel</comment>
+        <sql>
+            INSERT INTO `prodlims`.`panel_disease` (panel_id, disease_id)
+            SELECT `panel`.`id`, `horizondisease`.`id` FROM `prodlims`.`panel`, `prodlims`.`horizondisease`
+            WHERE `panel`.name = 'H14' AND `horizondisease`.`provider` = 'NATERA_LAB' AND `horizondisease`.`cloudid` IN (
+            'ACADM', 'ASPA', 'ATHAL', 'CFTR', 'DHCR7',
+            'DMD', 'FMR1', 'GALT', 'GBA', 'HBB',
+            'HEXA', 'IKBKAP', 'PKHD1', 'SMN1');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`panel_disease` WHERE panel_id IN (SELECT id FROM `prodlims`.`panel` WHERE name = 'H14' AND `DTYPE` = 'HorizonLDTPanel');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

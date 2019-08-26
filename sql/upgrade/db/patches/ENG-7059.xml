@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7059-01" author="kzakharov">
+        <comment>Eng-support escalations tracking</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`engincident` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            openedOn DATETIME NOT NULL,
+            openedBy_id BIGINT(20),
+            resolvedOn DATETIME,
+            resolvedBy_id BIGINT(20),
+            message VARCHAR(255) NOT NULL,
+            stackTrace TEXT,
+            casefile_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `engincident_openedBy` FOREIGN KEY (`openedBy_id`) REFERENCES `user` (`id`),
+            CONSTRAINT `engincident_resolvedBy` FOREIGN KEY (`resolvedBy_id`) REFERENCES `user` (`id`),
+            CONSTRAINT `engincident_casefile` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`engincident`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

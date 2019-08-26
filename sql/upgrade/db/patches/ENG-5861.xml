@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5861-01" author="jdavid">
+        <comment>Add Horizon LDT DMD panel into the Panel table</comment>
+        <sql>
+            insert into `prodlims`.`panel` (dtype, shipdestinationtype, name, hl7code, hl7name, description, ce_id, ce_text, ce_system, single_option, female_panel) VALUES
+            ("HorizonLDTPanel","NA","DMD",null,null,"Duchenne Muscular Atrophy","HCS_DMD","DMD","L",1,1);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `prodlims`.`panel`
+            where name = 'DMD' and dtype = 'HorizonLDTPanel';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5861-02" author="jdavid">
+        <comment>Add mapping between Horizon LDT DMD panel and DMD horizon disease</comment>
+        <sql>
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = "DMD" and panel.DTYPE = "HorizonLDTPanel"
+            and horizondisease.name = (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name = 'DMD_F' and p.dtype = 'HorizonPanel') and horizondisease.provider = "NATERA_LAB";
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `prodlims`.`panel_disease`
+            where panel_id = (select id from `prodlims`.`panel` where name = 'DMD' and dtype = 'HorizonLDTPanel');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5861-03" author="jdavid">
+        <comment>Add mapping between Horizon LDT DMD panel and DMD horizon custom panel</comment>
+        <sql>
+            insert into `prodlims`.`horizoncustompanel_panels` (horizoncustompanel_id, horizonpanel_id)
+            values ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD'),
+            (select id from `prodlims`.`panel` where name = 'DMD' and dtype = 'HorizonLDTPanel'));
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `prodlims`.`horizoncustompanel_panels`
+            where horizoncustompanel_id = (select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD') and
+            horizonpanel_id = (select id from `prodlims`.`panel` where name = 'DMD' and dtype='HorizonLDTPanel');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    
+</databaseChangeLog>

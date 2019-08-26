@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7270-01" author="mdaly">
+        <comment>Templates and ids for FMR1
+            55-90 CGG repeats: 27
+            91-200 CGG repeats: 28
+            >Two CGG alleles detected, one allele premutation (55-90 repeats): 31
+            >Two CGG alleles detected, one allele premutation (91-200 repeats): 32
+            One allele intermediate (45-54) and one allele premutation (55-90): 33
+            One allele intermediate (45-54) and one allele premutation (91-200): 34
+            Two alleles premutation (55-90): 36
+            Two alleles premutation (91-200): 38
+        </comment>
+        <sql>
+            -- Update text for FMR1 templates
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'POSITIVE for a premutation size ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal size ${(results[0].cggRepeats[1])!"cgg2"} allele in the FMR1 genes. Female premutation carriers have up to a 27% chance to have Fragile X-associated primary ovarian insufficiency (FXPOI) and up to a 17% chance of developing a late-onset neurological condition known as Fragile X-associated tremor/ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 27;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'POSITIVE for a premutation size ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal size ${(results[0].cggRepeats[1])!"cgg2"} allele in the FMR1 genes. Female premutation carriers have up to a 27% chance to have Fragile X-associated primary ovarian insufficiency (FXPOI) and up to a 17% chance of developing a late-onset neurological condition known as Fragile X-associated tremor/ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome.'
+            WHERE `id` = 28;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'A premutation sized ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal sized ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat allele were detected in the FMR1 gene. An additional minor allele in the normal range with ${(results[0].cggRepeats[2])!"cgg3"} CGG repeats was also detected. The presence of three alleles in this individual''s sample may be due to X chromosome aneuploidy, a duplication on the X chromosome, a somatic change in one of the alleles, or an assay artifact. Karyotype and/or chromosomal microarray may be considered to clarify these results. Female premutation carriers have up to a 27% chance to have Fragile X-associated primary ovarian insufficiency (FXPOI) and up to a 17% chance of developing a late-onset neurological condition known as Fragile X-associated tremor/ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome.'
+            WHERE `id` = 31;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'A premutation sized ${(results[0].cggRepeats[0])!"cgg1"} CGG repeat allele and a normal sized ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat allele were detected in the FMR1 gene. An additional allele in the normal range with ${(results[0].cggRepeats[2])!"cgg3"} CGG repeats was also detected. The presence of three alleles in this individual''s sample may be due to X chromosome aneuploidy, a duplication on the X chromosome, a somatic change in one of the alleles, or an assay artifact. Karyotype and/or chromosomal microarray may be considered to clarify these results. Female premutation carriers have up to a 27% chance to have Fragile X-associated primary ovarian insufficiency (FXPOI) and up to a 17% chance of developing a late-onset neurological condition known as Fragile X-associated tremor/ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome.'
+            WHERE `id` = 32;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'One premutation size ${(results[0].cggRepeats[0])!"cgg1"} and one intermediate size ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. Female premutation carriers have up to a 27% chance to have Fragile X-associated primary ovarian insufficiency (FXPOI) and up to a 17% chance of developing a late-onset neurological condition known as Fragile X-associated tremor/ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 33;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'One premutation size ${(results[0].cggRepeats[0])!"cgg1"} and one intermediate size ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. Female premutation carriers have up to a 27% chance to have Fragile X-associated primary ovarian insufficiency (FXPOI) and up to a 17% chance of developing a late-onset neurological condition known as Fragile X-associated tremor/ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome.'
+            WHERE `id` = 34;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Two premutation size ${(results[0].cggRepeats[0])!"cgg1"} and ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. Female premutation carriers have an increased risk for Fragile X associated Primary Ovarian Insufficiency (POI) and a late-onset neurological condition called Fragile X associated Tremor/Ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 36;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Two premutation size ${(results[0].cggRepeats[0])!"cgg1"} and ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. Female premutation carriers have an increased risk for Fragile X associated Primary Ovarian Insufficiency (POI) and a late-onset neurological condition called Fragile X associated Tremor/Ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome.'
+            WHERE `id` = 38;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

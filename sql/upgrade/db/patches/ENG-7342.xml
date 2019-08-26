@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7342-01" author="irazin">
+        <comment>Add new GC templates to support SNV Sendout</comment>
+        <sql>
+            <![CDATA[
+            INSERT INTO `prodlims`.`gctemplate` (name, text, archived, delayednote)
+            VALUES (
+'Vistara Test Result 7-Day Delay Notification',
+'<p>Dear Ordering Provider,</p>
+<p>This message is to notify you that your patient''s Vistara results are delayed. We expect the results to return within the next 7 days. We apologize for any inconvenience this delay causes you. Please call Natera at 650-249-9090 with questions.<br/></p>
+<p>Thanks,<br/>
+Natera</p>',
+            0,1);
+
+            INSERT INTO `prodlims`.`gctemplate` (name, text, archived, delayednote)
+            VALUES (
+            'Vistara Test Result 14-Day Delay Notification',
+'<p>Dear Ordering Provider,</p>
+<p>This message is to notify you that your patient''s Vistara results are delayed. We expect the results to return within the next 14 days. We apologize for any inconvenience this delay causes you. Please call Natera at 650-249-9090 with questions.<br/></p>
+<p>Thanks,<br/>
+Natera</p>',
+            0,1);
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`gctemplate` WHERE name = 'Vistara Test Result 7-Day Delay Notification';
+            DELETE FROM `prodlims`.`gctemplate` WHERE name = 'Vistara Test Result 14-Day Delay Notification';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7342-02" author="irazin">
+        <comment>Add new script to support SNV Sendout</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            INSERT INTO `prodlims`.`script` (name, code)
+            VALUES ('Vistara Test Result Delay Notification',
+'
+/*
+ * ENG-7342: Scripts for sending note for delayed Vistara results
+ */
+
+import com.natera.lims.datamodel.core.*;
+import org.apache.commons.lang.*;
+import com.natera.lims.datamodel.ivf.prod.*;
+import net.genesecurity.mail.util.*;
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName);
+def user = currentUserBean.getCurrentUser();
+def deliveryDestinations = new HashSet<DeliveryMethod>();
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null;
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+
+        caseFile = caseFileDAO.get(caseFileId)
+        if (!caseFile.testType.isSnvSendout()) {
+            println "Case " + caseFileId + " is not a Vistara case. Case is skipped, and note is not sent."
+            return;
+        }
+
+        emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+        if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+            println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for both Vistara and GC. Case is skipped, and note is not sent to ordering provider."
+            return;
+        }
+
+        gcReport = new GCReport()
+        gcReport.setGcTemplate(gcTemplate)
+        gcReport.setNotes(gcTemplate.text)
+        gcReport.caseFile = caseFile
+        gcReport.setCreatedBy(user)
+        gcReport.setCreated(new Date())
+
+        GCReportPublisher.publishGCReport(gcReport)
+        GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm);
+        caseFileDAO.update(caseFile);
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+    }
+}
+
+println "Script ran successfully!"');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`script` WHERE name = 'Vistara Test Result Delay Notification';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7342-03" author="irazin">
+        <comment>insert parameters for Vistara Test Result Delay Notification into scriptparameter table</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (code, elementtype, islist, name, script_id)
+            VALUES ('[''Vistara Test Result 7-Day Delay Notification'',''Vistara Test Result 14-Day Delay Notification'']', 'java.lang.String', 0, 'gcTemplateName',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara Test Result Delay Notification'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.Long', 1, 'caseFileIds',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara Test Result Delay Notification'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`scriptparameter`
+            WHERE script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara Test Result Delay Notification');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

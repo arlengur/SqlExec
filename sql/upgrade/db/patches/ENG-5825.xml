@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5825-01" author="dchettupuzha">
+        <comment>Enter new Sequencing Target Set for Horizon NGS</comment>
+        <sql>
+            insert into `hts`.`sequencingtargetset` (`name`) values ('hzn_ngs_v1');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `hts`.`sequencingtargetset` where name = 'hzn_ngs_v1';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5825-02" author="dchettupuzha">
+        <comment>Add column sequencingrun.source</comment>
+        <sql>
+            alter table `hts`.`sequencingrun` add column `source` varchar(10) not null default 'LOCAL';
+        </sql>
+        <rollback>
+            alter table `hts`.`sequencingrun` drop column source;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5825-03" author="dchettupuzha">
+        <comment>Initialize column sequencingrun.source</comment>
+        <sql>
+            update `hts`.`sequencingrun` set `source` = 'CLARITY' where clarityRun = 1;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="5825-04" author="dchettupuzha">
+        <comment>Add column sequencingrun.workflow</comment>
+        <sql>
+            alter table `hts`.`sequencingrun` add column `workflow` varchar(255) default null;
+        </sql>
+        <rollback>
+            alter table `hts`.`sequencingrun` drop column `workflow`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

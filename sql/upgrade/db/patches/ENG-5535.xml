@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5535-01" author="mdubrovin">
+        <comment>
+            Add 'supportStateChanged' column to parentKit and set default value on it.
+        </comment>
+
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            ALTER TABLE prodlims.parentkit ADD COLUMN supportStateChanged DATETIME NOT NULL;
+
+            UPDATE prodlims.parentkit
+            SET supportStateChanged=now();
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+            ALTER TABLE prodlims.parentkit DROP COLUMN supportStateChanged;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5535-02" author="mdubrovin">
+        <comment>
+            Update default value for the 'supportStateChanged' column.
+        </comment>
+
+        <sql>
+            ALTER TABLE prodlims.parentkit MODIFY supportStateChanged DATETIME;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

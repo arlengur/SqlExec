@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6343-01" author="mdaly">
+        <comment></comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonResultCall`
+                DROP COLUMN `considered_negative`,
+                ADD COLUMN `result_type` VARCHAR(50) NOT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`HorizonResultCall`
+                DROP COLUMN `result_type`,
+                ADD COLUMN `considered_negative` BOOLEAN;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6343-02" author="jdavid">
+        <comment></comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonResultCall`
+            MODIFY COLUMN `result_type` VARCHAR(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`HorizonResultCall`
+            MODIFY COLUMN `result_type` VARCHAR(50) NOT NULL;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6343-03" author="jdavid">
+        <comment></comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonResultCall`
+            DROP COLUMN `result_type`,
+            ADD COLUMN `resulttype` VARCHAR(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`HorizonResultCall`
+            DROP COLUMN `resulttype`,
+            ADD COLUMN `result_type` VARCHAR(50) NOT NULL;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions>
+        <dbms type="mysql"/>
+    </preConditions>
+
+    <include file="patches/2.24.0.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance_14 -->
+    <include file="patches/ENG-5028.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-4497.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 15 April/2016 -->
+    <include file="patches/ENG-4846.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-4845.xml" relativeToChangelogFile="true"/>
+
+    <!-- LIMS v3 changes -->
+    <include file="patches/ENG-4211.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-4211-02.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance_16 -->
+    <include file="patches/ENG-5153.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 17 -->
+    <include file="patches/ENG-5235.xml" relativeToChangelogFile="true"/>
+
+    <!-- H3 & H4 panels to Baylor -->
+    <include file="patches/ENG-5184.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance_18 -->
+    <include file="patches/ENG-5024.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 19 -->
+
+    <!-- Eligibility Service -->
+    <include file="patches/ENG-5182.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5185.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance_20 -->
+
+    <!-- Maintenance_21 -->
+
+    <!-- Maintenance 22 -->
+    <include file="patches/ENG-5386.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5408.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5385.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5428.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 23 -->
+    <include file="patches/ENG-5538.xml" relativeToChangelogFile="true" />
+
+    <!-- Panorama V3 -->
+    <include file="patches/ENG-5146.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5707.xml" relativeToChangelogFile="true" />
+
+
+    <include file="patches/ENG-5781.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5790.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5808.xml" relativeToChangelogFile="true" />
+
+    <!-- DMD a la carte -->
+    <include file="patches/ENG-4749.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 29 -->
+    <include file="patches/ENG-4690.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 30 -->
+    <include file="patches/ENG-5898.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 31 -->
+    <include file="patches/ENG-5683.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 34 -->
+    <include file="patches/ENG-6082.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6038.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 35 -->
+    <include file="patches/ENG-6057.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6004.xml" relativeToChangelogFile="true" />
+
+    <!-- Case Bundling and Case Sharing Project -->
+    <include file="patches/ENG-5962.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5936.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6055.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6165.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 36 -->
+    <include file="patches/ENG-6240.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6265.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 39 -->
+    <include file="patches/ENG-5085.xml" relativeToChangelogFile="true" />
+
+    <!-- Twins/EggDonor -->
+    <include file="patches/ENG-5946.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5952.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5999.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6147.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5968.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 40 -->
+    <include file="patches/ENG-6550.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5987.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6497.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 41 -->
+    <include file="patches/ENG-6293.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6112.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 43 -->
+    <include file="patches/ENG-6353.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 44 -->
+    <include file="patches/ENG-6863.xml" relativeToChangelogFile="true" />
+
+    <!-- UNIV-9 Support -->
+    <include file="patches/ENG-6320.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 46 -->
+    <include file="patches/ENG-6517.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 47 -->
+    <include file="patches/ENG-7028.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 48 -->
+    <include file="patches/ENG-5535.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7149.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6113.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7326.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 49 -->
+    <include file="patches/ENG-7080.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 50 -->
+    <include file="patches/ENG-6896.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7147.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 52 -->
+    <include file="patches/ENG-7506.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7538.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7369.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 54 -->
+    <include file="patches/ENG-7647.xml" relativeToChangelogFile="true" />
+
+    <!-- SNV Milestone 1 -->
+    <include file="patches/ENG-6292.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6297.xml" relativeToChangelogFile="true"/>
+
+    <!-- SNV Milestone 2 -->
+    <include file="patches/ENG-6417.xml" relativeToChangelogFile="true"/>
+
+    <!-- SNV Milestone 3 -->
+    <include file="patches/ENG-6577.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6939.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6511.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6356.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6713.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6522.xml" relativeToChangelogFile="true"/>
+
+    <!-- SNV Milestone 4 -->
+    <include file="patches/ENG-6409.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6598.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6740.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6919.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6770.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7079.xml" relativeToChangelogFile="true"/>
+
+    <!-- SNV Milestone 5 -->
+    <include file="patches/ENG-6576.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7059.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7303.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7329.xml" relativeToChangelogFile="true"/>
+
+    <!-- SNV Milestone 6 -->
+    <include file="patches/ENG-7342.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-6597.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7442.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7473.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7530.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7575.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 55 -->
+    <include file="patches/ENG-7884.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 56 -->
+    <include file="patches/ENG-7774.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 57 -->
+    <include file="patches/ENG-7912.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7552.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 1-->
+    <include file="patches/ENG-5353.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5404.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5380.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5504.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5468.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5583.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5284.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5431.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5691.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5715.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5657.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5737.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 2 -->
+    <include file="patches/ENG-5697.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5587.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5698.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5821.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 3 -->
+    <include file="patches/ENG-5860.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5861.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5849.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5885.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5940.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6022.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 5 -->
+    <include file="patches/ENG-5825.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6091.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5960.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6042.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6169.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6218.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6025.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6307.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6394.xml" relativeToChangelogFile="true" />
+
+    <!--Labvantage-->
+    <include file="patches/ENG-5349.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5388.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5483.xml" relativeToChangelogFile="true" />
+
+    <include file="patches/ENG-5842.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 5 -->
+    <include file="patches/ENG-6086.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6168.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6201.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6231.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6230.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 6 -->
+    <include file="patches/ENG-6296.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6308.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6385.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6313.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6343.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6158.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6366.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6460.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6480.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6482.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6490.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 7 -->
+    <include file="patches/ENG-6523.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6327.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6560.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6618.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6619.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6442.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6452.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6453.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6649.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6488.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6494.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6662.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6557.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6333.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6692.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6696.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6674.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6730.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6546.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6741.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6747.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6804.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6846.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 8 -->
+    <include file="patches/ENG-6894.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6844.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6751.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6880.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6743.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6918.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6917.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6764.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6794.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6978.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6983.xml" relativeToChangelogFile="true" />
+    <!-- manually run the script in patches/ENG-6882.groovy -->
+    <include file="patches/ENG-6828.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6945.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6982.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6898.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6971.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6988.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7025.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6951.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7148.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 9 -->
+    <include file="patches/ENG-6829.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6957.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6954.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6955.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7131.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7221.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7153.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7234.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7246.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7247.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7266.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7267.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7268.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7269.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7270.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7071.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon LDT project Milestone 10 -->
+    <include file="patches/ENG-7337.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7338.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7340.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7375.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-6930.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7491.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7527.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7597.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7746.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7979.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7992.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 58 -->
+    <include file="patches/ENG-7717.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7958.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8032.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7977.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8261.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 59 -->
+    <include file="patches/ENG-8073.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8193.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8194.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8204.xml" relativeToChangelogFile="true" />
+
+    <!-- GDPR -->
+    <include file="patches/ENG-7960.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8128.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8127.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8130.xml" relativeToChangelogFile="true" />
+
+    <!-- Natera Extraction Support -->
+    <include file="patches/ENG-7855.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 60 -->
+    <include file="patches/ENG-8349.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8451.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 61 -->
+    <include file="patches/ENG-8409.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 62 -->
+    <include file="patches/ENG-7962.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 63 -->
+    <include file="patches/ENG-8515.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8495.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 64 -->
+    <include file="patches/ENG-8556.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8595.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 65 -->
+    <include file="patches/ENG-8658.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 66 -->
+    <include file="patches/ENG-8675.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8787.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8592.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8593.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8813.xml" relativeToChangelogFile="true" />
+
+    <!-- FFBR -->
+    <include file="patches/ENG-7947.xml" relativeToChangelogFile="true"/>
+
+    <!-- CSSI -->
+    <include file="patches/ENG-8189.xml" relativeToChangelogFile="true" />
+
+    <!-- Hotfix 21 -->
+    <include file="patches/ENG-8904.xml" relativeToChangelogFile="true" />
+
+    <!-- SMART -->
+    <include file="patches/ENG-8084.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 68 -->
+    <include file="patches/ENG-8200.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8929.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8822.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9019.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9008.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 69 -->
+    <include file="patches/ENG-8603.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8997.xml" relativeToChangelogFile="true"/>
+
+    <!-- NY reporting changes -->
+    <include file="patches/ENG-9062.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 71 -->
+    <include file="patches/ENG-9006.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9007.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-8788.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9050.xml" relativeToChangelogFile="true"/>
+
+    <!-- Panorama Controls -->
+    <include file="patches/ENG-8797.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8921.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8922.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon 14 Support Milestone 1 -->
+    <include file="patches/ENG-8742.xml" relativeToChangelogFile="true" />
+
+    <!-- Horizon 14 Support Milestone 2 -->
+    <include file="patches/ENG-8968.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8912.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8974.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9060.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 73 -->
+    <include file="patches/ENG-8940.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9088.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9319.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 74 -->
+    <include file="patches/ENG-9399.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 75 -->
+    <include file="patches/ENG-9109.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7771.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9193.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9545.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 76 -->
+    <include file="patches/ENG-9389.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 77 -->
+    <include file="patches/ENG-8435.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9644.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 78 -->
+    <include file="patches/ENG-9610.xml" relativeToChangelogFile="true" />
+
+    <!-- SCA -->
+    <include file="patches/ENG-9306.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9309.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 80 -->
+    <include file="patches/ENG-8805.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9551.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9819.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9710.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 81 -->
+    <include file="patches/ENG-9690.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9900.xml" relativeToChangelogFile="true"/>
+
+    <!-- RM Milestone 1 -->
+    <include file="patches/ENG-7696.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7714.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7816.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8094.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8145.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8157.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 2 -->
+    <include file="patches/ENG-7710.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7832.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8173.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8198.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8252.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8407.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 3 -->
+    <include file="patches/ENG-7893.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 4 -->
+    <include file="patches/ENG-8545.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-7861.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8624.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 5 -->
+    <include file="patches/ENG-8333.xml" relativeToChangelogFile="true" />
+
+    <!-- RM WES E2E -->
+    <include file="patches/ENG-8975.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 7 -->
+    <include file="patches/ENG-8838.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9068.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9126.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-8863.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9044.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9077.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9175.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9154.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9170.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9158.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 8 -->
+    <include file="patches/ENG-9051.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9213.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9317.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 9 -->
+    <include file="patches/ENG-7865.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 10 -->
+    <include file="patches/ENG-9239.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9579.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9581.xml" relativeToChangelogFile="true" />
+
+    <!-- RM Milestone 11 -->
+    <include file="patches/ENG-9604.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9627.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 82 -->
+    <include file="patches/ENG-9885.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 84 -->
+    <include file="patches/ENG-9965.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-10009.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-9960.xml" relativeToChangelogFile="true"/>
+
+    <!-- NGS_CNV Milestone 1 -->
+    <include file="patches/ENG-9190.xml" relativeToChangelogFile="true" />
+
+    <!-- NGS_CNV Milestone 3 -->
+    <include file="patches/ENG-9378.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9606.xml" relativeToChangelogFile="true" />
+
+    <!-- NGS_CNV Milestone 5 -->
+    <include file="patches/ENG-9687.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9682.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9877.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9953.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 85 -->
+    <include file="patches/ENG-9770.xml" relativeToChangelogFile="true"/>
+
+    <!-- Panorama Controls Phase 2-->
+    <include file="patches/ENG-9373.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9375.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-9376.xml" relativeToChangelogFile="true" />
+
+    <!-- Maintenance 88 -->
+    <include file="patches/ENG-10312.xml" relativeToChangelogFile="true"/>
+    <include file="patches/ENG-7911.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 89 -->
+    <include file="patches/ENG-9436.xml" relativeToChangelogFile="true"/>
+
+    <!-- Maintenance 90 -->
+    <include file="patches/ENG-10146.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

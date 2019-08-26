@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9068-01" author="nfleming">
+        <comment>Add sample QC types for Signatera Primer Design metrics</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'The number of assay in the 16-plex pool', 'NUMBER_OF_ASSAYS_IN_POOL_METRIC', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'NUMBER_OF_ASSAYS_IN_POOL_METRIC';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

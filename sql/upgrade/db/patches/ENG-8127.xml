@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8127" author="mdubrovin">
+        <comment>Add data into privacystandard table according to GDPR doc</comment>
+        <sql>
+            -- British Overseas Territories
+            -- Anguilla
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('AI', 'EU_GDPR');
+            -- Bermuda
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('BM', 'EU_GDPR');
+            -- Falkland Islands
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('FK', 'EU_GDPR');
+            -- South Georgia and the South Sandwich Islands
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('GS', 'EU_GDPR');
+            -- British Indian Ocean Territory
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('IO', 'EU_GDPR');
+            -- Cayman Islands
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('KY', 'EU_GDPR');
+            -- Montserrat
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('MS', 'EU_GDPR');
+            -- Pitcairn
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('PN', 'EU_GDPR');
+            -- Saint Helena, Ascension and Tristan da Cunha
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('SH', 'EU_GDPR');
+            -- Turks and Caicos Islands
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('TC', 'EU_GDPR');
+            -- Virgin Islands, British
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('VG', 'EU_GDPR');
+
+            -- Dutch Overseas Territories
+            -- Aruba
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('AW', 'EU_GDPR');
+            -- Bonaire
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('BQ', 'EU_GDPR');
+            -- Curaçao
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('CW', 'EU_GDPR');
+            -- Sint Maarten
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('SX', 'EU_GDPR');
+
+            -- EU Countries
+            -- Austria
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('AT', 'EU_GDPR');
+            -- Belgium
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('BE', 'EU_GDPR');
+            -- Bulgaria
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('BG', 'EU_GDPR');
+            -- Cyprus
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('CY', 'EU_GDPR');
+            -- Czech Republic
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('CZ', 'EU_GDPR');
+            -- Germany
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('DE', 'EU_GDPR');
+            -- Denmark
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('DK', 'EU_GDPR');
+            -- Estonia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('EE', 'EU_GDPR');
+            -- Spain
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('ES', 'EU_GDPR');
+            -- Finland
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('FI', 'EU_GDPR');
+            -- France
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('FR', 'EU_GDPR');
+            -- United Kingdom
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('GB', 'EU_GDPR');
+            -- Greece
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('GR', 'EU_GDPR');
+            -- Croatia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('HR', 'EU_GDPR');
+            -- Hungary
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('HU', 'EU_GDPR');
+            -- Ireland
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('IE', 'EU_GDPR');
+            -- Italy
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('IT', 'EU_GDPR');
+            -- Lithuania
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('LT', 'EU_GDPR');
+            -- Luxembourg
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('LU', 'EU_GDPR');
+            -- Latvia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('LV', 'EU_GDPR');
+            -- Malta
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('MT', 'EU_GDPR');
+            -- Netherlands
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('NL', 'EU_GDPR');
+            -- Poland
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('PL', 'EU_GDPR');
+            -- Portugal
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('PT', 'EU_GDPR');
+            -- Romania
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('RO', 'EU_GDPR');
+            -- Sweden
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('SE', 'EU_GDPR');
+            -- Slovenia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('SI', 'EU_GDPR');
+            -- Slovakia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('SK', 'EU_GDPR');
+
+            -- European Economic Area
+            -- Greenland
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('GL', 'EU_GDPR');
+            -- Iceland
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('IS', 'EU_GDPR');
+            -- Liechtenstein
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('LI', 'EU_GDPR');
+            -- Norway
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('NO', 'EU_GDPR');
+
+            -- French Overseas Territories
+            -- Guadeloupe
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('GP', 'EU_GDPR');
+            -- New Caledonia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('NC', 'EU_GDPR');
+            -- French Polynesia
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('PF', 'EU_GDPR');
+            -- Saint-Pierre and Miquelon
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('PM', 'EU_GDPR');
+            -- Wallis
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('WF', 'EU_GDPR');
+
+            -- Included by Treaty
+            -- Switzerland
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('CH', 'EU_GDPR');
+
+            -- Outermost Regions
+            -- French Guiana
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('GF', 'EU_GDPR');
+            -- Saint-Martin
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('MF', 'EU_GDPR');
+            -- Martinique
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('MQ', 'EU_GDPR');
+            -- Renunion
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('RE', 'EU_GDPR');
+            -- Mayotte
+            INSERT INTO `privacystandard`  (`country_code`, `standard`) VALUES('YT', 'EU_GDPR');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

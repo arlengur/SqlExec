@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+
+    <changeSet id="ENG-5408-02" author="hharidas">
+        <comment>
+           Update the disease names in all applicable fields in horizondisease and horizondiseasetemplate tables.
+
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Familial Hyperinsulinism', 'Familial Hyperinsulinism, ABCC8-Related') WHERE `mutation` = 'ABCC8';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Familial Hyperinsulinism', 'Familial Hyperinsulinism, ABCC8-Related') WHERE `gene` = 'ABCC8';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Familial Hyperinsulinism', 'Familial Hyperinsulinism, ABCC8-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Familial Hyperinsulinism', 'Familial Hyperinsulinism, ABCC8-Related') WHERE `gene` = 'ABCC8' AND `resulttype` != 'NEGATIVE';
+
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Riboflavin Responsive Complex 1 Deficiency (Acyl-CoEnzyme Dehydrogenase 9 Deficiency)', 'Mitochondrial Complex I Deficiency, ACAD9-Related') WHERE `mutation` = 'ACAD9';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Riboflavin Responsive Complex 1 Deficiency (Acyl-CoEnzyme Dehydrogenase 9 Deficiency)', 'Mitochondrial Complex I Deficiency, ACAD9-Related') WHERE `gene` = 'ACAD9';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Riboflavin Responsive Complex 1 Deficiency (Acyl-CoEnzyme Dehydrogenase 9 Deficiency)', 'Mitochondrial Complex I Deficiency, ACAD9-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Riboflavin Responsive Complex 1 Deficiency', 'Mitochondrial Complex I Deficiency, ACAD9-Related') WHERE `gene` = 'ACAD9' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Severe Combined Immunodeficiency (Adenosine Deaminase Deficiency)', 'Severe Combined Immunodeficiency, ADA-Related') WHERE `mutation` = 'ADA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Severe Combined Immunodeficiency (Adenosine Deaminase Deficiency)', 'Severe Combined Immunodeficiency, ADA-Related') WHERE `gene` = 'ADA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Severe Combined Immunodeficiency (Adenosine Deaminase Deficiency)', 'Severe Combined Immunodeficiency, ADA-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Severe Combined Immunodeficiency (Adenosine Deaminase Deficiency)', 'Severe Combined Immunodeficiency, ADA-Related') WHERE `gene` = 'ADA' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Polyglandular Autoimmune Syndrome', 'Autoimmune Polyglandular Syndrome, Type 1') WHERE `mutation` = 'AIRE';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Polyglandular Autoimmune Syndrome', 'Autoimmune Polyglandular Syndrome, Type 1') WHERE `gene` = 'AIRE';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Polyglandular Autoimmune Syndrome', 'Autoimmune Polyglandular Syndrome, Type 1'),`resultnotetext` = REPLACE(`resultnotetext`, 'Polyglandular Autoimmune Syndrome', 'Autoimmune Polyglandular Syndrome, Type 1') WHERE `gene` = 'AIRE' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Hypophosphatasia, Autosomal Recessive', 'Hypophosphatasia, ALPL-Related') WHERE `mutation` = 'ALPL';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Hypophosphatasia, Autosomal Recessive', 'Hypophosphatasia, ALPL-Related') WHERE `gene` = 'ALPL';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Hypophosphatasia, Autosomal Recessive', 'Hypophosphatasia, ALPL-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Hypophosphatasia, Autosomal Recessive', 'Hypophosphatasia, ALPL-Related') WHERE `gene` = 'ALPL'  AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Familial Neurohypophyseal Diabetes Insipidus, Autosomal Recessive', 'Familial Nephrogenic Diabetes Insipidus, AQP2-Related') WHERE `mutation` = 'AQP2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Familial Neurohypophyseal Diabetes Insipidus, Autosomal Recessive', 'Familial Nephrogenic Diabetes Insipidus, AQP2-Related') WHERE `gene` = 'AQP2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Familial Neurohypophyseal Diabetes Insipidus, Autosomal Recessive', 'Familial Nephrogenic Diabetes Insipidus, AQP2-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Familial Neurohypophyseal Diabetes Insipidus, Autosomal Recessive', 'Familial Nephrogenic Diabetes Insipidus, AQP2-Related') WHERE `gene` = 'AQP2' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'GRACILE Syndrome (Mitochondrial Respiratory Chain Complex III Deficiency)', 'GRACILE Syndrome ') WHERE `mutation` = 'BCS1L';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'GRACILE Syndrome (Mitochondrial Respiratory Chain Complex III Deficiency)', 'GRACILE Syndrome ') WHERE `gene` = 'BCS1L';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'GRACILE Syndrome (Mitochondrial Respiratory Chain Complex III Deficiency)', 'GRACILE Syndrome ') WHERE `gene` = 'BCS1L' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Bartter Syndrome', 'Bartter Syndrome, BSND-Related') WHERE `mutation` = 'BSND';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Bartter Syndrome', 'Bartter Syndrome, BSND-Related') WHERE `gene` = 'BSND';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Bartter Syndrome', 'Bartter Syndrome, BSND-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Bartter Syndrome', 'Bartter Syndrome, BSND-Related') WHERE `gene` = 'BSND' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Limb Girdle Muscular Dystrophy, Type 2A', 'Limb-Girdle Muscular Dystrophy, Type 2A') WHERE `mutation` = 'CAPN3';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Limb Girdle Muscular Dystrophy, Type 2A', 'Limb-Girdle Muscular Dystrophy, Type 2A') WHERE `gene` = 'CAPN3';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Limb Girdle Muscular Dystrophy, Type 2A', 'Limb-Girdle Muscular Dystrophy, Type 2A'),`resultnotetext` = REPLACE(`resultnotetext`, 'Limb Girdle Muscular Dystrophy, Type 2A', 'Limb-Girdle Muscular Dystrophy, Type 2A') WHERE `gene` = 'CAPN3'  AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Homocystinuria', 'Homocystinuria, CBS-Related') WHERE `mutation` = 'CBS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Homocystinuria', 'Homocystinuria, CBS-Related') WHERE `gene` = 'CBS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Homocystinuria', 'Homocystinuria, CBS-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Homocystinuria', 'Homocystinuria, CBS-Related') WHERE `gene` = 'CBS' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Bare Lymphocyte Syndrome, Type II', 'Bare Lymphocyte Syndrome, CIITA-Related') WHERE `mutation` = 'CIITA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Bare Lymphocyte Syndrome, Type II', 'Bare Lymphocyte Syndrome, CIITA-Related') WHERE `gene` = 'CIITA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Bare Lymphocyte Syndrome, Type II', 'Bare Lymphocyte Syndrome, CIITA-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Bare Lymphocyte Syndrome, Type II', 'Bare Lymphocyte Syndrome, CIITA-Related') WHERE `gene` = 'CIITA' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Dystrophic Epidermolysis Bullosa, Autosomal Recessive', 'Dystrophic Epidermolysis Bullosa, COL7A1-Related') WHERE `mutation` = 'COL7A1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Dystrophic Epidermolysis Bullosa, Autosomal Recessive', 'Dystrophic Epidermolysis Bullosa, COL7A1-Related') WHERE `gene` = 'COL7A1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Dystrophic Epidermolysis Bullosa, Autosomal Recessive', 'Dystrophic Epidermolysis Bullosa, COL7A1-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Dystrophic Epidermolysis Bullosa, Autosomal Recessive', 'Dystrophic Epidermolysis Bullosa, COL7A1-Related') WHERE `gene` = 'COL7A1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Chronic Granulomatous Disease, Cytochrome b-negative', 'Chronic Granulomatous Disease, CYBA-Related') WHERE `mutation` = 'CYBA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Chronic Granulomatous Disease, Cytochrome b-negative', 'Chronic Granulomatous Disease, CYBA-Related') WHERE `gene` = 'CYBA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Chronic Granulomatous Disease, Cytochrome b-negative', 'Chronic Granulomatous Disease, CYBA-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Chronic Granulomatous Disease, Cytochrome b-negative', 'Chronic Granulomatous Disease, CYBA-Related') WHERE `gene` = 'CYBA' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Lipoamide Dehydrogenase Deficiency (Maple Syrup Urine Disease, Type 3)', 'Lipoamide Dehydrogenase Deficiency (Dihydrolipoamide Dehydrogenase Deficiency)') WHERE `mutation` = 'DLD';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Lipoamide Dehydrogenase Deficiency (Maple Syrup Urine Disease, Type 3)', 'Lipoamide Dehydrogenase Deficiency (Dihydrolipoamide Dehydrogenase Deficiency)') WHERE `gene` = 'DLD';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Lipoamide Dehydrogenase Deficiency (Maple Syrup Urine Disease, Type 3)', 'Lipoamide Dehydrogenase Deficiency (Dihydrolipoamide Dehydrogenase Deficiency)') WHERE `gene` = 'DLD' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Limb Girdle Muscular Dystrophy, Type 2B', 'Limb-Girdle Muscular Dystrophy, Type 2B') WHERE `mutation` = 'DYSF';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Limb Girdle Muscular Dystrophy, Type 2B', 'Limb-Girdle Muscular Dystrophy, Type 2B') WHERE `gene` = 'DYSF';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Limb Girdle Muscular Dystrophy, Type 2B', 'Limb-Girdle Muscular Dystrophy, Type 2B'),`resultnotetext` = REPLACE(`resultnotetext`, 'Limb Girdle Muscular Dystrophy, Type 2B', 'Limb-Girdle Muscular Dystrophy, Type 2B') WHERE `gene` = 'DYSF' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Ellis-van Creveld Syndome (Weyers Acrofacial Dysostosis)', 'Ellis-van Creveld Syndrome, EVC-Related') WHERE `mutation` = 'EVC';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Ellis-van Creveld Syndome (Weyers Acrofacial Dysostosis)', 'Ellis-van Creveld Syndrome, EVC-Related') WHERE `gene` = 'EVC';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Ellis-van Creveld Syndome (Weyers Acrofacial Dysostosis)', 'Ellis-van Creveld Syndrome, EVC-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Ellis-van Creveld Syndome', 'Ellis-van Creveld Syndrome, EVC-Related') WHERE `gene` = 'EVC' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Limb Girdle Muscular Dystrophy, Type 2I', 'Limb-Girdle Muscular Dystrophy, Type 2I') WHERE `mutation` = 'FKRP';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Limb Girdle Muscular Dystrophy, Type 2I', 'Limb-Girdle Muscular Dystrophy, Type 2I') WHERE `gene` = 'FKRP';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Limb Girdle Muscular Dystrophy, Type 2I', 'Limb-Girdle Muscular Dystrophy, Type 2I'),`resultnotetext` = REPLACE(`resultnotetext`, 'Limb Girdle Muscular Dystrophy, Type 2I', 'Limb-Girdle Muscular Dystrophy, Type 2I') WHERE `gene` = 'FKRP' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Walker-Warburg Syndrome', 'Walker-Warburg Syndrome, FKTN-Related') WHERE `mutation` = 'FKTN';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Walker-Warburg Syndrome', 'Walker-Warburg Syndrome, FKTN-Related') WHERE `gene` = 'FKTN';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Walker-Warburg Syndrome', 'Walker-Warburg Syndrome, FKTN-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Walker-Warburg Syndrome', 'Walker-Warburg Syndrome, FKTN-Related') WHERE `gene` = 'FKTN' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Glutaryl-CoA Dehydrogenase Deficiency (Glutaric Acidemia, Type 1)', 'Glutaric Acidemia, Type 1') WHERE `mutation` = 'GCDH';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Glutaryl-CoA Dehydrogenase Deficiency (Glutaric Acidemia, Type 1)', 'Glutaric Acidemia, Type 1') WHERE `gene` = 'GCDH';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Glutaryl-CoA Dehydrogenase Deficiency (Glutaric Acidemia, Type 1)', 'Glutaric Acidemia, Type 1'),`resultnotetext` = REPLACE(`resultnotetext`, 'Glutaryl-CoA Dehydrogenase Deficiency', 'Glutaric Acidemia, Type 1') WHERE `gene` = 'GCDH' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Charcot-Marie-Tooth Disease with Deafness, X-linked', 'Charcot-Marie-Tooth Disease with Deafness, X-Linked') WHERE `mutation` = 'GJB1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Charcot-Marie-Tooth Disease with Deafness, X-linked', 'Charcot-Marie-Tooth Disease with Deafness, X-Linked') WHERE `gene` = 'GJB1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Charcot-Marie-Tooth Disease with Deafness, X-linked', 'Charcot-Marie-Tooth Disease with Deafness, X-Linked'),`additionalsteps`=REPLACE(`additionalsteps`,'Charcot-Marie-Tooth Disease with Deafness, X-linked','Charcot-Marie-Tooth Disease with Deafness, X-Linked')  WHERE `gene` = 'GJB1'  AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Mucopolysaccharidosis, Type IVB (GM1 Gangliosidosis)', 'Mucopolysaccharidosis, Type IVB / GM1 Gangliosidosis') WHERE `mutation` = 'GLB1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Mucopolysaccharidosis, Type IVB (GM1 Gangliosidosis)', 'Mucopolysaccharidosis, Type IVB / GM1 Gangliosidosis') WHERE `gene` = 'GLB1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Mucopolysaccharidosis, Type IVB (GM1 Gangliosidosis)', 'Mucopolysaccharidosis, Type IVB / GM1 Gangliosidosis'),`resultnotetext` = REPLACE(`resultnotetext`, 'Mucopolysaccharidosis, Type IVB', 'Mucopolysaccharidosis, Type IVB / GM1 Gangliosidosis') WHERE `gene` = 'GLB1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Glycine Encephalopathy', 'Glycine Encephalopathy, GLDC-Related') WHERE `mutation` = 'GLDC';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Glycine Encephalopathy', 'Glycine Encephalopathy, GLDC-Related') WHERE `gene` = 'GLDC';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Glycine Encephalopathy', 'Glycine Encephalopathy, GLDC-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Glycine Encephalopathy', 'Glycine Encephalopathy, GLDC-Related') WHERE `gene` = 'GLDC' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Lethal Congenital Contracture Syndrome 1 (Lethal Arthrogryposis with Anterior Horn Cell Disease)', 'Lethal Congenital Contracture Syndrome 1') WHERE `mutation` = 'GLE1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Lethal Congenital Contracture Syndrome 1 (Lethal Arthrogryposis with Anterior Horn Cell Disease)', 'Lethal Congenital Contracture Syndrome 1') WHERE `gene` = 'GLE1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Lethal Congenital Contracture Syndrome 1 (Lethal Arthrogryposis with Anterior Horn Cell Disease)', 'Lethal Congenital Contracture Syndrome 1') WHERE `gene` = 'GLE1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Mucopolysaccharidosis, Type IIID', 'Mucopolysaccharidosis, Type IIID (Sanfilippo D)') WHERE `mutation` = 'GNS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Mucopolysaccharidosis, Type IIID', 'Mucopolysaccharidosis, Type IIID (Sanfilippo D)') WHERE `gene` = 'GNS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Mucopolysaccharidosis, Type IIID', 'Mucopolysaccharidosis, Type IIID (Sanfilippo D)') WHERE `gene` = 'GNS' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'X-linked Severe Combined Immunodeficiency', 'Severe Combined Immunodeficiency, X-Linked') WHERE `mutation` = 'IL2RG';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'X-linked Severe Combined Immunodeficiency', 'Severe Combined Immunodeficiency, X-Linked') WHERE `gene` = 'IL2RG';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'X-linked Severe Combined Immunodeficiency', 'Severe Combined Immunodeficiency, X-Linked'),`resultnotetext` = REPLACE(`resultnotetext`, 'X-linked Severe Combined Immunodeficiency', 'Severe Combined Immunodeficiency'),`additionalsteps`=REPLACE(`additionalsteps`,'X-linked Severe Combined Immunodeficiency','Severe Combined Immunodeficiency, X-Linked') WHERE `gene` = 'IL2RG' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Hyperinsulinemic Hypoglycemia', 'Congenital Hyperinsulinism, KCNJ11-Related') WHERE `mutation` = 'KCNJ11';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Hyperinsulinemic Hypoglycemia', 'Congenital Hyperinsulinism, KCNJ11-Related') WHERE `gene` = 'KCNJ11';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Hyperinsulinemic Hypoglycemia', 'Congenital Hyperinsulinism, KCNJ11-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Hyperinsulinemic Hypoglycemia', 'Congenital Hyperinsulinism, KCNJ11-Related') WHERE `gene` = 'KCNJ11' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Spondylothoracic Dysostosis', 'Spondylothoracic Dysostosis, MESP2-Related') WHERE `mutation` = 'MESP2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Spondylothoracic Dysostosis', 'Spondylothoracic Dysostosis, MESP2-Related') WHERE `gene` = 'MESP2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Spondylothoracic Dysostosis', 'Spondylothoracic Dysostosis, MESP2-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Spondylothoracic Dysostosis', 'Spondylothoracic Dysostosis, MESP2-Related') WHERE `gene` = 'MESP2' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Mitochondrial DNA Depletion Syndrome 6 (Hepatocerebral Type)', 'Hepatocerebral Mitochondrial DNA Depletion Syndrome, MPV17-Related') WHERE `mutation` = 'MPV17';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Mitochondrial DNA Depletion Syndrome 6 (Hepatocerebral Type)', 'Hepatocerebral Mitochondrial DNA Depletion Syndrome, MPV17-Related') WHERE `gene` = 'MPV17';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Mitochondrial DNA Depletion Syndrome 6 (Hepatocerebral Type)', 'Hepatocerebral Mitochondrial DNA Depletion Syndrome, MPV17-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Mitochondrial DNA Depletion Syndrome 6 (Hepatocerebral Type)', 'Hepatocerebral Mitochondrial DNA Depletion Syndrome, MPV17-Related') WHERE `gene` = 'MPV17' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Nemaline Myopathy', 'Nemaline Myopathy, NEB-Related') WHERE `mutation` = 'NEB';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Nemaline Myopathy', 'Nemaline Myopathy, NEB-Related') WHERE `gene` = 'NEB';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Nemaline Myopathy', 'Nemaline Myopathy, NEB-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Nemaline Myopathy', 'Nemaline Myopathy, NEB-Related') WHERE `gene` = 'NEB' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Enhanced S-Cone Syndrome (Goldmann-Favre Syndrome)', 'Enhanced S-Cone Syndrome') WHERE `mutation` = 'NR2E3';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Enhanced S-Cone Syndrome (Goldmann-Favre Syndrome)', 'Enhanced S-Cone Syndrome') WHERE `gene` = 'NR2E3';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Enhanced S-Cone Syndrome (Goldmann-Favre Syndrome)', 'Enhanced S-Cone Syndrome') WHERE `gene` = 'NR2E3' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Costeff Disease Optic Atrophy (3-Methylglutaconic Aciduria, Type III)', 'Costeff Syndrome (3-Methylglutaconic Aciduria, Type 3)') WHERE `mutation` = 'OPA3';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Costeff Disease Optic Atrophy (3-Methylglutaconic Aciduria, Type III)', 'Costeff Syndrome (3-Methylglutaconic Aciduria, Type 3)') WHERE `gene` = 'OPA3';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Costeff Disease Optic Atrophy (3-Methylglutaconic Aciduria, Type III)', 'Costeff Syndrome (3-Methylglutaconic Aciduria, Type 3)'),`resultnotetext` = REPLACE(`resultnotetext`, 'Costeff Disease Optic Atrophy', 'Costeff Syndrome') WHERE `gene` = 'OPA3' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Propionic Acidemia, alpha subunit', 'Propionic Acidemia, PCCA-Related') WHERE `mutation` = 'PCCA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Propionic Acidemia, alpha subunit', 'Propionic Acidemia, PCCA-Related') WHERE `gene` = 'PCCA';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Propionic Acidemia, alpha subunit', 'Propionic Acidemia, PCCA-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Propionic Acidemia, alpha subunit', 'Propionic Acidemia, PCCA-Related') WHERE `gene` = 'PCCA' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Propionic Acidemia, beta subunit', 'Propionic Acidemia, PCCB-Related') WHERE `mutation` = 'PCCB';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Propionic Acidemia, beta subunit', 'Propionic Acidemia, PCCB-Related') WHERE `gene` = 'PCCB';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Propionic Acidemia, beta subunit', 'Propionic Acidemia, PCCB-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Propionic Acidemia, beta subunit', 'Propionic Acidemia, PCCB-Related') WHERE `gene` = 'PCCB' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Pyruvate Dehydrogenase Deficiency, Autosomal Recessive', 'Pyruvate Dehydrogenase Deficiency, PDHB-Related') WHERE `mutation` = 'PDHB';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Pyruvate Dehydrogenase Deficiency, Autosomal Recessive', 'Pyruvate Dehydrogenase Deficiency, PDHB-Related') WHERE `gene` = 'PDHB';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Pyruvate Dehydrogenase Deficiency, Autosomal Recessive', 'Pyruvate Dehydrogenase Deficiency, PDHB-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Pyruvate Dehydrogenase Deficiency, Autosomal Recessive', 'Pyruvate Dehydrogenase Deficiency, PDHB-Related') WHERE `gene` = 'PDHB' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Muscle-Eye-Brain Disease, POMGNT1-Related (Muscular dystrophy-dystroglycanopathy, Type C)', 'Muscle-Eye-Brain Disease, POMGNT1-Related') WHERE `mutation` = 'POMGNT1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Muscle-Eye-Brain Disease, POMGNT1-Related (Muscular dystrophy-dystroglycanopathy, Type C)', 'Muscle-Eye-Brain Disease, POMGNT1-Related') WHERE `gene` = 'POMGNT1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Muscle-Eye-Brain Disease, POMGNT1-Related (Muscular dystrophy-dystroglycanopathy, Type C)', 'Muscle-Eye-Brain Disease, POMGNT1-Related') WHERE `gene` = 'POMGNT1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Metachromatic Leukodystrophy (Gaucher Disease, atypical)', 'Metachromatic Leukodystrophy, PSAP-Related') WHERE `mutation` = 'PSAP';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Metachromatic Leukodystrophy (Gaucher Disease, atypical)', 'Metachromatic Leukodystrophy, PSAP-Related') WHERE `gene` = 'PSAP';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Metachromatic Leukodystrophy (Gaucher Disease, atypical)', 'Metachromatic Leukodystrophy, PSAP-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Metachromatic Leukodystrophy', 'Metachromatic Leukodystrophy, PSAP-Related') WHERE `gene` = 'PSAP' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Mitochondrial Myopathy and Sideroblastic Anemia (MLAS1)', 'Mitochondrial Myopathy and Sideroblastic Anemia (MLASA1)') WHERE `mutation` = 'PUS1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Mitochondrial Myopathy and Sideroblastic Anemia (MLAS1)', 'Mitochondrial Myopathy and Sideroblastic Anemia (MLASA1)') WHERE `gene` = 'PUS1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Mitochondrial Myopathy and Sideroblastic Anemia (MLAS1)', 'Mitochondrial Myopathy and Sideroblastic Anemia (MLASA1)') WHERE `gene` = 'PUS1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Omenn Syndrome', 'Omenn Syndrome, RAG2-Related') WHERE `mutation` = 'RAG2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Omenn Syndrome', 'Omenn Syndrome, RAG2-Related') WHERE `gene` = 'RAG2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Omenn Syndrome', 'Omenn Syndrome, RAG2-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Omenn Syndrome', 'Omenn Syndrome, RAG2-Related') WHERE `gene` = 'RAG2' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Leber Congenital Amaurosis 2 (Retinitis Pigmentosa 20)', 'Leber Congenital Amaurosis 2') WHERE `mutation` = 'RPE65';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`,'Leber Congenital Amaurosis 2 (Retinitis Pigmentosa 20)', 'Leber Congenital Amaurosis 2') WHERE `gene` = 'RPE65';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Leber Congenital Amaurosis 2 (Retinitis Pigmentosa 20)', 'Leber Congenital Amaurosis 2'),`resultnotetext` = REPLACE(`resultnotetext`, 'Leber Congenital Amaurosis 2 (Retinitis Pigmentosa 20)', 'Leber Congenital Amaurosis 2') WHERE `gene` = 'RPE65' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'X-linked Juvenile Retinoschisis', 'Juvenile Retinoschisis, X-Linked') WHERE `mutation` = 'RS1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'X-linked Juvenile Retinoschisis', 'Juvenile Retinoschisis, X-Linked') WHERE `gene` = 'RS1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'X-linked Juvenile Retinoschisis', 'Juvenile Retinoschisis, X-Linked'),`resultnotetext` = REPLACE(`resultnotetext`, 'X-linked Juvenile Retinoschisis', 'Juvenile Retinoschisis'),`additionalsteps`=REPLACE(`additionalsteps`,'X-linked Juvenile Retinoschisis','Juvenile Retinoschisis, X-Linked') WHERE `gene` = 'RS1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Progressive Cerebello-Cerebral Atrophy', 'Pontocerebellar Hypoplasia, Type 2D') WHERE `mutation` = 'SEPSECS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Progressive Cerebello-Cerebral Atrophy', 'Pontocerebellar Hypoplasia, Type 2D') WHERE `gene` = 'SEPSECS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Progressive Cerebello-Cerebral Atrophy', 'Pontocerebellar Hypoplasia, Type 2D'),`resultnotetext` = REPLACE(`resultnotetext`, 'Progressive Cerebello-Cerebral Atrophy', 'Pontocerebellar Hypoplasia, Type 2D') WHERE `gene` = 'SEPSECS' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Andermann Syndrome (Hereditary Motor and Sensory Neuropathy with Agenesis of the Corpus Callosum)', 'Andermann Syndrome') WHERE `mutation` = 'SLC12A6';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Andermann Syndrome (Hereditary Motor and Sensory Neuropathy with Agenesis of the Corpus Callosum)', 'Andermann Syndrome') WHERE `gene` = 'SLC12A6';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Andermann Syndrome (Hereditary Motor and Sensory Neuropathy with Agenesis of the Corpus Callosum)', 'Andermann Syndrome') WHERE `gene` = 'SLC12A6' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Osteopetrosis, Infantile Malignant (Osteopetrosis, autosomal recessive)', 'Osteopetrosis, Infantile Malignant, TCIRG1-Related') WHERE `mutation` = 'TCIRG1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Osteopetrosis, Infantile Malignant (Osteopetrosis, autosomal recessive)', 'Osteopetrosis, Infantile Malignant, TCIRG1-Related') WHERE `gene` = 'TCIRG1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Osteopetrosis, Infantile Malignant (Osteopetrosis, autosomal recessive)', 'Osteopetrosis, Infantile Malignant, TCIRG1-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Osteopetrosis, Infantile Malignant', 'Osteopetrosis, Infantile Malignant, TCIRG1-Related') WHERE `gene` = 'TCIRG1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Segawa Syndrome, Autosomal Recessive', 'Segawa Syndrome, TH-Related') WHERE `mutation` = 'TH';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Segawa Syndrome, Autosomal Recessive', 'Segawa Syndrome, TH-Related') WHERE `gene` = 'TH';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Segawa Syndrome, Autosomal Recessive', 'Segawa Syndrome, TH-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Segawa Syndrome', 'Segawa Syndrome, TH-Related') WHERE `gene` = 'TH' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Joubert Syndrome 2', 'Joubert Syndrome 2 / Meckel Syndrome 2') WHERE `mutation` = 'TMEM216';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Joubert Syndrome 2', 'Joubert Syndrome 2 / Meckel Syndrome 2') WHERE `gene` = 'TMEM216';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Joubert Syndrome 2', 'Joubert Syndrome 2 / Meckel Syndrome 2'),`resultnotetext` = REPLACE(`resultnotetext`, 'Joubert Syndrome 2', 'Joubert Syndrome 2 / Meckel Syndrome 2') WHERE `gene` = 'TMEM216' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Acute Infantile Liver Failure', 'Acute Infantile Liver Failure, TRMU-Related') WHERE `mutation` = 'TRMU';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Acute Infantile Liver Failure', 'Acute Infantile Liver Failure, TRMU-Related') WHERE `gene` = 'TRMU';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Acute Infantile Liver Failure', 'Acute Infantile Liver Failure, TRMU-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Acute Infantile Liver Failure', 'Acute Infantile Liver Failure, TRMU-Related') WHERE `gene` = 'TRMU' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Microphthalmia/Anophthalmia', 'Microphthalmia/Anophthalmia, VSX2-Related') WHERE `mutation` = 'VSX2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Microphthalmia/Anophthalmia', 'Microphthalmia/Anophthalmia, VSX2-Related') WHERE `gene` = 'VSX2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Microphthalmia/Anophthalmia', 'Microphthalmia/Anophthalmia, VSX2-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Microphthalmia/Anophthalmia', 'Microphthalmia/Anophthalmia, VSX2-Related') WHERE `gene` = 'VSX2' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Odonto-onycho-dermal Dysplasia (Schopf-Schulz-Passarge Syndrome)', 'Odonto-Onycho-Dermal Dysplasia / Schopf-Schulz-Passarge Syndrome') WHERE `mutation` = 'WNT10A';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Odonto-onycho-dermal Dysplasia (Schopf-Schulz-Passarge Syndrome)', 'Odonto-Onycho-Dermal Dysplasia / Schopf-Schulz-Passarge Syndrome') WHERE `gene` = 'WNT10A';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Odonto-onycho-dermal Dysplasia', 'Odonto-Onycho-Dermal Dysplasia / Schopf-Schulz-Passarge Syndrome'),`resultnotetext` = REPLACE(`resultnotetext`, 'Odonto-onycho-dermal Dysplasia', 'Odonto-Onycho-Dermal Dysplasia / Schopf-Schulz-Passarge Syndrome') WHERE `gene` = 'WNT10A' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Achondrogenesis, Type 1B (Diastrophic Dysplasia)', 'Achondrogenesis, Type 1B') WHERE `mutation` = 'SLC26A2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Achondrogenesis, Type 1B (Diastrophic Dysplasia)', 'Achondrogenesis, Type 1B') WHERE `gene` = 'SLC26A2';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Achondrogenesis, Type 1B (Diastrophic Dysplasia)', 'Achondrogenesis, Type 1B') WHERE `gene` = 'SLC26A2' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Creatine Transporter Defect (Cerebral Creatine Deficiency Syndrome 1)', 'Creatine Transporter Defect (Cerebral Creatine Deficiency Syndrome 1, X-Linked)') WHERE `mutation` = 'SLC6A8';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Creatine Transporter Defect (Cerebral Creatine Deficiency Syndrome 1)', 'Creatine Transporter Defect (Cerebral Creatine Deficiency Syndrome 1, X-Linked)') WHERE `gene` = 'SLC6A8';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Creatine Transporter Defect (Cerebral Creatine Deficiency Syndrome 1)', 'Creatine Transporter Defect (Cerebral Creatine Deficiency Syndrome 1, X-Linked)') WHERE `gene` = 'SLC6A8' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Adrenoleukodystrophy', 'Adrenoleukodystrophy, X-Linked') WHERE `mutation` = 'ABCD1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Adrenoleukodystrophy', 'Adrenoleukodystrophy, X-Linked') WHERE `gene` = 'ABCD1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Adrenoleukodystrophy', 'Adrenoleukodystrophy, X-Linked'),`additionalsteps` = 'The patient is at risk to have sons with Adrenoleukodystrophy, X-Linked. Female carriers may experience some symptoms of this condition. Appropriate medical follow-up is suggested for this patient. The patient may wish to discuss these positive results with family members to allow them the option to be screened.' WHERE `gene` = 'ABCD1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Rhizomelic Chondrodysplasia Punctata, Type 3 (Akyl-DHAP Synthase Deficiency)', 'Rhizomelic Chondrodysplasia Punctata, Type 3') WHERE `mutation` = 'AGPS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Rhizomelic Chondrodysplasia Punctata, Type 3 (Akyl-DHAP Synthase Deficiency)', 'Rhizomelic Chondrodysplasia Punctata, Type 3') WHERE `gene` = 'AGPS';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Rhizomelic Chondrodysplasia Punctata, Type 3 (Akyl-DHAP Synthase Deficiency)', 'Rhizomelic Chondrodysplasia Punctata, Type 3') WHERE `gene` = 'AGPS' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Alstrom Syndrome (Early Onset Myocardial Infarction, Association with Leber Congenital Amaurosis, Diabetes Type 1)', 'Alstrom Syndrome') WHERE `mutation` = 'ALMS1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Alstrom Syndrome (Early Onset Myocardial Infarction, Association with Leber Congenital Amaurosis, Diabetes Type 1)', 'Alstrom Syndrome') WHERE `gene` = 'ALMS1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Alstrom Syndrome (Early Onset Myocardial Infarction, Association with Leber Congenital Amaurosis, Diabetes Type 1)', 'Alstrom Syndrome') WHERE `gene` = 'ALMS1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Occipital Horn Syndrome (Motor Neuropathy, Distal)', 'Menkes Syndrome') WHERE `mutation` = 'ATP7A';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Occipital Horn Syndrome (Motor Neuropathy, Distal)', 'Menkes Syndrome') WHERE `gene` = 'ATP7A';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Occipital Horn Syndrome (Motor Neuropathy, Distal)', 'Menkes Syndrome'),`resultnotetext` = REPLACE(`resultnotetext`, 'Occipital Horn Syndrome', 'Menkes Syndrome'),`additionalsteps`=REPLACE(`additionalsteps`,'Occipital Horn Syndrome','Menkes Syndrome') WHERE `gene` = 'ATP7A' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Dyskeratosis Congenita', 'Dyskeratosis Congenita, RTEL1-Related') WHERE `mutation` = 'RTEL1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Dyskeratosis Congenita', 'Dyskeratosis Congenita, RTEL1-Related') WHERE `gene` = 'RTEL1';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Dyskeratosis Congenita', 'Dyskeratosis Congenita, RTEL1-Related'),`resultnotetext` = REPLACE(`resultnotetext`, 'Dyskeratosis Congenita', 'Dyskeratosis Congenita, RTEL1-Related') WHERE `gene` = 'RTEL1' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Alpha Thalassemia', 'Alpha-Thalassemia') WHERE `mutation` = 'ATRX';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Alpha Thalassemia', 'Alpha-Thalassemia') WHERE `gene` = 'ATRX';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`, 'Alpha Thalassemia', 'Alpha-Thalassemia'),`resultnotetext` = REPLACE(`resultnotetext`, 'Alpha Thalassemia', 'Alpha-Thalassemia'),`additionalsteps`=REPLACE(`additionalsteps`,'Alpha Thalassemia','Alpha-Thalassemia') WHERE `gene` = 'ATRX' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondisease` SET `name` = REPLACE(`name`, 'Type I', 'Type 1') WHERE `mutation` = 'PEX7';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `diseaseName` = REPLACE(`diseaseName`, 'Type I', 'Type 1') WHERE `gene` = 'PEX7';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `status` = REPLACE(`status`,'Type I', 'Type 1'),`resultnotetext` = REPLACE(`resultnotetext`, 'Type I', 'Type 1') WHERE `gene` = 'PEX7' AND `resulttype` != 'NEGATIVE';
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `resultnotetext` = "Offspring of this individual have a 1 in 2 (50%) chance to inherit this pathogenic variant. In addition, if the patient's partner is a carrier for Familial Hypercholesterolemia, LDLR-Related, their chance to have a child with the severe childhood-onset form of this condition is 1 in 4 (25%)." WHERE `gene` = 'LDLR' AND `templatecode` = 'pathogenic variant detected';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `resultnotetext` = "Offspring of this individual have a 1 in 2 (50%) chance to inherit this likely pathogenic variant. In addition, if the patient's partner is a carrier for Familial Hypercholesterolemia, LDLR-Related, their chance to have a child with the severe childhood-onset form of this condition may be as high as 1 in 4 (25%)." WHERE `gene` = 'LDLR' AND `templatecode` = 'likely pathogenic variant detected';
+
+            SET SQL_SAFE_UPDATES=1;
+
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            SET FOREIGN_KEY_CHECKS=0;
+
+            DELETE FROM `prodlims`.`horizondisease`;
+            DELETE FROM `prodlims`.`horizondiseasetemplate`;
+
+            INSERT `prodlims`.`horizondisease` SELECT * FROM `prodlims`.`horizondisease_backup_eng5408`;
+            INSERT `prodlims`.`horizondiseasetemplate` SELECT * FROM `prodlims`.`horizondiseasetemplate_backup_eng5408`;
+
+            SET FOREIGN_KEY_CHECKS=1;
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

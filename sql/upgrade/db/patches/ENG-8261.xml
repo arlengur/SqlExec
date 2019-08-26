@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8261-01" author="mdaly">
+        <comment>Replace the placeholder for SMN1 copies number with ">/= 3" in the three copy SMN1 templates. (Use lookupCode
+        since the value is unique for these two templates.)</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'SMN1: >/= 3 copies; g.27134T>G: present; the g.27134T>G variant does not modify carrier risk in individuals who carry 3 or more copies of SMN1.'
+            WHERE `lookupCode` = 'SMN1_THREE_PRESENT';
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'SMN1: >/= 3 copies; g.27134T>G: absent; the g.27134T>G variant does not modify carrier risk in individuals who carry 3 or more copies of SMN1.'
+            WHERE `lookupCode` = 'SMN1_THREE_ABSENT';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'SMN1: ${"[number of SMN1 copies]"} copies; g.27134T>G: present; the g.27134T>G variant does not modify carrier risk in individuals who carry 3 or more copies of SMN1.'
+            WHERE `lookupCode` = 'SMN1_THREE_PRESENT';
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'SMN1: ${"[number of SMN1 copies]"} copies; g.27134T>G: absent; the g.27134T>G variant does not modify carrier risk in individuals who carry 3 or more copies of SMN1.'
+            WHERE `lookupCode` = 'SMN1_THREE_ABSENT';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

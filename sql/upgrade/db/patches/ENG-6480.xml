@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6480-01" author="mdaly">
+        <comment>Add HorizonLdtReport field to CNCReportShipmentRecord</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`CNCReportShipmentRecord`
+                ADD COLUMN `horizon_ldt_report_id` BIGINT(20),
+                ADD INDEX `FK_CNCReportShipmentRecord__horizon_ldt_report_id` (`horizon_ldt_report_id`),
+                ADD CONSTRAINT `FK_CNCReportShipmentRecord__horizon_report_id` FOREIGN KEY (`horizon_ldt_report_id`) REFERENCES `horizon_report` (`id`);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`CNCReportShipmentRecord`
+                DROP COLUMN `horizon_ldt_report_id`,
+                DROP FOREIGN KEY `FK_CNCReportShipmentRecord__horizon_report_id`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

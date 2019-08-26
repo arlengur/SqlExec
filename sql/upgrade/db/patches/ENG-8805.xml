@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8805-01" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="prodlims" tableName="hl7sendoutorder" columnName="file_name"/>
+            </not>
+        </preConditions>
+
+        <comment>To store file name of hl7 to be exported to</comment>
+
+        <addColumn schemaName="prodlims" tableName="hl7sendoutorder">
+            <column name="file_name" type="VARCHAR(128)" afterColumn="ordercontroltype"></column>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

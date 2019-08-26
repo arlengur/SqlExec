@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5657-01" author="jdavid">
+        <comment>Switch CS2 H3 and H4 cases coming from ALL clinics to be routed to Baylor</comment>
+        <sql>
+            update `prodlims`.`baylorroutingrule` set baylorClinic = false where name = 'CF,SMA_SMN1:MALE';
+            update `prodlims`.`baylorroutingrule` set baylorClinic = false where name = 'CF,FRAX_F,SMA_SMN1:FEMALE';
+            update `prodlims`.`baylorroutingrule` set baylorClinic = false where name = 'CF,DMD_F,FRAX_F,SMA_SMN1:FEMALE';
+        </sql>
+        <rollback>
+            update `prodlims`.`baylorroutingrule` set baylorClinic = true where name = 'CF,SMA_SMN1:MALE';
+            update `prodlims`.`baylorroutingrule` set baylorClinic = true where name = 'CF,FRAX_F,SMA_SMN1:FEMALE';
+            update `prodlims`.`baylorroutingrule` set baylorClinic = true where name = 'CF,DMD_F,FRAX_F,SMA_SMN1:FEMALE';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

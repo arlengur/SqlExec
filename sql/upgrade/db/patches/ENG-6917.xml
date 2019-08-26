@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6917-01" author="mdaly">
+        <comment>Use HGVS code and polyT tenotype to the lookupCode for CFTR R117H templates</comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET `lookupCode` = 'CFTR_c.350G>A_5T/5T' WHERE `id` = 41;
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET `lookupCode` = 'CFTR_c.350G>A_5T/7T' WHERE `id` = 42;
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET `lookupCode` = 'CFTR_c.350G>A_5T/9T' WHERE `id` = 43;
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET `lookupCode` = 'CFTR_c.350G>A_7T/7T' WHERE `id` = 44;
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET `lookupCode` = 'CFTR_c.350G>A_7T/9T' WHERE `id` = 45;
+        </sql>
+        <!-- Rollback: table will be dropped if Horizon rollback occurs -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

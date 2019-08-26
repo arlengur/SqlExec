@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6452-01" author="dchettupuzha">
+        <comment>Create table sanger_request</comment>
+        <sql>
+            create table `prodlims`.`sanger_request` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `chromosome` VARCHAR(4),
+            `start` BIGINT(20),
+            `end` BIGINT(20),
+            `variantIds` VARCHAR(255),
+            `sequencingrun_id` BIGINT(20),
+            `resequence_point` VARCHAR(100),
+            PRIMARY KEY(`id`),
+            CONSTRAINT `FK_SangerRequest_SequencingRun` FOREIGN KEY (`sequencingrun_id`) REFERENCES `hts`.`sequencingrun` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`sanger_request`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6452-02" author="dchettupuzha">
+        <comment>Create table sanger_sequencing_sample_info</comment>
+        <sql>
+            create table `prodlims`.`sanger_sequencing_sample_info` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `sequencingsample_id` BIGINT(20),
+            `direction` VARCHAR(100),
+            `position` VARCHAR(50),
+            `sanger_request_id` BIGINT(20),
+            PRIMARY KEY (`id`),
+            CONSTRAINT `FK_sanger_seq_sampleinfo_seq_sample` FOREIGN KEY(`sequencingsample_id`) REFERENCES `hts`.`sequencingsample`(`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`sanger_sequencing_sample_info`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6452-03" author="dchettupuzha">
+        <comment>Drop NOT NULL constraints from tables horizon_plate, horizonplate_info</comment>
+        <sql>
+            alter table `prodlims`.`horizon_plate`
+            MODIFY COLUMN `totalquadrants` TINYINT(1) DEFAULT null;
+
+            alter table `prodlims`.`horizonplate_info`
+            MODIFY COLUMN `assay`  VARCHAR(255) DEFAULT NULL,
+            MODIFY COLUMN `quadrant`  VARCHAR(255) DEFAULT NULL;
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5386-01" author="hharidas">
+        <comment>Add new disease supplements to Horizon Report</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/tay-sachs-positive-enzyme-no-dna-done.xml' WHERE `diseasename` = 'Tay-Sachs Disease (enzyme only)' AND `templatecode` = 'No DNA; positive enzyme';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/hemoglobin-e-disease.xml' WHERE `gene` = 'HBB' AND `templatecode` ='One mutation detected for Hb E';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/beta-hemoglobinopathies.xml' WHERE `gene` = 'HBB' AND `templatecode` IN ('likely pathogenic variant detected for beta-hemoglobinopathy','pathogenic variant detected for beta-hemoglobinopathy');
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = NULL WHERE `diseasename` = 'Tay-Sachs Disease (enzyme only)' AND `templatecode` = 'No DNA; positive enzyme';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = NULL WHERE `gene` = 'HBB' AND `templatecode` ='One mutation detected for Hb E';
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = NULL WHERE `gene` = 'HBB' AND `templatecode` IN ('likely pathogenic variant detected for beta-hemoglobinopathy','pathogenic variant detected for beta-hemoglobinopathy');
+
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

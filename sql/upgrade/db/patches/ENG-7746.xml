@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7746-01" author="mdaly">
+        <comment>Expand variant column in AssayWorkflow</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`assayworkflow` MODIFY `variant` VARCHAR(400) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`assayworkflow` MODIFY `variant` VARCHAR(255) DEFAULT NULL;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7746-02" author="mdaly">
+        <comment>Expand variant column in SangerRequest</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`sanger_request` MODIFY `variantIds` VARCHAR(4000);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`sanger_request` MODIFY `variantIds` VARCHAR(255);
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20160422-01" author="dchettupuzha">
+        <comment>Create new User Account for Care</comment>
+        <sql>
+            insert into user (DTYPE, email, passwordhash, deleted, locked) values ('SecureUser', 'care@natera.com', 'msVyq7RStqvd74Pjxbijs72G12A/Fz6UCEmPH/ZSWtP48=', 0, 0);
+            insert into user_roles (user_id, roles_element) select id, "ROLE_LIMS_USER" as role from user where email='care@natera.com';
+        </sql>
+        <rollback>
+            delete from user_roles where user_id=(select id from user where email='care@natera.com');
+            delete from user where email = 'care@natera.com';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="20160428-01" author="dchettupuzha">
+            <comment>Update passwordhash to correct password</comment>
+            <sql>
+                update user set passwordhash='Vyq7RStqvd74Pjxbijs72G12A/Fz6UCEmPH/ZSWtP48=' where email ='care@natera.com';
+            </sql>
+        </changeSet>
+
+</databaseChangeLog>

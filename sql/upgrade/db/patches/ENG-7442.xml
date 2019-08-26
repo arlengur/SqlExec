@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7442-01" author="kzakharov">
+        <comment>Add new script to update states for re-opened Vistara case</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            INSERT INTO `prodlims`.`script` (name, code)
+            VALUES ('Vistara Re-open Case',
+'
+/*
+ * ENG-7442: Vistara: Update states when user manually reopens case
+ */
+
+import com.natera.lims.api.model.core.TestType;
+import static com.natera.lims.datamodel.sendout.SendoutPanelOrder.FamilySampleDrawStatus.*;
+
+def order = sendoutOrderServiceImpl.findSendoutOrderByCaseFileId(caseFileId);
+if(order == null || order.getCaseFile().getTestType() != TestType.SNV_SENDOUT) {
+  println("invalid case file");
+  return;
+}
+snvCaseFileUpdateService.reopenCaseFile(caseFileId);
+order.getCaseFile().createNote("Implicit Accessioning Note", "Case re-opened", currentUserBean.getCurrentUser());
+
+order.setState("IN_PROGRESS");
+def panelOrder = order.getPanelOrders().iterator().next();
+def familySampleDraw = panelOrder.getFamilySampleDraw();
+if(familySampleDraw.containsValue(NOT_RECEIVED) || familySampleDraw.containsValue(REDRAW_REQUESTED)) {
+	panelOrder.setState("AWAITING_SAMPLES");
+} else {
+  	panelOrder.setState("AWAITING_RESULTS");
+}
+sendoutOrderDAO.update(order);
+');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`script` WHERE name = 'Vistara Re-open Case';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7442-02" author="kzakharov">
+        <comment>insert parameters for Vistara Re-open Case into scriptparameter table</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.Long', 0, 'caseFileId',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara Re-open Case'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`scriptparameter`
+            WHERE script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara Re-open Case');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

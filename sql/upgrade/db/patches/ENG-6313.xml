@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6313-01" author="dchettupuzha">
+        <comment>Add new User for LV in LIMS</comment>
+        <sql>
+            insert into `prodlims`.`user` (DTYPE, email, passwordhash, deleted, locked) values ('SecureUser', 'lvuser@natera.com', null, 0, 0);
+            insert into `prodlims`.`user_roles` (user_id, roles_element) select id, "ROLE_LIMS_USER" as role from user where email='lvuser@natera.com';
+        </sql>
+        <rollback>
+            delete from user_roles where user_id=(select id from user where email='lvuser@natera.com');
+            delete from user where email = 'lvuser@natera.com';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

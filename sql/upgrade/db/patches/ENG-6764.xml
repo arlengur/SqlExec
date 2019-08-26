@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6764-01" author="jdavid">
+        <comment>Create pricing plans for CS3</comment>
+        <sql>
+            INSERT INTO `prodlims`.`pricingplan` (name, testtype) values('Standard', 'CARRIER_SCREENING_3');
+            INSERT INTO `prodlims`.`pricingplan` (name, testtype) values('International', 'CARRIER_SCREENING_3');
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`pricingplan` WHERE `name`='Standard' and `testtype`= 'CARRIER_SCREENING_3';
+            DELETE FROM `prodlims`.`pricingplan` WHERE `name`='International' and `testtype`= 'CARRIER_SCREENING_3';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

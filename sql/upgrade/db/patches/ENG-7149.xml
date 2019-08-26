@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7149-01" author="mdaly">
+        <comment>Add column for HorizonCaseInfo.formattedSharingPartners</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizon_report`
+                ADD COLUMN `formattedSharingPartners` VARCHAR(1024) AFTER `patient_phone`;
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`horizon_report`
+                DROP COLUMN `formattedSharingPartners`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

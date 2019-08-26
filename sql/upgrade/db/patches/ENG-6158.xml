@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6158-01" author="dchettupuzha">
+        <comment>Insert new QC types</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SEQUENCING_RUN', 'Num of NTC samples', 'NTC_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of Amplidex samples', 'CONTROL_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of Normal samples', 'NORMAL_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of Intermediate samples', 'INT_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of Pre-mutation samples', 'PREMUT_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of Mutation samples', 'MUT_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of passed Amplidex samples', 'AMPLIDEX_PASSED_CONTROL_CALL_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of failed control samples', 'FAILED_CONTROL_CALL_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of estimated parameters', 'ESTIMATED_PARAM_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of Ladder Peaks', 'LADDER_PEAKS_COUNT', 0),
+            ('SEQUENCING_RUN', 'Max NTC data weight', 'MAX_DATA_PEAKS_WEIGHT', 0),
+            ('SEQUENCING_RUN', 'Max NTC Data Peak: NTC threshold', 'NTC_PEAK_THRESHOLD', 0),
+            ('SEQUENCING_RUN', 'Max NTC Data Peak: Premut cutoff', 'PRE_MUT_RFU_CUTOFF', 0),
+            ('SEQUENCING_RUN', 'Max NTC Data Peak: Mut cutoff', 'MUT_RFU_CUTOFF', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'NTC_SAMPLE_COUNT',
+            'CONTROL_SAMPLE_COUNT',
+            'NORMAL_SAMPLE_COUNT',
+            'INT_SAMPLE_COUNT',
+            'PREMUT_SAMPLE_COUNT',
+            'MUT_SAMPLE_COUNT',
+            'AMPLIDEX_PASSED_CONTROL_CALL_COUNT',
+            'FAILED_CONTROL_CALL_COUNT',
+            'ESTIMATED_PARAM_COUNT',
+            'LADDER_PEAKS_COUNT',
+            'MAX_DATA_PEAKS_WEIGHT',
+            'NTC_PEAK_THRESHOLD',
+            'PRE_MUT_RFU_CUTOFF',
+            'MUT_RFU_CUTOFF');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6158-02" author="dchettupuzha">
+        <comment>Insert new QC stats types</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Number of Ladder Peaks', 'LADDER_PEAKS_COUNT', 'ALL'),
+            ('Max NTC Data weight', 'MAX_DATA_PEAKS_WEIGHT', 'ALL'),
+            ('Max NTC Data Peak: NTC threshold', 'NTC_PEAK_THRESHOLD', 'ALL'),
+            ('Max NTC Data Peak: Premut cutoff', 'PRE_MUT_RFU_CUTOFF', 'ALL'),
+            ('Max NTC Data Peak: Mut cutoff', 'MUT_RFU_CUTOFF', 'ALL');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Number of Ladder Peaks' AND `name` = 'LADDER_PEAKS_COUNT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Max NTC Data weight' AND `name` = 'MAX_DATA_PEAKS_WEIGHT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Max NTC Data Peak: NTC threshold' AND `name` = 'NTC_PEAK_THRESHOLD' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Max NTC Data Peak: Premut cutoff' AND `name` = 'PRE_MUT_RFU_CUTOFF' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Max NTC Data Peak: Mut cutoff' AND `name` = 'MUT_RFU_CUTOFF' AND `applicability` = 'ALL';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6158-03" author="dchettupuzha">
+        <comment>Insert new QC types for MLPA</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SEQUENCING_RUN', 'Ladder detection', 'LADDER_CORRELATION', 0),
+            ('SEQUENCING_RUN', 'Q Fragment High Count', 'Q_FRAGMENT_HIGH_COUNT', 0),
+            ('SEQUENCING_RUN', 'D fragment', 'D_FRAGMENT_LOW_COUNT', 0),
+            ('SEQUENCING_RUN', 'Low probe intensity', 'PROBE_SIGNAL_STRENGTH', 0),
+            ('SEQUENCING_RUN', 'Deep sloping', 'DEEP_SLOPING', 0),
+            ('SEQUENCING_RUN', 'Floating peaks', 'FLOATING_LADDER', 0),
+            ('SEQUENCING_RUN', 'Q Fragment Max Height Diff', 'Q_FRAGMENT_MAX_HEIGHT_DIFF', 0),
+            ('SEQUENCING_RUN', 'MLPA Gender Check', 'MLPA_GENDER_CHECK', 0),
+            ('SEQUENCING_RUN', 'Number of good reference samples', 'GOOD_MLPA_REFERENCE_SAMPLE_COUNT', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'LADDER_CORRELATION',
+            'Q_FRAGMENT_HIGH_COUNT',
+            'D_FRAGMENT_LOW_COUNT',
+            'PROBE_SIGNAL_STRENGTH',
+            'DEEP_SLOPING',
+            'FLOATING_LADDER',
+            'Q_FRAGMENT_MAX_HEIGHT_DIFF',
+            'MLPA_GENDER_CHECK',
+            'GOOD_MLPA_REFERENCE_SAMPLE_COUNT');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6158-04" author="dchettupuzha">
+        <comment>Insert new QC stats types for MLPA</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Ladder detection', 'LADDER_CORRELATION', 'ALL'),
+            ('Q Fragment High Count', 'Q_FRAGMENT_HIGH_COUNT', 'ALL'),
+            ('D fragment', 'D_FRAGMENT_LOW_COUNT', 'ALL'),
+            ('Low probe intensity', 'PROBE_SIGNAL_STRENGTH', 'ALL'),
+            ('Deep sloping', 'DEEP_SLOPING', 'ALL'),
+            ('Floating peaks', 'FLOATING_LADDER', 'ALL'),
+            ('Q Fragment Max Height Diff', 'Q_FRAGMENT_MAX_HEIGHT_DIFF', 'ALL'),
+            ('MLPA Gender Check', 'MLPA_GENDER_CHECK', 'ALL');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'Ladder detection' AND `name` = 'LADDER_CORRELATION' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'Q Fragment High Count' AND `name` = 'Q_FRAGMENT_HIGH_COUNT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'D fragment' AND `name` = 'D_FRAGMENT_LOW_COUNT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'Low probe intensity' AND `name` = 'PROBE_SIGNAL_STRENGTH' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'Deep sloping' AND `name` = 'DEEP_SLOPING' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'Floating peaks' AND `name` = 'FLOATING_LADDER' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'Q Fragment Max Height Diff' AND `name` = 'Q_FRAGMENT_MAX_HEIGHT_DIFF' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type`  WHERE `description` = 'MLPA Gender Check' AND `name` = 'MLPA_GENDER_CHECK' AND `applicability` = 'ALL';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6158-05" author="dchettupuzha">
+        <comment>Insert new Sample types MLPA (Display name should not matter, this would get mapped)</comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values
+            ('MLPA_DMD_49_52_DEL', 'MLPA_DMD_49_52_DEL', null, null, '',''),
+            ('MLPA_DMD_35_43_DEL', 'MLPA_DMD_35_43_DEL', null, null, '',''),
+            ('MLPA_DMD_8_17_DUP', 'MLPA_DMD_8_17_DUP', null, null, '',''),
+            ('MLPA_DMD_2_30_DUP', 'MLPA_DMD_2_30_DUP', null, null, '','');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_49_52_DEL' AND `displayname` = 'MLPA_DMD_49_52_DEL';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_35_43_DEL' AND `displayname` = 'MLPA_DMD_35_43_DEL';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_8_17_DUP' AND `displayname` = 'MLPA_DMD_8_17_DUP';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_DMD_2_30_DUP' AND `displayname` = 'MLPA_DMD_2_30_DUP';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6158-06" author="dchettupuzha">
+        <comment>Remove unwanted types from sampletype table</comment>
+        <sql>
+            SET sql_safe_updates=0;
+
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD_49_52_DEL';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD_35_43_DEL';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD_8_17_DUP';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_DMD_2_30_DUP';
+            delete from `prodlims`.`sampletype` where name = 'MLPA_SMA_7_8_DEL';
+
+            SET sql_safe_updates=1;
+        </sql>
+        <!-- Rollback: rows added in changeSet -05 and ENG-6394.xml -->
+    </changeSet>
+
+    <changeSet id="ENG-6158-07" author="dchettupuzha">
+        <comment>Add new SampleType for SMA</comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values
+            ('MLPA_SMA_7_8_DEL_1', 'NA23687', null, null, '',''),
+            ('MLPA_SMA_7_8_DEL_2', 'NA23688', null, null, '','');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_SMA_7_8_DEL_1' AND `displayname` = 'NA23687';
+            DELETE FROM `prodlims`.`sampletype` WHERE `name` = 'MLPA_SMA_7_8_DEL_2' AND `displayname` = 'NA23688';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

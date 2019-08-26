@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9008-01" author="mdaly">
+        <comment>Remove UI notification of AGG reflex from CS2 scenarios. Affected CS2 scenarios are:
+            '45-54 CGG repeats',
+            '>2 CGG alleles detected, one allele intermediate (45-54)',
+            '1 CGG allele detected, intermediate (45-54)'
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `fraxReflexScenario` = FALSE
+            WHERE `gene` = 'FMR1' AND
+            `templatecode` IN (
+                '45-54 CGG repeats',
+                '>2 CGG alleles detected, one allele intermediate (45-54)',
+                '1 CGG allele detected, intermediate (45-54)'
+            );
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `fraxReflexScenario` = TRUE
+            WHERE `gene` = 'FMR1' AND
+            `templatecode` IN (
+            '45-54 CGG repeats',
+            '>2 CGG alleles detected, one allele intermediate (45-54)',
+            '1 CGG allele detected, intermediate (45-54)'
+            );
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

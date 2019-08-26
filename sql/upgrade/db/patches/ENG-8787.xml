@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8787-01" author="mdaly">
+        <comment>Remove the new line character (ASCII 10) from the two specified Tay-Sachs templates (ids 882 and 883).</comment>
+        <sql>
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `variant` = REPLACE(`variant`, CHAR(10), '')
+            WHERE
+            `templatecode` IN ('No DNA; positive enzyme', 'No DNA; indeterminate enzyme') AND
+            `id` IN (882, 883)
+        </sql>
+
+        <!-- Since this is correcting bad data, a roll back doesn't make sense -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

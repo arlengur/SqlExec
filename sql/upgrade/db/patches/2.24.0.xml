@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20151112-01" author="dzgursky">
+        <sql>
+            create table if not exists `prodlims`.`liquibase_test_table1` (
+                id int,
+                column1 varchar(100),
+                column2 varchar(100),
+                column3 varchar(100)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`liquibase_test_table1`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

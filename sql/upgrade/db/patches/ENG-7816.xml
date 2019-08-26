@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7816-01" author="apotekhin">
+        <comment>Store Signatera Plasma Variant Calling Pipeline results</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`testconditionresult` add column `alleleRatio` DOUBLE default NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` add column `confidence` DOUBLE default NULL;
+            ALTER TABLE `prodlims`.`testconditionresult` add column `detected` BOOLEAN default NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`testconditionresult` drop column `alleleRatio`;
+            ALTER TABLE `prodlims`.`testconditionresult` drop column `confidence`;
+            ALTER TABLE `prodlims`.`testconditionresult` drop column `detected`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

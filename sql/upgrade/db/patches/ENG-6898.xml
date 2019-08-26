@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6898-01" author="mdaly">
+        <comment>Set the associatedCall for the "X Chromosome deletion or duplication inconclusive..." HorizonDiseaseResultTemplate (id 52)
+            to a ResultCall that has a POSITIVE resultType. It originally was set to "Other" (id 3), which has an OTHER resultType). Use the
+            "Pathogenic variant" ResultCall (id 6) as a generic positive. (Refer to ENG-6333.xml to confirm ids.)
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `associatedCall_id` = 6 WHERE `id` = 52;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `associatedCall_id` = 3 WHERE `id` = 52;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

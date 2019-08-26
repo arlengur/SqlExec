@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9317-01" author="nfleming">
+        <comment>Insert new QC type FILTERED_SNP_TRACER_NOR for Signatera Plasma pipeline</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Filtered SNP Tracer NOR', 'FILTERED_SNP_TRACER_NOR', 0);
+
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Filtered SNP Tracer NOR', 'FILTERED_SNP_TRACER_NOR', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'FILTERED_SNP_TRACER_NOR';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` = 'FILTERED_SNP_TRACER_NOR';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

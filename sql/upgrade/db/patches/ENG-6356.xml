@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6356-01" author="apotekhin">
+        <comment>Sendout report framework - part 3</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`sendoutreport` MODIFY reportStatus VARCHAR(255) NOT NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

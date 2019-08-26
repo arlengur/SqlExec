@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5380-01" author="jdavid">
+        <comment>Add labvantageSampleType column in SampleType table</comment>
+        <sql>
+            alter table `prodlims`.`sampletype` add column `labvantageSampleType` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`sampletype` drop column `labvantageSampleType`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5380-02" author="jdavid">
+        <comment>Update labvantageSampleType values for blood and saliva</comment>
+        <sql>
+            update `prodlims`.`sampletype` set labvantageSampleType = 'Whole Blood' where name = 'blood';
+            update `prodlims`.`sampletype` set labvantageSampleType = 'Saliva' where name = 'saliva';
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5587-01" author="dchettupuzha">
+        <comment>Add new column to Sequencing Sample table</comment>
+        <sql>
+            CREATE TABLE `hts`.`resequence_request` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `sequencingsample_id` BIGINT(20),
+            `run_type` VARCHAR(255),
+            `resequence_point` VARCHAR(255),
+            `state` VARCHAR(255),
+            `request_creation_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `resequenced_by` BIGINT(20),
+            PRIMARY KEY (`id`),
+            CONSTRAINT `FKRRSEQSMPLIDDBC` FOREIGN KEY (`sequencingsample_id`) REFERENCES `hts`.`sequencingsample` (`id`),
+            CONSTRAINT `FKRRUSRIDDBC` FOREIGN KEY (`resequenced_by`) REFERENCES `prodlims`.`user` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `hts`.`resequence_request`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

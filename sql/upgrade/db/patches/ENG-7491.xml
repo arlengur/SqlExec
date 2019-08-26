@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7491-01" author="dchettupuzha">
+        <comment>Insert new QC types for MLPA</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Floating peaks', 'FLOATING_PEAKS', 0),
+            ('SAMPLE', 'Ladder Pullup Ratio', 'LADDER_PULLUP_RATIO', 0),
+            ('SAMPLE', 'Data Channel Max RFU Low', 'MAX_DATA_HEIGHT_LOW', 0),
+            ('SAMPLE', 'Data Channel Max RFU High', 'MAX_DATA_HEIGHT_HIGH', 0),
+            ('SAMPLE', 'Median Q Fragment to Control Ratio', 'MEDIAN_Q_FRAGMENT_TO_CONTROL_RATIO', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'FLOATING_PEAKS',
+            'LADDER_PULLUP_RATIO',
+            'MAX_DATA_HEIGHT_LOW',
+            'MAX_DATA_HEIGHT_HIGH',
+            'MEDIAN_Q_FRAGMENT_TO_CONTROL_RATIO');
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7491-02" author="dchettupuzha">
+        <comment>Insert new QC stats types for MLPA</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Floating peaks', 'FLOATING_PEAKS', 'ALL'),
+            ('Ladder Pullup Ratio', 'LADDER_PULLUP_RATIO', 'ALL'),
+            ('Data Channel Max RFU Low', 'MAX_DATA_HEIGHT_LOW', 'ALL'),
+            ('Data Channel Max RFU High', 'MAX_DATA_HEIGHT_HIGH', 'ALL'),
+            ('Median Q Fragment to Control Ratio', 'MEDIAN_Q_FRAGMENT_TO_CONTROL_RATIO', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'FLOATING_PEAKS',
+            'LADDER_PULLUP_RATIO',
+            'MAX_DATA_HEIGHT_LOW',
+            'MAX_DATA_HEIGHT_HIGH',
+            'MEDIAN_Q_FRAGMENT_TO_CONTROL_RATIO');
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7855-01" author="nfleming">
+        <comment>Create Natera extractions info table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`extraction_info` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `spinGroupName` varchar(255) DEFAULT NULL,
+            `starttime` datetime DEFAULT NULL,
+            `proteinasek` varchar(125) DEFAULT NULL,
+            `pkdb` varchar(125) DEFAULT NULL,
+            `bindingbuffer` varchar(125) DEFAULT NULL,
+            `washbuffer1` varchar(125) DEFAULT NULL,
+            `washbuffer2` varchar(125) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`spinGroupName`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`extraction_info`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7855-02" author="nfleming">
+        <comment>Create join table for Natera extractions info and Sample </comment>
+        <sql>
+            CREATE TABLE `prodlims`.`sample_extraction_info` (
+            `sample_id` bigint(20) NOT NULL,
+            `extraction_info_id` bigint(20) NOT NULL,
+            PRIMARY KEY (`sample_id`, `extraction_info_id`),
+            CONSTRAINT `FK_EXT_SAMPLE_idx` FOREIGN KEY (`sample_id`) REFERENCES `sample` (`id`),
+            CONSTRAINT `FK_EXT_INFO_idx` FOREIGN KEY (`extraction_info_id`) REFERENCES `extraction_info` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`sample_extraction_info`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

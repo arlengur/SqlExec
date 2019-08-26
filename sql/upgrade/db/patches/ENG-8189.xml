@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8189-01" author="mdubrovin">
+        <comment>Create new organization instructions tables</comment>
+        <sql>
+
+            CREATE TABLE `organization_instruction` (
+                `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                `organization_id` bigint(20) NOT NULL,
+                `instruction` text NOT NULL,
+                `expiration_date` datetime DEFAULT NULL,
+                `created` datetime NOT NULL,
+                `last_modified_user_id` bigint(20) NOT NULL,
+                `last_modified_at` datetime NOT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FK_organization_instruction_org_id` (`organization_id`),
+            KEY `FK_organization_instruction_modified_by` (`last_modified_user_id`),
+            CONSTRAINT `FK_organization_instruction_org_id` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+            CONSTRAINT `FK_organization_instruction_modified_by` FOREIGN KEY (`organization_id`) REFERENCES `organization` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+            CREATE TABLE `organizationinstruction_department` (
+                `organizationinstruction_id` bigint(10) NOT NULL,
+                `department` varchar(50) NOT NULL,
+            PRIMARY KEY (`organizationinstruction_id`,`department`),
+            KEY `FK_organizationinstruction_department_id` (`organizationinstruction_id`),
+            CONSTRAINT `FK_organizationinstruction_department_id` FOREIGN KEY (`organizationinstruction_id`) REFERENCES `organization_instruction` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE `organizationinstruction_department`;
+            DROP TABLE `organization_instruction`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

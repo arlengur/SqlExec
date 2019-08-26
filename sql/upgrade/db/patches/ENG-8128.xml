@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8128" author="mdubrovin">
+        <comment>Create privacystandard table for a case file</comment>
+        <sql>
+
+            CREATE TABLE `casefile_privacystandard` (
+            `casefile_id` bigint(20) NOT NULL,
+            `standard` varchar(30) NOT NULL,
+            PRIMARY KEY (`casefile_id`, `standard`),
+            CONSTRAINT `FK_cf_ps_casefile_id` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`));
+
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `casefile_privacystandard`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

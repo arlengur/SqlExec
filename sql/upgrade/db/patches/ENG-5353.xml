@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5353-01" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            rename table `prodlims`.`horizonpanel` to `prodlims`.`panel`;
+        </sql>
+        <rollback>
+            rename table `prodlims`.`panel` to `prodlims`.`horizonpanel`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-02" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            alter table `prodlims`.`panel` add column `DTYPE` varchar(31) NOT NULL after `id`;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`panel` drop column `DTYPE`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-03" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            update `prodlims`.`panel` set DTYPE = 'HorizonPanel';
+        </sql>
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-5353-04" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            rename table `prodlims`.`horizonpanelorder` to `prodlims`.`panelorder`;
+        </sql>
+        <rollback>
+            rename table `prodlims`.`panelorder` to `prodlims`.`horizonpanelorder`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-05" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            alter table `prodlims`.`panelorder` add column `DTYPE` varchar(31) NOT NULL after `id`;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`panelorder` drop column `DTYPE`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-06" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            update `prodlims`.`panelorder` set DTYPE = 'HorizonPanelOrder';
+        </sql>
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-5353-07" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            alter table `prodlims`.`panelorder` add column `gender` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`panelorder` drop column `gender`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-08" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            alter table `prodlims`.`panelorder` add column `shipDestinationType` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`panelorder` drop column `shipDestinationType`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-09" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            alter table `prodlims`.`panelorder` add column `canceled` bit(1) NOT NULL DEFAULT b'0';
+        </sql>
+        <rollback>
+            alter table `prodlims`.`panelorder` drop column `canceled`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5353-10" author="jdavid">
+        <comment>Initial sql table check-in for Horizon LDT</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`panel`
+            ADD CONSTRAINT `UKPNLTBL` UNIQUE(`DTYPE`, `name`);
+        </sql>
+        <rollback>
+            DROP INDEX `UKPNLTBL` on `prodlims`.`panel`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

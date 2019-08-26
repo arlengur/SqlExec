@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6453-01" author="dchettupuzha">
+        <comment>Add column to sanger_request table</comment>
+        <sql>
+            alter table `prodlims`.`sanger_request` add column `source_sample_id` BIGINT(20) NOT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`sanger_request` drop column `source_sample_id`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6453-02" author="dchettupuzha">
+        <comment>Alter column in sanger_request table</comment>
+        <sql>
+            alter table `prodlims`.`sanger_request` CHANGE COLUMN `source_sample_id` `sourcesample_id` BIGINT(20) NOT NULL;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="ENG-6453-03" author="dchettupuzha">
+        <comment>Alter column in sanger_request table</comment>
+        <sql>
+            alter table `prodlims`.`sanger_request` MODIFY `sourcesample_id` BIGINT(20) DEFAULT NULL;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="ENG-6453-04" author="dchettupuzha">
+        <comment>Add row in cloudproject table</comment>
+        <sql>
+            insert into `prodlims`.`cloudproject` (`name`, `description`, `apitoken`, `projectId`) values ('Natera Horizon Production', 'Project for all Horizon cases.', '', '');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`cloudproject` WHERE `name` = 'Natera Horizon Production' AND `description` = 'Project for all Horizon cases.';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6453-05" author="dchettupuzha">
+        <comment>Add row in qc_type table</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            update `prodlims`.`qc_type` set `name` = 'EPT_TEMPERATURE_MAX' where `name` = 'EPT_TEMPERATURE';
+
+            SET SQL_SAFE_UPDATES=1;
+
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Temperature, measured (degrees C)', 'EPT_TEMPERATURE_MEAN', 0);
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`qc_type` set `name` = 'EPT_TEMPERATURE' where `name` = 'EPT_TEMPERATURE_MAX';
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'EPT_TEMPERATURE_MEAN';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

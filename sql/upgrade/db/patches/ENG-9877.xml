@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9877-01" author="jdavid">
+        <comment>Add new column createtime to resequencingtask</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`resequencingtask` ADD COLUMN `createddate` datetime DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`resequencingtask` DROP COLUMN `createddate`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

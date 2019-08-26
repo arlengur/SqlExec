@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+ xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5082-01" author="vpiyanov">
+        <comment>Remove 'LIKELY' from status for all 'likely pathogenic variant detected' templates</comment>
+        <sql>
+            update 
+                prodlims.HorizonDiseaseTemplate 
+            set 
+                status = REPLACE(status, 'LIKELY CARRIER for ', 'CARRIER for ') 
+            where 
+                status like 'LIKELY CARRIER for %'
+                and templatecode in (
+                    'likely pathogenic variant detected',
+                    'likely pathogenic variant detected for beta-hemoglobinopathy',
+                    'likely pathogenic variant detected for beta-thal',
+                    'SMN1: 2 copies; g.27134T>G present AND Jewish or Asian ethnicity reported.',
+                    'likely pathogenic variant detected; positive enzyme analysis',
+                    'likely pathogenic variant detected; indeterminate enzyme analysis'
+                )
+            ;
+        </sql>
+        <rollback>
+            update 
+                prodlims.HorizonDiseaseTemplate 
+            set 
+                status = REPLACE(status, 'CARRIER for ', 'LIKELY CARRIER for ') 
+            where 
+                status like 'CARRIER for %'
+                and templatecode in (
+                    'likely pathogenic variant detected',
+                    'likely pathogenic variant detected for beta-hemoglobinopathy',
+                    'likely pathogenic variant detected for beta-thal',
+                    'SMN1: 2 copies; g.27134T>G present AND Jewish or Asian ethnicity reported.',
+                    'likely pathogenic variant detected; positive enzyme analysis',
+                    'likely pathogenic variant detected; indeterminate enzyme analysis'
+                )
+            ;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

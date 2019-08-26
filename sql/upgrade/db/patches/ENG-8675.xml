@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8675-01" author="jdavid">
+        <comment>Added new field to store disabled value to casesharingconsent table</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`casesharingconsent` ADD COLUMN `disabled` bit(1) DEFAULT b'0';
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`casesharingconsent` DROP COLUMN `disabled`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8094-01" author="apotekhin">
+        <comment>Add sendout tissue panel for Signatera product</comment>
+        <sql>
+            INSERT INTO `prodlims`.`sendoutpanel` (testtype, name, hl7Name, hl7Code, description)
+            VALUES ('RM_TISSUE', 'RM_PRIMER_DESIGN', 'n/a', 'n/a', 'Signatera panel to order custom primer reagents');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`sendoutpanel` WHERE testtype = 'RM_TISSUE';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

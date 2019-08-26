@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8974-01" author="jdavid">
+        <comment>Add new category Manual escalation</comment>
+        <sql>
+            INSERT INTO `prodlims`.`category` (`name`, `deleted`) VALUES ('Manual escalation', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`category` WHERE `name` = 'Manual escalation';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8974-02" author="jdavid">
+        <comment>Add Manual escalation to Horizon Testing category group</comment>
+        <sql>
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT (SELECT id from `prodlims`.`categorygroup` where name = 'Horizon Testing') as categorygroup_id,
+                id FROM `prodlims`.`category` WHERE `name` = 'Manual escalation';
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE `categorygroup_id` = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Horizon Testing')
+            AND `category_id` = (SELECT id FROM `prodlims`.`category` WHERE name = 'Manual escalation');
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8974-03" author="jdavid">
+        <comment>Add Manual escalation to TAT category group</comment>
+        <sql>
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT (SELECT id from `prodlims`.`categorygroup` where name = 'TAT') as categorygroup_id,
+            id FROM `prodlims`.`category` WHERE `name` = 'Manual escalation';
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE `categorygroup_id` = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'TAT')
+            AND `category_id` = (SELECT id FROM `prodlims`.`category` WHERE name = 'Manual escalation');
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

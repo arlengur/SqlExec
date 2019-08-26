@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9006" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists schemaName="hts" tableName="clarity_plate" indexName="clarity_plate_platebarcode_idx"/>
+            </not>
+        </preConditions>
+        <comment>
+            Create index on platebarcode field on hts.clarity_plate table to speed up search
+        </comment>
+        <sql>
+            CREATE INDEX `clarity_plate_platebarcode_idx` ON `hts`.`clarity_plate` (`platebarcode`);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

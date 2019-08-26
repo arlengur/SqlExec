@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9545-01" author="mdaly">
+        <comment>Undo the update to the "One gene deleted and one point mutation (cis)" template that is in change set
+            ENG-9193-02. The ID for the previous supplement ("Positive Alpha-Thalassemia")is 137.
+
+            Template Description: ID
+            One gene deleted and one point mutation (cis): 141
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement`
+            SET `supplement_id` = 137
+            WHERE `template_id` = 141 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement`
+            SET `supplement_id` = 298
+            WHERE `template_id` = 141 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

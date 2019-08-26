@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7326-01" author="hharidas">
+        <comment>Add supplements for two scenarios for Fragile X disease</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE prodlims.horizondiseasetemplate
+            SET supplementpath = "com/natera/lims/service/horizon/report/supplements/fragile-x-premutation.xml"
+            WHERE gene = "FMR1"
+            AND templatecode IN ("One allele intermediate (45-54) and one allele premutation (55-90)","One allele intermediate (45-54) and one allele premutation (91-200)")
+            AND resulttype = "NON_NEGATIVE";
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE prodlims.horizondiseasetemplate
+            SET supplementpath = NULL
+            WHERE gene = "FMR1"
+            AND templatecode IN ("One allele intermediate (45-54) and one allele premutation (55-90)","One allele intermediate (45-54) and one allele premutation (91-200)")
+            AND resulttype = "NON_NEGATIVE";
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6147-01" author="nfleming">
+        <comment>Add Twins and Egg Donor QC statistic and result types</comment>
+        <sql>
+            INSERT IGNORE INTO prodlims.qc_type(category, description, name, ismultisample) values ('CONTAMINATION', 'Check the Child Fraction Estimate', 'EGG_DONOR_MIXTURE_FRACTION', false);
+            INSERT IGNORE INTO prodlims.qc_type(category, description, name, ismultisample) values ('CONTAMINATION', 'Check the Minimum Child Fraction Estimate', 'TWINS_CFE_NO_HOST_MIN', false);
+            INSERT IGNORE INTO prodlims.qc_type(category, description, name, ismultisample) values ('CONTAMINATION', 'Check the Maximum Child Fraction Estimate', 'TWINS_CFE_NO_HOST_MAX', false);
+            INSERT IGNORE INTO prodlims.qc_type(category, description, name, ismultisample) values ('CONTAMINATION', 'Check the sample zygosity', 'ZYGOSITY_DETECTION', false);
+
+            INSERT IGNORE INTO prodlims.qc_statistics_type (description, name, applicability) VALUES ('EGG_DONOR_MIXTURE_FRACTION', 'EGG_DONOR_MIXTURE_FRACTION', 'PLASMA');
+            INSERT IGNORE INTO prodlims.qc_statistics_type (description, name, applicability) VALUES ('TWINS_CFE_NO_HOST_MIN', 'TWINS_CFE_NO_HOST_MIN', 'PLASMA');
+            INSERT IGNORE INTO prodlims.qc_statistics_type (description, name, applicability) VALUES ('TWINS_CFE_NO_HOST_MAX', 'TWINS_CFE_NO_HOST_MAX', 'PLASMA');
+            INSERT IGNORE INTO prodlims.qc_statistics_type (description, name, applicability) VALUES ('ZYGOSITY_DETECTION', 'ZYGOSITY_DETECTION', 'PLASMA');
+        </sql>
+        <rollback>
+            DELETE FROM prodlims.qc_type WHERE name = 'EGG_DONOR_MIXTURE_FRACTION';
+            DELETE FROM prodlims.qc_type WHERE name = 'TWINS_CFE_NO_HOST_MIN';
+            DELETE FROM prodlims.qc_type WHERE name = 'TWINS_CFE_NO_HOST_MAX';
+            DELETE FROM prodlims.qc_type WHERE name = 'ZYGOSITY_DETECTION';
+
+            DELETE FROM prodlims.qc_statistics_type WHERE name = 'EGG_DONOR_MIXTURE_FRACTION';
+            DELETE FROM prodlims.qc_statistics_type WHERE name = 'TWINS_CFE_NO_HOST_MIN';
+            DELETE FROM prodlims.qc_statistics_type WHERE name = 'TWINS_CFE_NO_HOST_MAX';
+            DELETE FROM prodlims.qc_statistics_type WHERE name = 'ZYGOSITY_DETECTION';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

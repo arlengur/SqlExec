@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7714-01" author="irazin">
+        <comment>Add cloud project for Signatera CLIA</comment>
+        <sql>
+            INSERT INTO `prodlims`.`cloudproject` (`name`, `description`, `apitoken`, `projectId`)
+            VALUES ('Signatera CLIA Stage', 'Project for Signatera CLIA testing', 'nuqPdTHqRy5t0AuFGx9DtLiLBCQ1c6vX', 'project-FBQ44YQ0Z370Pz0FKvyfVBqb');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`cloudproject` WHERE name = 'Signatera CLIA Stage';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
+
+
+

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6165-01" author="jdavid">
+        <comment>Create casefile_collectiondate table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`casefile_collectiondate` (
+            `casefile_id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `collectiondate` datetime NOT NULL,
+            PRIMARY KEY (`casefile_id`)
+            )  DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casefile_collectiondate`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6165-02" author="jdavid">
+        <comment>Populate casefile_collectiondate</comment>
+        <sql>
+            insert into `prodlims`.`casefile_collectiondate`
+            select cf1.id, min(s1.collectiondate) from `prodlims`.`casefile` cf1
+            join `prodlims`.`parentkit` pk1 on
+            cf1.id = pk1.casefile_id
+            join `prodlims`.`parentkit_sample` pks1 on
+            pk1.id = pks1.parentkit_id
+            join sample s1 on
+            pks1.sample_id = s1.id
+            where cf1.testtype = 'NPT'
+            and s1.collectiondate is not null
+            group by cf1.id;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casefile_collectiondate`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6165-03" author="jdavid">
+        <comment>Create casefile_subject table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`casefile_subject` (
+            `casefile_id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `subject_id` bigint(20) NOT NULL,
+            PRIMARY KEY (`casefile_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casefile_subject`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6165-04" author="jdavid">
+        <comment>Populate casefile_subject</comment>
+        <sql>
+            <![CDATA[
+            insert into `prodlims`.`casefile_subject`
+            select cf1.id as `casefile_id`, min(fs1.members_id) as `subject_id` from
+            `prodlims`.`casefile_collectiondate` cc1
+            join `prodlims`.`casefile` cf1 on
+            cc1.casefile_id = cf1.id
+
+            join `prodlims`.`family_subject` fs1 on fs1.families_id = cf1.family_id
+            join `prodlims`.`subject` s on s.id = fs1.members_id
+            join `prodlims`.`family_subject` fs2 on fs2.members_id = s.id
+            join `prodlims`.`casefile` cf2 on cf2.family_id = fs2.families_id
+            join `prodlims`.`casefile_collectiondate` cc2 on
+            cf2.id = cc2.casefile_id
+
+            where cf1.testtype = 'NPT' and cf2.testtype = 'NPT' and cf1.id != cf2.id
+            and (ABS(DATEDIFF(cc1.collectiondate, cc2.collectiondate)) <= 180 OR ABS(DATEDIFF(cc2.collectiondate, cc1.collectiondate)) <= 180)
+            group by cf1.id;
+            ]]>
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casefile_subject`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6165-05" author="jdavid">
+        <comment>Create stored procedure for migrating redraw cases to the case bundling model. Stored procedure written by hharidas</comment>
+        <createProcedure catalogName="cat"
+                         procedureName="migrateNptRedrawCases"
+                         relativeToChangelogFile="true"
+                         schemaName="prodlims">
+
+            CREATE PROCEDURE `migrateNptRedrawCases`()
+
+            BEGIN
+
+            DECLARE done INT DEFAULT FALSE;
+
+            DECLARE npt_caseID, subjectID BIGINT(20);
+            DECLARE caseCursor CURSOR FOR
+            select casefile_id, subject_id
+            from `prodlims`.`casefile_subject`
+            order by subject_id;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+            SET @prev_subject = 0;
+
+            OPEN caseCursor;
+
+            read_loop: LOOP
+
+            FETCH caseCursor INTO npt_caseID, subjectID;
+            IF done THEN
+            LEAVE read_loop;
+            END IF;
+
+            if(@prev_subject != subjectID)then
+
+            INSERT INTO `prodlims`.`casebundling` (casebundlingtype) VALUES ("REDRAW");
+            SET @last_insert_casebundling_id = LAST_INSERT_ID();
+            SET @prev_subject = subjectID;
+            END IF;
+
+            INSERT INTO `prodlims`.`casefile_casebundling` (casebundling_id, casefile_id) VALUES (@last_insert_casebundling_id,npt_caseID );
+            END LOOP;
+
+            CLOSE caseCursor;
+
+            END
+
+        </createProcedure>
+        <rollback>
+            DROP PROCEDURE IF EXISTS `prodlims`.`migrateNptRedrawCases`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

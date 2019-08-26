@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7771-01" author="vkomlev">
+        <comment>New category group for holds in cases which are not to be pushed to Support Review state.</comment>
+        <sql>
+            INSERT INTO `prodlims`.`category` (name, deleted)
+            VALUES ('Verify TSE', 0);
+
+            INSERT INTO `prodlims`.`categorygroup_category` (categorygroup_id, category_id)
+            SELECT (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Hold Reasons') AS categorygroup_id, id
+            FROM `prodlims`.`category`
+            WHERE name = 'Verify TSE';
+        </sql>
+
+        <rollback>
+            DELETE
+            FROM `prodlims`.`categorygroup_category`
+            WHERE category_id = (SELECT id FROM `prodlims`.`category` WHERE name = 'Verify TSE');
+
+            DELETE
+            FROM `prodlims`.`category`
+            WHERE name = 'Verify TSE';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7575-01" author="kzakharov">
+        <comment>Fix the script 'Vistara cases having a clinical indication' - mail option and inclusive date range</comment>
+        <sql endDelimiter=";;;">
+            <![CDATA[
+            SET SQL_SAFE_UPDATES=0;;;
+
+            UPDATE `prodlims`.`script` set code=
+'
+/*
+ * ENG-6597 Clinical Indication Follow Up
+ * ENG-7575 Groovy script references "emailTo" parameter instead of "mailTo" specified by user
+ */
+
+import com.natera.lims.api.model.core.TestType;
+import com.natera.lims.api.model.core.QuestionnaireChoice;
+import com.natera.lims.datamodel.ivf.prod.CaseFile;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
+List ICD_CODES = Arrays.asList("O28.3", "O28.4", "O28.5", "O28.8");
+
+String CASE_TEMPLATE = "Case #%s" +
+            "\\n\\tAbnormal ultrasound findings: %s" +
+            "\\n\\tFamily history background: %s" +
+            "\\n\\tICD codes: %s";
+String MESSAGE_BODY_TEMPLATE = "User %s requested lookup of the cases having a clinical indication with maternal kits accessioned from %s to %s.\\n\\nThe following cases match the criteria:\\n%s";
+String MESSAGE_SUBJECT = "Vistara cases having a clinical indication";
+
+def caseToString = { cf ->
+  	def pf = cf.getPaternityFields();
+  	def icdCodes = cf.getDiagnoses().isEmpty() ? "not provided" : cf.getDiagnoses().diagnosisCode.join(", ");
+  	def findings = pf.getAbnormalUltrasoundFindings() == QuestionnaireChoice.Y ? "provided" : "not provided";
+  	def familyHistory = pf.getFamilyHistoryInfo() ? "provided" : "not provided";
+	String.format(CASE_TEMPLATE,
+                  cf.getId(),
+                  findings,
+                  familyHistory,
+                  icdCodes);
+}
+
+def dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+List cases = caseFileDAO.getCaseFilesWithClinicalIndication(TestType.SNV_SENDOUT,
+    dtf.parseDateTime(receivedFrom).toDate(),
+    dtf.parseDateTime(receivedUntil).millisOfDay().withMaximumValue().toDate(),
+    ICD_CODES);
+
+if(cases.isEmpty()) {
+	println("There are no cases matched the criteria");
+} else {
+	String messageBody = String.format(MESSAGE_BODY_TEMPLATE,
+	                                   currentUserBean.getCurrentUser().getEmail(),
+                                       receivedFrom,
+                                       receivedUntil,
+                                       cases.collect{cf -> caseToString(cf)}.join("\\n"));
+	if(StringUtils.isEmpty(mailTo)) {
+		println(messageBody);
+	} else {
+		emailSender.send(mailTo, MESSAGE_SUBJECT, messageBody);
+	}
+}
+' WHERE name='Vistara cases having a clinical indication';;;
+
+SET SQL_SAFE_UPDATES=1;;;
+            ]]>
+        </sql>
+        <rollback>
+            <sql endDelimiter=";;;">
+                <![CDATA[
+            SET SQL_SAFE_UPDATES=0;;;
+
+            UPDATE `prodlims`.`script` set code=
+'
+/*
+ * ENG-6597 Clinical Indication Follow Up
+ */
+
+import com.natera.lims.api.model.core.TestType;
+import com.natera.lims.api.model.core.QuestionnaireChoice;
+import com.natera.lims.datamodel.ivf.prod.CaseFile;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+
+List ICD_CODES = Arrays.asList("O28.3", "O28.4", "O28.5", "O28.8");
+
+String CASE_TEMPLATE = "Case #%s" +
+            "\\n\\tAbnormal ultrasound findings: %s" +
+            "\\n\\tFamily history background: %s" +
+            "\\n\\tICD codes: %s";
+String MESSAGE_BODY_TEMPLATE = "User %s requested lookup of the cases having a clinical indication with maternal kits accessioned from %s to %s.\\n\\nThe following cases match the criteria:\\n%s";
+String MESSAGE_SUBJECT = "Vistara cases having a clinical indication";
+
+def caseToString = { cf ->
+  	def pf = cf.getPaternityFields();
+  	def icdCodes = cf.getDiagnoses().isEmpty() ? "not provided" : cf.getDiagnoses().diagnosisCode.join(", ");
+  	def findings = pf.getAbnormalUltrasoundFindings() == QuestionnaireChoice.Y ? "provided" : "not provided";
+  	def familyHistory = pf.getFamilyHistoryInfo() ? "provided" : "not provided";
+	String.format(CASE_TEMPLATE,
+                  cf.getId(),
+                  findings,
+                  familyHistory,
+                  icdCodes);
+}
+
+List cases = caseFileDAO.getCaseFilesWithClinicalIndication(TestType.SNV_SENDOUT,
+    DateUtils.parseDate(receivedFrom, "yyyy-MM-dd"),
+    DateUtils.parseDate(receivedUntil, "yyyy-MM-dd"),
+    ICD_CODES);
+
+if(cases.isEmpty()) {
+	println("There are no cases matched the criteria");
+} else {
+	String messageBody = String.format(MESSAGE_BODY_TEMPLATE,
+	                                   currentUserBean.getCurrentUser().getEmail(),
+                                       receivedFrom,
+                                       receivedUntil,
+                                       cases.collect{cf -> caseToString(cf)}.join("\\n"));
+	if(StringUtils.isEmpty(emailTo)) {
+		println(messageBody);
+	} else {
+		emailSender.send(emailTo, MESSAGE_SUBJECT, messageBody);
+	}
+}
+' WHERE name='Vistara cases having a clinical indication';;;
+
+SET SQL_SAFE_UPDATES=1;;;
+            ]]>
+            </sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

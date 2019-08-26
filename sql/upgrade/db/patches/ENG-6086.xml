@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6086-01" author="mdaly">
+        <comment>Create new tables for new entities and extend existing HorizonDisease</comment>
+        <sql>
+            ALTER TABLE `HorizonCloudResult`
+                DROP KEY `FK_horizoncloudresult_horizoncloudresultoverride`,
+                DROP FOREIGN KEY `FK_horizoncloudresult_horizoncloudresultoverride_id`;
+
+            DROP TABLE `prodlims`.`HorizonCloudResultOverride`;
+
+
+            ALTER TABLE `HorizonCloudResult`
+                DROP COLUMN `cggRepeatCount1`,
+                DROP COLUMN `cggRepeatCount2`,
+                DROP COLUMN `cggRepeatCount3`,
+                DROP COLUMN `allele3minor`,
+
+                CHANGE COLUMN `plasmaHexAPercent` `plasma_hexAPercent` DECIMAL(19,2),
+                CHANGE COLUMN `plasmaHexActivity` `plasma_hexActivity` DECIMAL(19,2),
+                CHANGE COLUMN `wbcHexAPercent` `wbc_hexAPercent` DECIMAL(19,2),
+                CHANGE COLUMN `wbcHexActivity` `wbc_hexActivity` DECIMAL(19,2);
+
+            CREATE TABLE `prodlims`.`FragileXResult_alleleCounts` (
+                `FragileXResult_id` BIGINT(20) NOT NULL,
+                `alleleCounts` INTEGER,
+
+                KEY `FK_FragileXResult_alleleCounts_FragileXResult_id` (`FragileXResult_id`),
+                CONSTRAINT `FK_FragileXResult_alleleCounts_horizoncloudresult_id` FOREIGN KEY (`FragileXResult_id`) REFERENCES `HorizonCloudResult` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+        </sql>
+        <rollback>
+            ALTER TABLE `HorizonCloudResult`
+                ADD COLUMN `cggRepeatCount1` INTEGER,
+                ADD COLUMN `cggRepeatCount2` INTEGER,
+                ADD COLUMN `cggRepeatCount3` INTEGER,
+                ADD COLUMN `allele3minor` BOOLEAN,
+
+                CHANGE COLUMN `plasma_hexAPercent` `plasmaHexAPercent` DECIMAL(19,2),
+                CHANGE COLUMN `plasma_hexActivity` `plasmaHexActivity` DECIMAL(19,2),
+                CHANGE COLUMN `wbc_hexAPercent` `wbcHexAPercent` DECIMAL(19,2),
+                CHANGE COLUMN `wbc_hexActivity` `wbcHexActivity` DECIMAL(19,2);
+
+            DROP TABLE `prodlims`.`FragileXResult_alleleCounts`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6086-02" author="mdaly">
+        <comment>Drop column for Overridden Results</comment>
+        <sql>
+            ALTER TABLE `HorizonCloudResult` DROP COLUMN `resultOverride_id`;
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>
+
+

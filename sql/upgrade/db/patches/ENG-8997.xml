@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8997-01" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <indexExists indexName="cloudpanoramareport_listreference_7_idx" columnNames="limsReference"/>
+        </preConditions>
+        <comment>
+            Drop index created during production emergency before rebuilding a table.
+            Check it exists before dropping.
+            Forgive a few typos in the index name, it was created in a rush.
+        </comment>
+        <sql>
+            DROP INDEX `cloudpanoramareport_listreference_7_idx` ON `prodlims`.`cloudpanoramareport`;
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-8997-02" author="ashabanov">
+        <comment>
+            Convert cloudpanoramareport's lisReference column type to bigint and make it a NOT NULL to reflect the fact
+            that
+            LIMS case file id cannot be NULL.
+            Expected runtime is under 2 minutes.
+        </comment>
+        <sql>
+            ALTER TABLE `prodlims`.`cloudpanoramareport` CHANGE COLUMN `lisReference` `lisReference` BIGINT NOT NULL,
+            ADD KEY `cloudpanoramareport_lisReference_ind` (`lisReference`);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`cloudpanoramareport` DROP KEY `cloudpanoramareport_lisReference_ind`,
+            CHANGE COLUMN `lisReference` `lisReference` VARCHAR(255) NULL,
+            ADD KEY `cloudpanoramareport_listreference_7_idx` (`lisReference`);
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

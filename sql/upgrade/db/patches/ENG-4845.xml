@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20160320-01" author="dchettupuzha">
+        <comment>Set default passwordhash value to null</comment>
+        <sql>
+            ALTER TABLE `user` MODIFY `passwordhash` VARCHAR(255) null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20160503-01" author="dchettupuzha">
+        <comment>Update password for care user in Users table (Will not be used but just in case</comment>
+        <sql>
+            update user set passwordhash='DC9j1MbXe/WOA2H9PUhm0GVNOh1vPXPWXY3yD4RebLo=' where email ='care@natera.com';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

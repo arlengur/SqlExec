@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6292-01" author="kzakharov">
+        <comment>Sendout framework - Order management</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`sendoutorder` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            casefile_id BIGINT(20) NOT NULL,
+            state VARCHAR(255) NOT NULL,
+
+            CONSTRAINT `sendoutorder_casefile` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`sendoutorder`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6292-02" author="kzakharov">
+        <comment>Sendout framework - Panel static info</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`sendoutpanel` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            testtype VARCHAR(255) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            description VARCHAR(255) NOT NULL,
+            hl7Name VARCHAR(255) NOT NULL,
+            hl7Code VARCHAR(255) NOT NULL
+            );
+
+            CREATE TABLE `prodlims`.`testcondition` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            name VARCHAR(255) NOT NULL,
+            description VARCHAR(255),
+            hl7Code VARCHAR(255),
+            mutation VARCHAR(255)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutpanel_testcondition` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            panel_id BIGINT(20) NOT NULL,
+            testcondition_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutpanel_testcondition_panel` FOREIGN KEY (`panel_id`) REFERENCES `sendoutpanel` (`id`),
+            CONSTRAINT `sendoutpanel_testcondition_testcondition` FOREIGN KEY (`testcondition_id`) REFERENCES
+            `testcondition` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`sendoutpanel_testcondition`;
+            drop table if exists `prodlims`.`testcondition`;
+            drop table if exists `prodlims`.`sendoutpanel`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6292-03" author="kzakharov">
+        <comment>Sendout framework - Lab orders</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`sendoutlaborder` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            ordersent DATETIME,
+            order_id BIGINT(20),
+            orderType VARCHAR(255) NOT NULL,
+
+            CONSTRAINT `sendoutlaborder_order` FOREIGN KEY (`order_id`) REFERENCES `documentinfo` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutlaborder_results` (
+            sendoutlaborder_id BIGINT(20) NOT NULL,
+            results_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutlaborder_results_order` FOREIGN KEY (`sendoutlaborder_id`) REFERENCES `sendoutlaborder`
+            (`id`),
+            CONSTRAINT `sendoutlaborder_results_result` FOREIGN KEY (`results_id`) REFERENCES `documentinfo` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`sendoutlaborder_results`;
+            drop table if exists `prodlims`.`sendoutlaborder`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6292-04" author="kzakharov">
+        <comment>Sendout framework - Panel management</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`sendoutpanelorder` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            state VARCHAR(255),
+            provider VARCHAR(255),
+            panel_id BIGINT(20) NOT NULL,
+            order_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutpanelorder_panel` FOREIGN KEY (`panel_id`) REFERENCES `sendoutpanel` (`id`),
+            CONSTRAINT `sendoutpanelorder_order` FOREIGN KEY (`order_id`) REFERENCES `sendoutorder` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutpanelorder_reasoncode` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            panelorder_id BIGINT(20) NOT NULL,
+            reasoncode_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutpanelorder_reasoncode_panelorder` FOREIGN KEY (`panelorder_id`) REFERENCES
+            `sendoutpanelorder` (`id`),
+            CONSTRAINT `sendoutpanelorder_reasoncode_reasoncode` FOREIGN KEY (`reasoncode_id`) REFERENCES `reasoncode`
+            (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutpanelorder_draw` (
+            panelorder_id BIGINT(20) NOT NULL,
+            familyposition VARCHAR(255) NOT NULL,
+            sampledraw VARCHAR(255) NOT NULL
+            );
+
+            CREATE TABLE `prodlims`.`sendoutpanelorder_sample` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            panelorder_id BIGINT(20) NOT NULL,
+            sample_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutpanelorder_sample_panelorder` FOREIGN KEY (`panelorder_id`) REFERENCES
+            `sendoutpanelorder` (`id`),
+            CONSTRAINT `sendoutpanelorder_sample_sample` FOREIGN KEY (`sample_id`) REFERENCES `sample` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutpanelorder_sendoutlaborder` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            panelorder_id BIGINT(20) NOT NULL,
+            sendoutlaborder_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutpanelorder_sendoutlaborder_panelorder` FOREIGN KEY (`panelorder_id`) REFERENCES
+            `sendoutpanelorder` (`id`),
+            CONSTRAINT `sendoutpanelorder_sendoutlaborder_sendoutlaborder` FOREIGN KEY (`sendoutlaborder_id`) REFERENCES
+            `sendoutlaborder` (`id`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`sendoutpanelorder_draw`;
+            drop table if exists `prodlims`.`sendoutpanelorder_reasoncode`;
+            drop table if exists `prodlims`.`sendoutpanelorder`;
+            drop table if exists `prodlims`.`sendoutpanelorder_sample`;
+            drop table if exists `prodlims`.`sendoutpanelorder_sendoutlaborder`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6292-05" author="kzakharov">
+        <comment>Sendout framework - Results management</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`sendoutpanelresult` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            resultCode VARCHAR(255) NOT NULL,
+            receivedOn DATETIME NOT NULL,
+            createdBy_id BIGINT(20) NOT NULL,
+            panelorder_id BIGINT(20) NOT NULL,
+            status VARCHAR(255) NOT NULL,
+
+            CONSTRAINT `sendoutpanelresult_panelorder` FOREIGN KEY (`panelorder_id`) REFERENCES `sendoutpanelorder`
+            (`id`),
+            CONSTRAINT `sendoutpanelresult_user` FOREIGN KEY (`createdBy_id`) REFERENCES `user` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutpanelresult_documentinfo` (
+            panelresult_id BIGINT(20) NOT NULL,
+            receiveddocument_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutpanelresult_documentinfo_result` FOREIGN KEY (`panelresult_id`) REFERENCES
+            `sendoutpanelresult` (`id`),
+            CONSTRAINT `sendoutpanelresult_documentinfo_document` FOREIGN KEY (`receiveddocument_id`) REFERENCES
+            `documentinfo` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sendoutreport` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            overallResultCode VARCHAR(255) NOT NULL,
+            reportStatus VARCHAR(255) NOT NULL,
+            patientInfoReportView_id BIGINT(20) NOT NULL,
+            testInfoReportView_id BIGINT(20) NOT NULL,
+            sampleInfoReportView_id BIGINT(20) NOT NULL,
+            resultSummaryReportView_id BIGINT(20) NOT NULL,
+            detailedFindingsReportView_id BIGINT(20) NOT NULL,
+            diseaseSupplementReportView_id BIGINT(20) NOT NULL
+            );
+
+            CREATE TABLE `prodlims`.`patientInfoReportView` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            CONSTRAINT `patientInfoReportView_report` FOREIGN KEY (`id`) REFERENCES `sendoutreport` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`testInfoReportView` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            CONSTRAINT `testInfoReportView_report` FOREIGN KEY (`id`) REFERENCES `sendoutreport` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sampleInfoReportView` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            CONSTRAINT `sampleInfoReportView_report` FOREIGN KEY (`id`) REFERENCES `sendoutreport` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`resultSummaryReportView` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            CONSTRAINT `resultSummaryReportView_report` FOREIGN KEY (`id`) REFERENCES `sendoutreport` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`detailedFindingsReportView` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            CONSTRAINT `detailedFindingsReportView_report` FOREIGN KEY (`id`) REFERENCES `sendoutreport` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`diseaseSupplementReportView` (
+            id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            CONSTRAINT `diseaseSupplementReportView_report` FOREIGN KEY (`id`) REFERENCES `sendoutreport` (`id`)
+            );
+
+
+            CREATE TABLE `prodlims`.`sendoutreport_result` (
+            report_id BIGINT(20) NOT NULL,
+            panelresult_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `sendoutreport_result_report` FOREIGN KEY (`report_id`) REFERENCES `sendoutreport` (`id`),
+            CONSTRAINT `sendoutreport_result_result` FOREIGN KEY (`panelresult_id`) REFERENCES `sendoutpanelresult`
+            (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`patientInfoReport_field` (
+            patientInfoReport_id BIGINT(20) NOT NULL,
+            fieldId VARCHAR(255) NOT NULL,
+            fieldValue VARCHAR(255),
+
+            CONSTRAINT `patientInfoReport_field_report` FOREIGN KEY (`patientInfoReport_id`) REFERENCES `patientInfoReportView` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`testInfoReport_field` (
+            testInfoReport_id BIGINT(20) NOT NULL,
+            fieldId VARCHAR(255) NOT NULL,
+            fieldValue VARCHAR(255),
+
+            CONSTRAINT `testInfoReport_field_report` FOREIGN KEY (`testInfoReport_id`) REFERENCES `testInfoReportView` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`sampleInfoReport_field` (
+            sampleInfoReport_id BIGINT(20) NOT NULL,
+            fieldId VARCHAR(255) NOT NULL,
+            fieldValue VARCHAR(255),
+
+            CONSTRAINT `sampleInfoReport_field_report` FOREIGN KEY (`sampleInfoReport_id`) REFERENCES `sampleInfoReportView` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`resultSummaryReport_field` (
+            resultSummaryReport_id BIGINT(20) NOT NULL,
+            fieldId VARCHAR(255) NOT NULL,
+            fieldValue VARCHAR(255),
+
+            CONSTRAINT `resultSummaryReport_field_report` FOREIGN KEY (`resultSummaryReport_id`) REFERENCES `resultSummaryReportView` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`detailedFindingsReport_field` (
+            detailedFindingsReport_id BIGINT(20) NOT NULL,
+            fieldId VARCHAR(255) NOT NULL,
+            fieldValue VARCHAR(255),
+
+            CONSTRAINT `detailedFindingsReport_field_report` FOREIGN KEY (`detailedFindingsReport_id`) REFERENCES `detailedFindingsReportView` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`diseaseSupplementReport_field` (
+            diseaseSupplementReport_id BIGINT(20) NOT NULL,
+            fieldId VARCHAR(255) NOT NULL,
+            fieldValue VARCHAR(255),
+
+            CONSTRAINT `diseaseSupplementReport_field_report` FOREIGN KEY (`diseaseSupplementReport_id`) REFERENCES `diseaseSupplementReportView` (`id`)
+            );
+
+            CREATE TABLE `prodlims`.`testconditionresult` (
+            id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            resultcode VARCHAR(255) NOT NULL,
+            resulttext VARCHAR(255),
+            testcondition_id BIGINT(20) NOT NULL,
+            panelresult_id BIGINT(20) NOT NULL,
+
+            CONSTRAINT `testconditionresult_panelresult` FOREIGN KEY (`panelresult_id`) REFERENCES `sendoutpanelresult`
+            (`id`),
+            CONSTRAINT `testconditionresult_testcondition` FOREIGN KEY (`testcondition_id`) REFERENCES `testcondition`
+            (`id`)
+            );
+
+            ALTER TABLE `prodlims`.`cncreportshipmentrecord`
+            ADD COLUMN `sendout_report_id` BIGINT(20);
+
+            ALTER TABLE `prodlims`.`cncreportshipmentrecord`
+            ADD CONSTRAINT `cnc_sendout_report` FOREIGN KEY (`sendout_report_id`) REFERENCES `sendoutreport` (`id`);
+
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`sendoutpanelresult`;
+            drop table if exists `prodlims`.`sendoutpanelresult_documentinfo`;
+            drop table if exists `prodlims`.`patientInfoReport_field`;
+            drop table if exists `prodlims`.`testInfoReport_field`;
+            drop table if exists `prodlims`.`sampleInfoReport_field`;
+            drop table if exists `prodlims`.`resultSummaryReport_field`;
+            drop table if exists `prodlims`.`detailedFindingsReport_field`;
+            drop table if exists `prodlims`.`diseaseSupplementReport_field`;
+            drop table if exists `prodlims`.`patientInfoReportView`;
+            drop table if exists `prodlims`.`testInfoReportView`;
+            drop table if exists `prodlims`.`sampleInfoReportView`;
+            drop table if exists `prodlims`.`resultSummaryReportView`;
+            drop table if exists `prodlims`.`detailedFindingsReportView`;
+            drop table if exists `prodlims`.`diseaseSupplementReportView`;
+            drop table if exists `prodlims`.`sendoutreport`;
+            drop table if exists `prodlims`.`sendoutreport_result`;
+            drop table if exists `prodlims`.`testconditionresult`;
+
+            ALTER TABLE `prodlims`.`cncreportshipmentrecord`
+            DROP FOREIGN KEY `cnc_sendout_report`,
+            DROP COLUMN `sendout_report_id`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6292-06" author="kzakharov">
+        <comment>Sendout framework - SNV Panel lookup values</comment>
+        <sql>
+            INSERT INTO `prodlims`.`sendoutpanel` (id, testtype, name, hl7Name, hl7Code, description)
+            VALUES (1, 'SNV_SENDOUT', 'SNV_MAIN', 'n/a', 'n/a', 'NIPT SNV Disease Panel');
+
+            INSERT INTO `prodlims`.`testcondition` (id, name, mutation, hl7Code) VALUES (1, 'Noonan syndrome 4', 'SOS1', 'SOS1');
+            INSERT INTO `prodlims`.`testcondition` (id, name, mutation, hl7Code) VALUES (2, 'Noonan syndrome 9', 'SOS2', 'SOS2');
+
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (1, 1);
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (1, 2);
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`sendoutorder`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

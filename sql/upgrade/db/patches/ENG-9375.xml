@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9375-01" author="dzgursky">
+        <comment>Insert new Control Sample type for NTC</comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`,
+            `sourcetypename`, `sampletypename`)
+            values ('no_template_control', 'No Template Control (NTC)', null, null, '', '');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `prodlims`.`sampletype` where name in ('no_template_control');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

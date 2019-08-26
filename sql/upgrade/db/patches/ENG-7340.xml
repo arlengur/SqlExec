@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7340-01" author="mdaly">
+        <comment>Add new supplement for Fragile X that combines intermediate and premutation supplements. Then associate
+            the new supplement with the two Fragile X templates.
+
+            Template Description: ID
+            One allele intermediate (45-54) and one allele premutation (55-90): 33
+            One allele intermediate (45-54) and one allele premutation (91-200): 34
+        </comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondiseasesupplement`
+            (`id`, `label`, `content`)
+            VALUES
+            (296, 'Intermediate and Premuation Fragile X Syndrome', 'com/natera/lims/service/horizon/report/supplements/fragile-x-intermediate-and-premuation.xml');
+
+            INSERT INTO `prodlims`.`horizondisease_horizondiseasesupplement`
+            (`supplement_id`, `template_id`, `disease_id`)
+            VALUES
+            (296, 33, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FMR1')),
+            (296, 34, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'FMR1'));
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

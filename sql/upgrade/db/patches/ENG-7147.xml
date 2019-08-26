@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7147-01" author="mdubrovin">
+        <comment>Add 'Reporting escalation' category and put it into the same categoryGroup as 'Lab Hold' and 'Generic Hold' categories</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            INSERT INTO prodlims.category (name, deleted) VALUES('Reporting escalation', 0);
+
+            SET @category_id = LAST_INSERT_ID();
+
+            INSERT INTO prodlims.categorygroup_category (categorygroup_id, category_id)
+            SELECT cg.id, @category_id FROM prodlims.categorygroup as cg WHERE cg.name = 'Panorama prenatal testing';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM prodlims.categorygroup_category
+            WHERE category_id =
+            (SELECT c.id FROM prodlims.category as c where c.name = 'Reporting escalation' );
+
+            DELETE FROM prodlims.category WHERE name='Reporting escalation';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

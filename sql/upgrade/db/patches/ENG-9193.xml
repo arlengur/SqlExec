@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9193-01" author="mdaly">
+        <comment>Add new supplement for Alpha-Thalassemia, "Silent Carrier (Point Mutation) for Alpha-Thalassemia"
+            Associate it with the "One pathogenic point mutation" and "One likely pathogenic point mutation" templates:
+
+            Template Description: ID
+            One pathogenic point mutation: 139
+            One likely pathogenic point mutation: 140
+
+            Existing supplement ("Silent Carrier for Alpha-Thalassemia") is 136 (for rollback)
+        </comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondiseasesupplement`
+            (`id`, `label`, `content`)
+            VALUES
+            (297, 'Silent Carrier (Point Mutation) for Alpha-Thalassemia', 'com/natera/lims/service/horizon/report/supplements/alpha-thalassemia-point-mutation-silent-carrier.xml');
+
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement`
+            SET `supplement_id` = 297
+            WHERE `template_id` IN (139, 140) AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement`
+            SET `supplement_id` = 136
+            WHERE `template_id` IN (139, 140) AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+
+            DELETE FROM `prodlims`.`horizondiseasesupplement` WHERE `id` = 297;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9193-02" author="mdaly">
+        <comment>Add new supplement for Alpha-Thalassemia, "One Deletion and One Point Mutation for Alpha-Thalassemia".
+            Associate it with the three (cis, trans, unknown) "One gene deleted and one point mutation" templates:
+
+            Template Description: ID
+            One gene deleted and one point mutation (cis): 141
+            One gene deleted and one point mutation (trans): 142
+            One gene deleted and one point mutation (cis or trans unknown): 143
+
+            Existing supplement ("Positive Alpha-Thalassemia") is 137 (for rollback).
+        </comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondiseasesupplement`
+            (`id`, `label`, `content`)
+            VALUES
+            (298, 'One Deletion and One Point Mutation for Alpha-Thalassemia', 'com/natera/lims/service/horizon/report/supplements/alpha-thalassemia-1-gene-deleted-and-1-point-mutation.xml');
+
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement`
+            SET `supplement_id` = 298
+            WHERE `template_id` IN (141, 142, 143) AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement`
+            SET `supplement_id` = 137
+            WHERE `template_id` IN (141, 142, 143) AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+
+            DELETE FROM `prodlims`.`horizondiseasesupplement` WHERE `id` = 298;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

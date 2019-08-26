@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6828-01" author="jdavid">
+        <comment>updating script: Cancel Horizon Panel Orders</comment>
+        <sql>
+
+            SET sql_safe_updates=0;
+
+            <![CDATA[
+            update `prodlims`.`script` set code =
+'
+import com.natera.lims.datamodel.core.*
+import com.natera.lims.datamodel.horizon.*
+import com.natera.lims.datamodel.ivf.prod.*
+import com.natera.lims.api.model.core.*
+
+def user = currentUserBean.getCurrentUser()
+def cf = caseFileDAO.get(CaseFileID.toLong())
+
+if(cf.getTestType().isCarrierScreening2()) {
+
+  if (!cf.getReportDiseaseResults().isEmpty()) {
+    println "Can''t cancel panel orders for ${cf.getId()}. Results have been received by the case."
+    return
+  }
+
+  if(sendCancellationOrders.equalsIgnoreCase("yes") || sendCancellationOrders.equalsIgnoreCase("y")) {
+
+    for (def horizonPanelOrder : (List<HorizonPanelOrder>) cf.getNonCanceledPanelOrders()) {
+
+      boolean needToSendHL7CancelingSendOutOrder = horizonPanelOrderService.isInStateForSendingHL7CancelingSendOutOrder(horizonPanelOrder)
+
+      if (horizonPanelOrder.getShipDestinationType() == ShipDestinationType.MTSINAI) {
+        println horizonPanelOrder.id
+        CS2PostAccessionerHelper.prepareToCancelPanelOrder(horizonPanelOrder)
+        if (needToSendHL7CancelingSendOutOrder) {
+          sendOutHL7OrdersLauncher.createHL7Order(horizonPanelOrder , HL7SendOutOrder.OrderControlType.CANCEL_ORDER)
+          horizonPanelOrder.removeSamples()
+        }
+
+      } else if (horizonPanelOrder.getShipDestinationType() == ShipDestinationType.BMGL) {
+        CS2PostAccessionerHelper.prepareToCancelPanelOrder(horizonPanelOrder)
+        horizonPanelOrder.removeSamples()
+      }
+
+    }
+
+    def note = new Note()
+    note.setSubject("Panels cancelled and Cancellation orders sent to Clinic")
+    note.setBody("Panels cancelled and Cancellation orders sent to Clinic by ${user}")
+    note.setUser(user)
+	cf.addNote(note)
+	println "Panels cancelled on LIMS and cancellation orders sent"
+
+  }
+
+  else {
+
+    if(sendCancellationOrders.equalsIgnoreCase("no") || sendCancellationOrders.equalsIgnoreCase("n")) {
+
+      List<HorizonPanelOrder> panelOrders = (List<HorizonPanelOrder>) cf.getPanelOrders()
+
+      panelOrders.each { hpo ->
+        hpo.removeSamples()
+        hpo.status = "HORIZON_PANEL_CANCELLED"
+      }
+
+      def note = new Note()
+      note.setSubject("Panels cancelled only on LIMS")
+      note.setBody("Panels cancelled only on LIMS by ${user}")
+      note.setUser(user)
+      cf.addNote(note)
+      println "Panels cancelled only on LIMS"
+
+    }
+
+  }
+
+}
+
+else {
+
+  println "${cf.getId()} is not a CARRIER_SCREENING_2 case."
+
+}
+
+//For ''sendCancellationOrders'' type yes/y for cancelling panels and sending cancellation orders to clinic
+//type no/n for cancelling Panels only on LIMS and not sending cancellation orders to clinic
+'
+WHERE name = 'Cancel Horizon Panel Orders (Only LIMS OR LIMS & Clinic)';
+
+            ]]>
+
+            SET sql_safe_updates=1;
+        </sql>
+        <rollback>
+
+        SET sql_safe_updates=0;
+
+        <![CDATA[
+            update `prodlims`.`script` set code =
+'
+import com.natera.lims.datamodel.core.*
+import com.natera.lims.datamodel.horizon.*
+import com.natera.lims.datamodel.ivf.prod.*
+import java.util.concurrent.atomic.AtomicBoolean
+import com.google.common.collect.*
+
+
+def user = currentUserBean.getCurrentUser();
+def cf
+def panelOrders
+AtomicBoolean sendEmail = new AtomicBoolean(false)
+
+cf = caseFileDAO.get(CaseFileID.toLong())
+Map<String, HorizonPanelOrder> panelOrdersToSaveMap = new HashMap<String, HorizonPanelOrder>() //Empty Map as there are no panels to Save
+Map<String, HorizonPanelOrder> panelOrdersToCancelMap = new HashMap<String, HorizonPanelOrder>() //HPOs that are to be cancelled (all) to be added to this
+boolean hasGenderChange = false
+StringBuilder panelsToCancelStringBuilder = new StringBuilder()
+
+if(cf.getTestType().isCarrierScreening2())
+{
+	panelOrders= cf.getPanelOrders()
+	if(sendCancellationOrders.equalsIgnoreCase("yes") || sendCancellationOrders.equalsIgnoreCase("y"))
+	{
+		panelOrders.each
+		{hpo->
+        	if(hpo.getPanel().getShipDestinationType() == com.natera.lims.api.model.core.ShipDestinationType.BMGL)
+        	{
+          	sendEmail.set(true) //Need to send email to Baylor
+          	panelsToCancelStringBuilder.append(hpo.getPanel().getHl7Code())
+        		panelsToCancelStringBuilder.append("(Order ID: ")
+        		panelsToCancelStringBuilder.append(hpo.getId())
+        		panelsToCancelStringBuilder.append(") ")
+        		String panelName = hpo.getPanel().getName()
+        		panelOrdersToCancelMap.put(panelName, hpo)
+            hpo.removeSamples()
+    				hpo.status = com.natera.lims.api.model.core.LimsState.HORIZON_PANEL_CANCELLED
+        	}
+        	if (hpo.getPanel().getShipDestinationType() == com.natera.lims.api.model.core.ShipDestinationType.MTSINAI)
+        	{
+				horizonCasePanelManagerService.cancelPanelOrder(hpo, sendEmail)
+        	}
+		}
+		if(sendEmail)
+		{
+    		String panelsToOrder = "" //No Panels to order here if all panels are cancellations
+    		String panelsToKeep = "" //No panels to keep here if all panels are cancellations
+    		String panelsToCancel = panelsToCancelStringBuilder.toString()
+    		Iterable<HorizonPanelOrder> modifiedHorizonPanelOrders = Iterables.concat(panelOrdersToCancelMap.values(), panelOrdersToSaveMap.values())
+    		println "${cf.id} ${panelsToCancel}"
+    		horizonCasePanelManagerService.sendOrderModificationEmailToBmgl(cf.getParentKitForHorizon(), panelsToOrder, panelsToKeep, panelsToCancel, modifiedHorizonPanelOrders, hasGenderChange, cf.getPatient().getGender())
+		}
+    	Note note = new Note()
+  		note.setSubject("Panels cancelled and Cancellation orders sent to Clinic");
+		note.setBody("Panels cancelled and Cancellation orders sent to Clinic by ${user}");
+  		note.setUser(user)
+		cf.addNote(note)
+		println "Panels cancelled on LIMS and cancellation orders sent"
+	}
+	else
+	{
+		if(sendCancellationOrders.equalsIgnoreCase("no") || sendCancellationOrders.equalsIgnoreCase("n"))
+		{
+			panelOrders.each
+			{hpo->
+				hpo.removeSamples()
+				hpo.status = com.natera.lims.api.model.core.LimsState.HORIZON_PANEL_CANCELLED
+		    }
+			Note note = new Note()
+  			note.setSubject("Panels cancelled only on LIMS");
+			note.setBody("Panels cancelled only on LIMS by ${user}");
+  			note.setUser(user)
+			cf.addNote(note)
+			println "Panels cancelled only on LIMS"
+		}
+	}
+}
+else
+{
+ 	println "${cf.getId()} is not a Horizon Case"
+}
+
+//For ''sendCancellationOrders'' type yes/y for cancelling Panels and sending orders to Clinic
+//type No/N for cancelling Panels only on LIMS and not sending cancellation orders to clinic
+'
+WHERE name = 'Cancel Horizon Panel Orders (Only LIMS OR LIMS & Clinic)';
+
+            ]]>
+
+        SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

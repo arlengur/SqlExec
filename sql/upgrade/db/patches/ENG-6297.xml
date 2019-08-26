@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6297-01" author="tmcfarlin">
+        <comment>Sendout framework</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`testconditionresult` add column resultname VARCHAR(255);
+            ALTER TABLE `prodlims`.`testconditionresult` add column resultunit VARCHAR(50);
+            ALTER TABLE `prodlims`.`testconditionresult` add column resultflag VARCHAR(25);
+            ALTER TABLE `prodlims`.`testconditionresult` add column resultstatus VARCHAR(25);
+            ALTER TABLE `prodlims`.`testconditionresult` add column resultnote VARCHAR(2000);
+
+            ALTER TABLE `prodlims`.`sendoutpanelresult` add column sendoutLabAccessionId VARCHAR(255);
+            ALTER TABLE `prodlims`.`sendoutpanelresult` add column resultNote VARCHAR(2000);
+
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`testconditionresult` drop column resultname;
+            ALTER TABLE `prodlims`.`testconditionresult` drop column resultunit;
+            ALTER TABLE `prodlims`.`testconditionresult` drop column resultflag;
+            ALTER TABLE `prodlims`.`testconditionresult` drop column resultstatus;
+            ALTER TABLE `prodlims`.`testconditionresult` drop column resultnote;
+
+            ALTER TABLE `prodlims`.`sendoutpanelresult` drop column sendoutLabAccessionId;
+            ALTER TABLE `prodlims`.`sendoutpanelresult` drop column resultNote;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

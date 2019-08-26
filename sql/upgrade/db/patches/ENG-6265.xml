@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6265-01" author="mdaly">
+        <comment>Restore the one pseudo variant, positive enzyme scenario for HEXA/TSE.</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+                `templateCode` = 'One pseudodeficiency variant detected; positive enzyme',
+                `status` = 'Pseudodeficiency VARIANT DETECTED for Tay-Sachs Disease',
+                `variant` = 'The pseudodeficiency variant name of variant-6327529485231519467 was detected in the HEXA gene. Positive enzyme analysis. Hexosaminidase Activity. Plasma: add HEX activity plasma nmol/hr/ml-5140538871613018367; WBC: add HEX activity WBC nmol/hr/mg-6025429726900915823; Hex A %. Plasma add HEX A % plasma-4613384791897068225; WBC add HEX A % WBC-4749141054868490364. This Pseudodeficiency allele is known to cause false positive results on enzyme-based Tay-Sachs Disease carrier screening. This benign variant does not increase the risk for Tay-Sachs Disease in this individual''s children.',
+                `supplementPath` = NULL
+            WHERE templatecode = 'One variant and one Pseudodeficiency variant detected; positive enzyme'
+            ;
+
+            INSERT INTO `prodlims`.`template_variable` (`template_id`, `variable_id`)
+                SELECT t.id, v.id FROM `prodlims`.`horizondiseasetemplate` t, `prodlims`.`horizontemplatevariable` v WHERE
+                `templateCode` = 'One pseudodeficiency variant detected; positive enzyme'	 AND
+                `code` IN (
+                'name of variant-6327529485231519467',
+                'add HEX activity plasma nmol/hr/ml-5140538871613018367',
+                'add HEX activity WBC nmol/hr/mg-6025429726900915823',
+                'add HEX A % plasma-4613384791897068225',
+                'add HEX A % WBC-4749141054868490364');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+    </changeSet>
+    <changeSet id="ENG-6265-02" author="mdaly">
+        <comment>Fix spacing on negative DNA, indeterminate enzyme (possible Sandhoff carrier) template.</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `variant` = REPLACE(`variant`, '.The Hex A% activity is high in this specimen', '. The Hex A% activity is high in this specimen')
+            WHERE `templateCode` = 'TS DNA normal; indeterminate enzyme (possible Sandhoff carrier)';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

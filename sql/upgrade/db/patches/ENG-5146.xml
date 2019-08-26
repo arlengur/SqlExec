@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5146_01" author="nfleming">
+        <comment>Add DiGeorge trim fraction QC statistic (TOTAL_EXCLUSION_RATE_DI_GEORGE)</comment>
+        <sql>
+            INSERT INTO qc_statistics_type (description, name, applicability) VALUES ('TOTAL_EXCLUSION_RATE_DI_GEORGE', 'TOTAL_EXCLUSION_RATE_DI_GEORGE', 'PLASMA');
+        </sql>
+        <rollback>
+            DELETE FROM qc_statistics_type WHERE name = 'TOTAL_EXCLUSION_RATE_DI_GEORGE';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

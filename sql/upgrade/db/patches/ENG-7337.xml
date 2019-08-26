@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7337-01" author="mdaly">
+        <comment>Update CFTR scenario for pathogenic variant (other than R11H) and polyT requested.
+            Id for pathogenic (non-R117H) and poly T scenario is 46
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Positive for the pathogenic variant ${results[0].variantName} in the CFTR gene. As requested by provider, the ${"[polyT values]"} variants were detected in the PolyT tract of the CFTR gene pair. A small number of Cystic Fibrosis (CF) carriers may have mild respiratory or other CF-related symptoms. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 46;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

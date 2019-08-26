@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5860-01" author="jdavid">
+        <comment>Add femalePanel column into the Panel table</comment>
+        <sql>
+            alter table `prodlims`.`panel` add column `female_panel` bit(1) NOT NULL DEFAULT b'0';
+        </sql>
+        <rollback>
+            alter table `prodlims`.`panel` drop column `female_panel`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-5860-02" author="jdavid">
+        <comment>Set female_panel value to true for female panels</comment>
+        <sql>
+            update `prodlims`.`panel` set `female_panel` = true where name in ('FRAX_F', 'FRAX_F_B', 'CS_FRAX_F', 'DMD_F', 'DMD_F_B');
+        </sql>
+        <rollback>
+            update `prodlims`.`panel` set `female_panel` = false where name in ('FRAX_F', 'FRAX_F_B', 'CS_FRAX_F', 'DMD_F', 'DMD_F_B');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

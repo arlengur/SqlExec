@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="ENG-6385-01" author="mdaly">
+        <comment>Migrate fields from HorizonResult to HorizonReport.</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizon_report`
+                ADD COLUMN `requisitionPanel` VARCHAR(20) AFTER `third_party_kit_id`,
+                ADD COLUMN `riskURL` VARCHAR(50) AFTER `requisitionPanel`,
+                ADD COLUMN `shorttnp` VARCHAR(50) AFTER `riskURL`;
+
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`horizon_report` r JOIN `prodlims`.`horizon_report_result` rr on r.`result_id` = rr.`id`
+                SET r.`requisitionPanel` = rr.`requisitionPanel`,
+                    r.`riskURL` = rr.`riskURL`,
+                    r.`shorttnp` = rr.`shorttnp`;
+
+            SET SQL_SAFE_UPDATES=1;
+
+            ALTER TABLE `prodlims`.`horizon_report_result`
+                DROP COLUMN `requisitionPanel`,
+                DROP COLUMN `riskURL`,
+                DROP COLUMN `shorttnp`;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizon_report_result`
+                ADD COLUMN `requisitionPanel` VARCHAR(20) AFTER `id`,
+                ADD COLUMN `riskURL` VARCHAR(50) AFTER `requisitionPanel`,
+                ADD COLUMN `shorttnp` VARCHAR(50);
+
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`horizon_report_result` rr JOIN `prodlims`.`horizon_report` r on r.`result_id` = rr.`id`
+                SET rr.`requisitionPanel` = r.`requisitionPanel`,
+                    rr.`riskURL` = r.`riskURL`,
+                    rr.`shorttnp` = r.`shorttnp`;
+
+            SET SQL_SAFE_UPDATES=1;
+
+            ALTER TABLE `prodlims`.`horizon_report`
+                DROP COLUMN `requisitionPanel`,
+                DROP COLUMN `riskURL`,
+                DROP COLUMN `shorttnp`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6385-02" author="mdaly">
+        <comment>Add table for HorizonLdtResult.</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizon_report_ldtResult` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `recommendation` VARCHAR(4096) NOT NULL,
+            PRIMARY KEY (`id`)
+            )  ENGINE = InnoDB  CHARSET=latin1;
+
+            CREATE TABLE `prodlims`.`horizonReportLdtResult_ldtDiseaseResult` (
+            `ldtResult_id` bigint(20) NOT NULL,
+            `ldtDiseaseResult_id` bigint(20) NOT NULL,
+            CONSTRAINT `FK_hrlr_ldtDiseaseResult` FOREIGN KEY (`ldtDiseaseResult_id`) REFERENCES `HorizonLdtDiseaseResult` (`id`),
+            CONSTRAINT `FK_hrlr_horizonLdtResult` FOREIGN KEY (`ldtResult_id`) REFERENCES `horizon_report_ldtresult` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE `prodlims`.`horizonReportLdtResult_ldtDiseaseResult`;
+            DROP TABLE `prodlims`.`horizon_report_ldtResult`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6385-03" author="mdaly">
+        <comment>Add DTYPE and HorizonLdtReport-specific fields to horizon_report.</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizon_report`
+                ADD COLUMN `DTYPE` VARCHAR(31) NOT NULL FIRST,
+
+                ADD COLUMN `initRecord_id` BIGINT(20) AFTER `horizonpanel_id`,
+                ADD COLUMN `ldtresult_id` BIGINT(20) AFTER `result_id`,
+
+                ADD CONSTRAINT `FK_HorizonReport_HorizonInitRecord_id` FOREIGN KEY (`initRecord_id`) REFERENCES `HorizonInitRecord` (`id`),
+                ADD CONSTRAINT `FK_HorizonReport_HorizonLdtResult_id` FOREIGN KEY (`ldtresult_id`) REFERENCES `horizon_report_ldtResult` (`id`);
+
+            UPDATE `prodlims`.`horizon_report` SET `DTYPE` = 'HorizonReport' WHERE id > 0;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizon_report`
+                DROP COLUMN `DTYPE`,
+
+                DROP COLUMN `initRecord_id`,
+                DROP COLUMN `ldtresult_id`,
+
+                DROP FOREIGN KEY `FK_HorizonReport_HorizonInitRecord_id`,
+                DROP FOREIGN KEY `FK_HorizonReport_HorizonLdtResult_id`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

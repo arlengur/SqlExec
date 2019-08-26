@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7267-01" author="mdaly">
+        <comment>Generic templates and ids (autosomal recessive).
+            Path: 12
+            Likely Path: 13
+            2 unknown: 14
+            2 cis: 15
+            2 trans: 16
+
+            CF-specific templates and ids.
+            c.3454G>C: 7
+        </comment>
+        <sql>
+            -- Update text for CF-specific template
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Positive for the pathogenic variant c.3454G>C (p.D1152H) in the CFTR gene. This variant is associated with an atypical presentation and has varying consequences. Some individuals with this variant, along with another CFTR pathogenic variant, have Cystic Fibrosis, while some individuals do not (PMID 23974870). A small number of Cystic Fibrosis (CF) carriers may have mild respiratory or other CF-related symptoms. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 7;
+
+            -- New templates for CFTR
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (154, 6, 'PATHOGENIC', 'Pathogenic variant detected', 'CARRIER for Cystic Fibrosis', 'Positive for the pathogenic variant ${results[0].variantName} in the CFTR gene. A small number of Cystic Fibrosis (CF) carriers may have mild respiratory or other CF-related symptoms. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (155, 7, 'LIKELY_PATHOGENIC', 'Likely pathogenic variant detected', 'CARRIER for Cystic Fibrosis', 'Positive for the likely pathogenic variant ${results[0].variantName} in the CFTR gene. A small number of Cystic Fibrosis (CF) carriers may have mild respiratory or other CF-related symptoms. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (157, 8, 'TWO_CIS', 'Two variants detected (cis)', 'CARRIER for Cystic Fibrosis', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in cis (on the same chromosome) in the CFTR gene. A small number of Cystic Fibrosis (CF) carriers may have mild respiratory or other CF-related symptoms. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+
+            -- Copies of generic; done to totally break CFTR from the generics
+            (156, 8, 'TWO_UNKNOWN', 'Two variants detected (cis or trans unknown)', 'POSITIVE for two variants in the gene associated with Cystic Fibrosis', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the CFTR gene. This individual may be affected with Cystic Fibrosis. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This analysis cannot determine if the CFTR variants are on the same (in cis) or opposite (in trans) chromosomes in this individual. Testing of parents or other close family members may assist in determining the phase of these variants. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.'),
+            (158, 8, 'TWO_TRANS', 'Two variants detected (trans)', 'POSITIVE for two variants in the gene associated with Cystic Fibrosis', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the CFTR gene. This individual is predicted to be affected with Cystic Fibrosis. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Cystic Fibrosis, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.');
+
+            -- Update any existing CFTR HorizonLdtDiseaseResults using the generic template
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 154 WHERE `template_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 155 WHERE `template_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 156 WHERE `template_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 157 WHERE `template_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 158 WHERE `template_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+
+            -- Update association between CFTR HorizonDisease and generic templates.
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 154 WHERE `diseaseResultTemplate_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 155 WHERE `diseaseResultTemplate_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 156 WHERE `diseaseResultTemplate_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 157 WHERE `diseaseResultTemplate_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 158 WHERE `diseaseResultTemplate_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+
+            -- Update the template-supplement association
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 154 WHERE `template_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 155 WHERE `template_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 156 WHERE `template_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 157 WHERE `template_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 158 WHERE `template_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'CFTR');
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

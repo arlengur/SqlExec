@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6618-01" author="dchettupuzha">
+        <comment>Insert new QC types for NGS</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('MedianClusterDensity', 'Median Cluster Density', 'CLUSTER_DENSITY_L1', 0),
+            ('MedianClusterDensity', 'Median Cluster Density', 'CLUSTER_DENSITY_L2', 0),
+            ('MedianClusterDensity', 'Median Cluster Density', 'CLUSTER_DENSITY_L3', 0),
+            ('MedianClusterDensity', 'Median Cluster Density', 'CLUSTER_DENSITY_L4', 0),
+            ('MinimumSignalIntensity', 'Minimum Signal Intensity', 'SIGNAL_INTENSITY_L1', 0),
+            ('MinimumSignalIntensity', 'Minimum Signal Intensity', 'SIGNAL_INTENSITY_L2', 0),
+            ('MinimumSignalIntensity', 'Minimum Signal Intensity', 'SIGNAL_INTENSITY_L3', 0),
+            ('MinimumSignalIntensity', 'Minimum Signal Intensity', 'SIGNAL_INTENSITY_L4', 0),
+            ('PostFilterClusterRate', 'Post Filter Cluster Rate', 'CLUSTER_PF_RATE_L1', 0),
+            ('PostFilterClusterRate', 'Post Filter Cluster Rate', 'CLUSTER_PF_RATE_L2', 0),
+            ('PostFilterClusterRate', 'Post Filter Cluster Rate', 'CLUSTER_PF_RATE_L3', 0),
+            ('PostFilterClusterRate', 'Post Filter Cluster Rate', 'CLUSTER_PF_RATE_L4', 0),
+            ('Q30QualityScoresRate', 'Q30 Quality Scores Rate', 'QUALITY_SCORES_L1', 0),
+            ('Q30QualityScoresRate', 'Q30 Quality Scores Rate', 'QUALITY_SCORES_L2', 0),
+            ('Q30QualityScoresRate', 'Q30 Quality Scores Rate', 'QUALITY_SCORES_L3', 0),
+            ('Q30QualityScoresRate', 'Q30 Quality Scores Rate', 'QUALITY_SCORES_L4', 0),
+            ('MaxExtractionPhixErrorRate', 'Max Extraction Phix Error Rate', 'PHIX_ERROR_RATE_L1', 0),
+            ('MaxExtractionPhixErrorRate', 'Max Extraction Phix Error Rate', 'PHIX_ERROR_RATE_L2', 0),
+            ('MaxExtractionPhixErrorRate', 'Max Extraction Phix Error Rate', 'PHIX_ERROR_RATE_L3', 0),
+            ('MaxExtractionPhixErrorRate', 'Max Extraction Phix Error Rate', 'PHIX_ERROR_RATE_L4', 0),
+            ('UnexpectedBarcodesMax', 'Unexpected Barcodes Max Ratio', 'UNEXPECTED_BARCODES_RATIO_L1', 0),
+            ('UnexpectedBarcodesMax', 'Unexpected Barcodes Max Ratio', 'UNEXPECTED_BARCODES_RATIO_L2', 0),
+            ('UnexpectedBarcodesMax', 'Unexpected Barcodes Max Ratio', 'UNEXPECTED_BARCODES_RATIO_L3', 0),
+            ('UnexpectedBarcodesMax', 'Unexpected Barcodes Max Ratio', 'UNEXPECTED_BARCODES_RATIO_L4', 0),
+            ('UndeterminedClusters', 'Undetermined Clusters Ratio', 'UNDETERMINED_CLUSTERS_RATIO_L1', 0),
+            ('UndeterminedClusters', 'Undetermined Clusters Ratio', 'UNDETERMINED_CLUSTERS_RATIO_L2', 0),
+            ('UndeterminedClusters', 'Undetermined Clusters Ratio', 'UNDETERMINED_CLUSTERS_RATIO_L3', 0),
+            ('UndeterminedClusters', 'Undetermined Clusters Ratio', 'UNDETERMINED_CLUSTERS_RATIO_L4', 0),
+            ('TotalReads', 'Total Reads Count', 'TOTAL_READS_L1', 0),
+            ('TotalReads', 'Total Reads Count', 'TOTAL_READS_L2', 0),
+            ('TotalReads', 'Total Reads Count', 'TOTAL_READS_L3', 0),
+            ('TotalReads', 'Total Reads Count', 'TOTAL_READS_L4', 0),
+            ('PassFilterReads', 'Pass Filter Reads Count', 'PASS_FILTER_READS_L1', 0),
+            ('PassFilterReads', 'Pass Filter Reads Count', 'PASS_FILTER_READS_L2', 0),
+            ('PassFilterReads', 'Pass Filter Reads Count', 'PASS_FILTER_READS_L3', 0),
+            ('PassFilterReads', 'Pass Filter Reads Count', 'PASS_FILTER_READS_L4', 0),
+            ('GoodQualityReads', 'Good Quality Reads Count', 'GOOD_QUALITY_READS_L1', 0),
+            ('GoodQualityReads', 'Good Quality Reads Count', 'GOOD_QUALITY_READS_L2', 0),
+            ('GoodQualityReads', 'Good Quality Reads Count', 'GOOD_QUALITY_READS_L3', 0),
+            ('GoodQualityReads', 'Good Quality Reads Count', 'GOOD_QUALITY_READS_L4', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L1_R1', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L2_R1', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L3_R1', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L4_R1', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L1_R2', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L2_R2', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L3_R2', 0),
+            ('PhasingRate', 'Phasing Rate', 'PHASING_L4_R2', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L1_R1', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L2_R1', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L3_R1', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L4_R1', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L1_R2', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L2_R2', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L3_R2', 0),
+            ('PrePhasingRate', 'Pre Phasing Rate', 'PRE_PHASING_L4_R2', 0),
+            ('BcfHeaderMetric', 'Total Reads', 'ALIGNMENT_PAIR_TOTAL_READS', 0),
+            ('BcfHeaderMetric', 'Post Filtered Reads Aligned', 'ALIGNMENT_PAIR_PF_READS_ALIGNED', 0),
+            ('BcfHeaderMetric', 'Post Filtered High Quality Aligned Reads', 'ALIGNMENT_PAIR_PF_HQ_ALIGNED_READS', 0),
+            ('BcfHeaderMetric', 'Post Filtered High Quality Error Rate', 'ALIGNMENT_PAIR_PF_HQ_ERROR_RATE', 0),
+            ('BcfHeaderMetric', 'Mean Read Length', 'ALIGNMENT_PAIR_MEAN_READ_LENGTH', 0),
+            ('BcfHeaderMetric', 'Post Filtered Reads Aligned Percentage', 'ALIGNMENT_PAIR_PCT_PF_READS_ALIGNED', 0),
+            ('BcfHeaderMetric', 'Bad Cycles', 'ALIGNMENT_PAIR_BAD_CYCLES', 0),
+            ('BcfHeaderMetric', 'Strand Balance', 'ALIGNMENT_PAIR_STRAND_BALANCE', 0),
+            ('BcfHeaderMetric', 'Chimeras Percentage', 'ALIGNMENT_PAIR_PCT_CHIMERAS', 0),
+            ('BcfHeaderMetric', 'Post Filtered Unaligned Reads Match Adapter Percentage', 'ALIGNMENT_PAIR_PCT_ADAPTER', 0),
+            ('BcfHeaderMetric', 'Usable Bases On Target Percentage', 'HS_PCT_USABLE_BASES_ON_TARGET', 0),
+            ('BcfHeaderMetric', 'Duplication Percentage', 'DUPLICATION_PERCENT', 0),
+            ('BcfHeaderMetric', 'Demux Total Good Reads', 'DEMUX_TOTAL_GOOD_READS', 0),
+            ('BcfHeaderMetric', 'Depth of Reads Min Average Coverage', 'DOR_MIN_AVERAGE_COVERAGE', 0),
+            ('BcfHeaderMetric', 'AT Dropout', 'GC_BIAS_SUMMARY_AT_DROPOUT', 0),
+            ('BcfHeaderMetric', 'GC Dropout', 'GC_BIAS_SUMMARY_GC_DROPOUT', 0),
+            ('NGSGenderCheck', 'Gender Check', 'GENDER_CHECK', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'CLUSTER_DENSITY_L1',
+            'CLUSTER_DENSITY_L2',
+            'CLUSTER_DENSITY_L3',
+            'CLUSTER_DENSITY_L4',
+            'SIGNAL_INTENSITY_L1',
+            'SIGNAL_INTENSITY_L2',
+            'SIGNAL_INTENSITY_L3',
+            'SIGNAL_INTENSITY_L4',
+            'CLUSTER_PF_RATE_L1',
+            'CLUSTER_PF_RATE_L2',
+            'CLUSTER_PF_RATE_L3',
+            'CLUSTER_PF_RATE_L4',
+            'QUALITY_SCORES_L1',
+            'QUALITY_SCORES_L2',
+            'QUALITY_SCORES_L3',
+            'QUALITY_SCORES_L4',
+            'PHIX_ERROR_RATE_L1',
+            'PHIX_ERROR_RATE_L2',
+            'PHIX_ERROR_RATE_L3',
+            'PHIX_ERROR_RATE_L4',
+            'UNEXPECTED_BARCODES_RATIO_L1',
+            'UNEXPECTED_BARCODES_RATIO_L2',
+            'UNEXPECTED_BARCODES_RATIO_L3',
+            'UNEXPECTED_BARCODES_RATIO_L4',
+            'UNDETERMINED_CLUSTERS_RATIO_L1',
+            'UNDETERMINED_CLUSTERS_RATIO_L2',
+            'UNDETERMINED_CLUSTERS_RATIO_L3',
+            'UNDETERMINED_CLUSTERS_RATIO_L4',
+            'TOTAL_READS_L1',
+            'TOTAL_READS_L2',
+            'TOTAL_READS_L3',
+            'TOTAL_READS_L4',
+            'PASS_FILTER_READS_L1',
+            'PASS_FILTER_READS_L2',
+            'PASS_FILTER_READS_L3',
+            'PASS_FILTER_READS_L4',
+            'GOOD_QUALITY_READS_L1',
+            'GOOD_QUALITY_READS_L2',
+            'GOOD_QUALITY_READS_L3',
+            'GOOD_QUALITY_READS_L4',
+            'PHASING_L1_R1',
+            'PHASING_L2_R1',
+            'PHASING_L3_R1',
+            'PHASING_L4_R1',
+            'PHASING_L1_R2',
+            'PHASING_L2_R2',
+            'PHASING_L3_R2',
+            'PHASING_L4_R2',
+            'PRE_PHASING_L1_R1',
+            'PRE_PHASING_L2_R1',
+            'PRE_PHASING_L3_R1',
+            'PRE_PHASING_L4_R1',
+            'PRE_PHASING_L1_R2',
+            'PRE_PHASING_L2_R2',
+            'PRE_PHASING_L3_R2',
+            'PRE_PHASING_L4_R2',
+            'ALIGNMENT_PAIR_TOTAL_READS',
+            'ALIGNMENT_PAIR_PF_READS_ALIGNED',
+            'ALIGNMENT_PAIR_PF_HQ_ALIGNED_READS',
+            'ALIGNMENT_PAIR_PF_HQ_ERROR_RATE',
+            'ALIGNMENT_PAIR_MEAN_READ_LENGTH',
+            'ALIGNMENT_PAIR_PCT_PF_READS_ALIGNED',
+            'ALIGNMENT_PAIR_BAD_CYCLES',
+            'ALIGNMENT_PAIR_STRAND_BALANCE',
+            'ALIGNMENT_PAIR_PCT_CHIMERAS',
+            'ALIGNMENT_PAIR_PCT_ADAPTER',
+            'HS_PCT_USABLE_BASES_ON_TARGET',
+            'DUPLICATION_PERCENT',
+            'DEMUX_TOTAL_GOOD_READS',
+            'DOR_MIN_AVERAGE_COVERAGE',
+            'GC_BIAS_SUMMARY_AT_DROPOUT',
+            'GC_BIAS_SUMMARY_GC_DROPOUT',
+            'GENDER_CHECK');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6618-02" author="dchettupuzha">
+        <comment>Insert new QC stats types for NGS</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Total Reads', 'ALIGNMENT_PAIR_TOTAL_READS', 'ALL'),
+            ('Post Filtered Reads Aligned', 'ALIGNMENT_PAIR_PF_READS_ALIGNED', 'ALL'),
+            ('Post Filtered High Quality Aligned Reads', 'ALIGNMENT_PAIR_PF_HQ_ALIGNED_READS', 'ALL'),
+            ('Post Filtered High Quality Error Rate', 'ALIGNMENT_PAIR_PF_HQ_ERROR_RATE', 'ALL'),
+            ('Mean Read Length', 'ALIGNMENT_PAIR_MEAN_READ_LENGTH', 'ALL'),
+            ('Post Filtered Reads Aligned Percentage', 'ALIGNMENT_PAIR_PCT_PF_READS_ALIGNED', 'ALL'),
+            ('Bad Cycles', 'ALIGNMENT_PAIR_BAD_CYCLES', 'ALL'),
+            ('Strand Balance', 'ALIGNMENT_PAIR_STRAND_BALANCE', 'ALL'),
+            ('Chimeras Percentage', 'ALIGNMENT_PAIR_PCT_CHIMERAS', 'ALL'),
+            ('Post Filtered Unaligned Reads Match Adapter Percentage', 'ALIGNMENT_PAIR_PCT_ADAPTER', 'ALL'),
+            ('Usable Bases On Target Percentage', 'HS_PCT_USABLE_BASES_ON_TARGET', 'ALL'),
+            ('Duplication Percentage', 'DUPLICATION_PERCENT', 'ALL'),
+            ('Demux Total Good Reads', 'DEMUX_TOTAL_GOOD_READS', 'ALL'),
+            ('Depth of Reads Min Average Coverage', 'DOR_MIN_AVERAGE_COVERAGE', 'ALL'),
+            ('AT Dropout', 'GC_BIAS_SUMMARY_AT_DROPOUT', 'ALL'),
+            ('GC Dropout', 'GC_BIAS_SUMMARY_GC_DROPOUT', 'ALL'),
+            ('Gender Check', 'GENDER_CHECK', 'ALL');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Total Reads' AND `name` = 'ALIGNMENT_PAIR_TOTAL_READS' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Post Filtered Reads Aligned' AND `name` = 'ALIGNMENT_PAIR_PF_READS_ALIGNED' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Post Filtered High Quality Aligned Reads' AND `name` = 'ALIGNMENT_PAIR_PF_HQ_ALIGNED_READS' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Post Filtered High Quality Error Rate' AND `name` = 'ALIGNMENT_PAIR_PF_HQ_ERROR_RATE' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Mean Read Length' AND `name` = 'ALIGNMENT_PAIR_MEAN_READ_LENGTH' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Post Filtered Reads Aligned Percentage' AND `name` = 'ALIGNMENT_PAIR_PCT_PF_READS_ALIGNED' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Bad Cycles' AND `name` = 'ALIGNMENT_PAIR_BAD_CYCLES' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Strand Balance' AND `name` = 'ALIGNMENT_PAIR_STRAND_BALANCE' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Chimeras Percentage' AND `name` = 'ALIGNMENT_PAIR_PCT_CHIMERAS' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Post Filtered Unaligned Reads Match Adapter Percentage' AND `name` = 'ALIGNMENT_PAIR_PCT_ADAPTER' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Usable Bases On Target Percentage' AND `name` = 'HS_PCT_USABLE_BASES_ON_TARGET' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Duplication Percentage' AND `name` = 'DUPLICATION_PERCENT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Demux Total Good Reads' AND `name` = 'DEMUX_TOTAL_GOOD_READS' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Depth of Reads Min Average Coverage' AND `name` = 'DOR_MIN_AVERAGE_COVERAGE' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'AT Dropout' AND `name` = 'GC_BIAS_SUMMARY_AT_DROPOUT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'GC Dropout' AND `name` = 'GC_BIAS_SUMMARY_GC_DROPOUT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Gender Check' AND `name` = 'GENDER_CHECK' AND `applicability` = 'ALL';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6618-03" author="dchettupuzha">
+        <comment>Insert new QC type for NGS</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SampleIdentity', 'Sample Identity', 'SAMPLE_IDENTITY', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` `name` = 'SAMPLE_IDENTITY';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6618-04" author="dchettupuzha">
+        <comment>Insert new QC stats type for NGS</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Sample Identity', 'SAMPLE_IDENTITY', 'ALL');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE
+            `description` = 'Sample Identity' AND
+            `name` = 'SAMPLE_IDENTITY' AND
+            `applicability` = 'ALL';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6618-05" author="dchettupuzha">
+        <comment>Modify Category type for Sequencing run</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            update `prodlims`.`qc_type` set `category` = 'SEQUENCING_RUN' where `category` in (
+            'MedianClusterDensity',
+            'MinimumSignalIntensity',
+            'PostFilterClusterRate',
+            'Q30QualityScoresRate',
+            'MaxExtractionPhixErrorRate',
+            'UnexpectedBarcodesMax',
+            'UndeterminedClusters',
+            'TotalReads',
+            'PassFilterReads',
+            'GoodQualityReads',
+            'PhasingRate',
+            'PrePhasingRate');
+
+            update `prodlims`.`qc_type` set `category` = 'SAMPLE' where `category` in (
+            'BcfHeaderMetric',
+            'NGSGenderCheck',
+            'SampleIdentity');
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <!-- Rollback: Updates are for rows inserted by change sets -01 and -03 -->
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

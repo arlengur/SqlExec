@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8788-01" author="mdubrovin">
+        <comment>Case sample report script 2.0 without linked/redraw cases</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+INSERT INTO `prodlims`.`script` (name, code)
+VALUES ('Case Samples Report 2.0 without linked/redraw cases',
+'
+import com.natera.lims.api.model.core.FamilyPosition
+import com.natera.lims.dataaccess.ivf.prod.CaseFileDAO
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import com.natera.lims.datamodel.ivf.prod.*
+
+output = []
+
+def header = ["Case", "Sample", "FamilyPosition", "StorageName/Lib2Plate", "IndexLocation", "Sample_collection_date", "Linked/Redraw Case(s)"]
+output.add(header)
+
+caseFileIds.each { caseFileId ->
+
+    def caseFile = caseFileDAO.get(caseFileId.toLong())
+    if (caseFile != null) {
+
+        def associatedCaseIds = getAssociatedCaseIds(caseFile)
+        def associatedCaseIdsString = associatedCaseIds.join(",")
+
+
+        def motherSamples = caseFile.getSamplesByFamilyPosition(FamilyPosition.patient)
+        def motherDNASamples = (motherSamples != null) ? filterPrepSamples(motherSamples, SampleType.DNA) : null
+        addSamplesToOutput(caseFileId, FamilyPosition.patient.formName, motherSamples, associatedCaseIdsString)
+        addSamplesToOutput(caseFileId, FamilyPosition.patient.formName, motherDNASamples, associatedCaseIdsString)
+
+        def fatherSamples = caseFile.getSamplesByFamilyPosition(FamilyPosition.partner)
+        def fatherDNASamples = (fatherSamples != null) ? filterPrepSamples(fatherSamples, SampleType.DNA) : null
+        addSamplesToOutput(caseFileId, FamilyPosition.partner.formName, fatherSamples, associatedCaseIdsString)
+        addSamplesToOutput(caseFileId, FamilyPosition.partner.formName, fatherDNASamples, associatedCaseIdsString)
+
+        def childPlasmaSamples = (motherSamples != null) ? filterPrepSamples(motherSamples, SampleType.PLASMA) : null
+        def childDNASamples = (childPlasmaSamples != null) ? filterPrepSamples(childPlasmaSamples, SampleType.DNA) : null
+        addSamplesToOutput(caseFileId, FamilyPosition.child.formName, childPlasmaSamples, associatedCaseIdsString)
+        addChildDNASamplesToOutput(caseFileId, FamilyPosition.child.formName, childDNASamples, associatedCaseIdsString)
+
+        //patient blood and its prep
+        def patientBloodSamples = (motherSamples != null) ? filterPrepSamples(motherSamples, SampleType.BLOOD) : null
+        def patientPreppedSamples = (patientBloodSamples != null) ? filterPrepSamples(patientBloodSamples, SampleType.BLOOD) : null
+        addSamplesToOutput(caseFileId, FamilyPosition.patient.formName, patientBloodSamples, associatedCaseIdsString)
+        addChildDNASamplesToOutput(caseFileId, FamilyPosition.patient.formName, patientPreppedSamples, associatedCaseIdsString)
+
+        def partnerBloodSamples = (fatherSamples != null) ? filterPrepSamples(fatherSamples, SampleType.BLOOD) : null
+        def partnerPreppedSamples = (partnerBloodSamples != null) ? filterPrepSamples(partnerBloodSamples, SampleType.BLOOD) : null
+        addSamplesToOutput(caseFileId, FamilyPosition.partner.formName, partnerBloodSamples, associatedCaseIdsString)
+        addChildDNASamplesToOutput(caseFileId, FamilyPosition.partner.formName, partnerPreppedSamples, associatedCaseIdsString)
+
+        //blastomere plate -> FREE_FLOATING_DNA -> plasma -> DNA
+        def blastomerePlateList = caseFile.getBlastomerePlateList()
+        blastomerePlateList.each {
+            blastomerePlateSample ->
+            def childPrepPlasmaSamples = (blastomerePlateSample != null) ? filterPrepSamples(blastomerePlateSample, SampleType.PLASMA) : null
+            def childPrepDNASamples = (childPrepPlasmaSamples != null) ? filterPrepSamples(childPrepPlasmaSamples, SampleType.DNA) : null
+
+            addSamplesToOutput(caseFileId, FamilyPosition.child.formName, blastomerePlateSample, associatedCaseIdsString)
+            addSamplesToOutput(caseFileId, FamilyPosition.child.formName, childPrepPlasmaSamples, associatedCaseIdsString)
+            addSamplesToOutput(caseFileId, FamilyPosition.child.formName, childPrepDNASamples, associatedCaseIdsString)
+        }
+
+        //CVS -> DNA
+        ArrayList childSamples = caseFile.getSamplesByFamilyPosition(FamilyPosition.child)
+        addSamplesToOutput(caseFileId, FamilyPosition.child.formName, childSamples, associatedCaseIdsString)
+    }
+
+}
+
+def filterPrepSamples(def samples, def sampleType) {
+    def returnSamples = new HashSet()
+    samples.each { sample ->
+        def prepSamples = sample.prepSamples
+        prepSamples.each { prepSample ->
+            if (prepSample.sampleType.name.equals(sampleType)) {
+            returnSamples.add(prepSample)
+            }
+        }
+    }
+    return returnSamples
+}
+
+def addSamplesToOutput(def caseFileId, def familyPosition, def samples, def associatedCaseIds) {
+    if (samples != null) {
+        samples.each { sample ->
+            def locations = sampleContainerDAO.getStorageLocations(sample)
+            if (locations.size() != 0) {
+                locations.each { location ->
+                def container = location.get("container")
+                def indexLocation = location.get("indexLocation")
+                output.add([caseFileId, sample.barcode, familyPosition, container.barcode, indexLocation, sample.collectionDate.toString(), associatedCaseIds])
+                }
+            } else {
+                output.add([caseFileId, sample.barcode, familyPosition, "", "", sample.collectionDate.toString(), associatedCaseIds])
+            }
+        }
+    }
+}
+
+/* Find Lib2 plates for child DNA samples */
+def addChildDNASamplesToOutput(def caseFileId, def familyPosition, def samples, def associatedCaseIds) {
+    if (samples != null) {
+        samples.each { sample ->
+            def lib2Plates = lib2PlateDAO.getPlatesBySample(sample)
+            lib2Plates.each { lib2Plate ->
+                def wells = lib2Plate.wells
+                def position = null
+                for (def entry : wells.entrySet()) {
+                    def pws = entry.getValue()
+                    if (pws.sample == sample) {
+                        position = entry.getKey()
+                    }
+                }
+
+                position = indexToLocation(position)
+                output.add([caseFileId, sample.barcode, familyPosition, lib2Plate.barcode, position, sample.collectionDate.toString(), associatedCaseIds])
+
+            }
+            if(!lib2Plates) {
+                def ss = sample.completedSequencingSamples[0]
+                if(ss) {
+                    def plates = ss.clarityPlateMetaData
+                    for(def plate : plates) {
+                        // if plate name ends in -LIB2
+                        if(plate.plateBarcode.endsWith("-LIB2")) {
+                            output.add([caseFileId, sample.barcode, familyPosition, plate.plateBarcode, plate.wellPosition.replace(":", ""), sample.collectionDate.toString(), associatedCaseIds])
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+def String indexToLocation(int i) {
+    int rows = 8
+    if (rows == 0) rows = 1
+    StringBuilder ret = new StringBuilder()
+    ret.append((char) (((int) "A") + (i % rows)))
+    int position = ((int) (i / rows)) + 1
+    if (position < 10) ret.append(0)
+    ret.append(position)
+    return ret.toString()
+}
+
+def getAssociatedCaseIds(CaseFile caseFile) {
+    Set<Long> associatedCaseIds = new HashSet<>()
+
+    associatedCaseIds.addAll(caseFile.getLinkedCaseFiles().collect {it.id})
+    associatedCaseIds.addAll(caseFile.getBundledCases(CaseBundling.CaseBundlingType.REDRAW).collect {it.id})
+
+    return associatedCaseIds
+}
+
+def subject = "Case Sample Locations Report 2.0 without linked/redraw cases"
+def body = "Case sample locations report from LIMS attached."
+def filename = "case_sample_locations_report_2_0_without_linked_cases.xlsx"
+
+def wb = new XSSFWorkbook()
+def sheet = wb.createSheet("R&D Sample Disposal Report")
+
+output.eachWithIndex { r, i ->
+    def row = sheet.createRow((short) i)
+    r.eachWithIndex { c, j ->
+        def cs = wb.createCellStyle()
+        cs.setWrapText(true)
+        def cell = row.createCell(j)
+        cell.setCellValue(c == null ? "" : c)
+        cell.setCellStyle(cs)
+    }
+}
+
+def outStream = new ByteArrayOutputStream()
+
+try {
+    wb.write(outStream)
+    secureEmailSender.send(toAddresses as List, subject as String, body as String, filename as String, outStream.toByteArray(), false as Boolean)
+} finally {
+    outStream.close()
+}
+');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`script` where name='Case Samples Report 2.0 without linked/redraw cases';
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="ENG-8788-02" author="mdubrovin">
+        <comment>Add script parameters for case sample report script 2.0 without linked/redraw cases</comment>
+        <sql>
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 1, 'toAddresses',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Case Samples Report 2.0 without linked/redraw cases')
+            );
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 1, 'caseFileIds',
+                (SELECT id FROM `prodlims`.`script` WHERE name = 'Case Samples Report 2.0 without linked/redraw cases')
+            );
+        </sql>
+        <rollback>
+            DELETE sp FROM `prodlims`.`scriptparameter` as sp
+            JOIN `prodlims`.`script` as s ON sp.script_id = s.id
+            WHERE s.name = 'Case Samples Report 2.0 without linked/redraw cases';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

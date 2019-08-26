@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9900-01" author="jdavid">
+        <comment>Delete SampleRule_Other rule</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            WHERE `samplerule_id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Other');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule`
+            WHERE `id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Other');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='SampleCheckGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='SampleRule_Other' );
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` = 'SampleRule_Other';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('SampleRule_Other', 'DEFAULT_SAMPLE_RULE', true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Other'),
+            null, null, null;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Other') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('MTSINAI','BMGL');
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'SampleCheckGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'SampleRule_Other') as rule_id, 2;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9900-02" author="jdavid">
+        <comment>Add calculatetotalbloodvolume column to horizoncaseroutingrule_samplerule table</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizoncaseroutingrule_samplerule`
+            ADD `calculatetotalbloodvolume` bit(1) DEFAULT b'0';
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizoncaseroutingrule_samplerule` DROP COLUMN calculatetotalbloodvolume;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9900-03" author="jdavid">
+        <comment>Create SampleRule_ExternalLabEdtaSampleRule</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('SampleRule_ExternalLabEdtaSampleRule', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabEdtaSampleRule'),
+            (SELECT id from `prodlims`.`containertype` where `name` = 'EDTA Tube'), null, 4.0, true;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabEdtaSampleRule') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('MTSINAI','BMGL');
+
+            -- Associate SampleCheckGroup with SampleRule_ExternalLabEdtaSampleRule
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'SampleCheckGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'SampleRule_ExternalLabEdtaSampleRule') as rule_id, 2;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            WHERE `samplerule_id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabEdtaSampleRule');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule`
+            WHERE `id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabEdtaSampleRule');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='SampleCheckGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='SampleRule_ExternalLabEdtaSampleRule' );
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` = 'SampleRule_ExternalLabEdtaSampleRule';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9900-04" author="jdavid">
+        <comment>Create SampleRule_ExternalLabAcdaSampleRule</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('SampleRule_ExternalLabAcdaSampleRule', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabAcdaSampleRule'),
+            (SELECT id from `prodlims`.`containertype` where `name` = 'ACD-A Tube'), null, 4.0, true;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabAcdaSampleRule') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('MTSINAI','BMGL');
+
+            -- Associate SampleCheckGroup with SampleRule_ExternalLabAcdaSampleRule
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'SampleCheckGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'SampleRule_ExternalLabAcdaSampleRule') as rule_id, 3;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            WHERE `samplerule_id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabAcdaSampleRule');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule`
+            WHERE `id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_ExternalLabAcdaSampleRule');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='SampleCheckGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='SampleRule_ExternalLabAcdaSampleRule' );
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` = 'SampleRule_ExternalLabAcdaSampleRule';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9900-05" author="jdavid">
+        <comment>Change execution type for SampleCheckGroup</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET executiontype = 'EVALUATE_ALL_THEN_RETURN_UNION_RESULT' where `name`='SampleCheckGroup';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET executiontype = 'STOP_EXECUTION_WHEN_RULE_IS_TRUE' where `name`='SampleCheckGroup';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9900-06" author="jdavid">
+        <comment>Re-arrange rule groups</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 5 where `name`='SampleCheckGroup';
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 1 where `name`='StateRuleGroup';
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 2 where `name`='PanelRuleGroup';
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 3 where `name`='SampleCheckGroup';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 6 where `name`='SampleCheckGroup';
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 3 where `name`='PanelRuleGroup';
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 2 where `name`='StateRuleGroup';
+
+            UPDATE `prodlims`.`horizoncaseroutingrulegroup`
+            SET `rank` = 1 where `name`='SampleCheckGroup';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9900-07" author="jdavid">
+        <comment>Removed MTSINAI and BMGL association to SampleRule_NateraSampleRequirement rule</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            WHERE `samplerule_id` IN (SELECT id FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` = 'SampleRule_NateraSampleRequirement') AND
+            `laboratory_id` IN (SELECT id FROM `prodlims`.`laboratory` WHERE `shipDestinationType` IN ('MTSINAI', 'BMGL'));
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_NateraSampleRequirement') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('MTSINAI','BMGL');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8435-01" author="mdaly">
+        <comment>Create collection table to store the CLSAccessTag values for a HorizonInitRecord.</comment>
+        <sql>
+            CREATE TABLE `horizoninitrecord_clsaccesstag` (
+              `horizoninitrecord_id` bigint(10) NOT NULL,
+              `accesstag` varchar(255) NOT NULL,
+              PRIMARY KEY (`horizoninitrecord_id`,`accesstag`),
+              KEY `KEY__hir_cat__horizoninitrecord_id` (`horizoninitrecord_id`),
+              CONSTRAINT `FK__hir_cat__horizoninitrecord_id` FOREIGN KEY (`horizoninitrecord_id`) REFERENCES
+              `horizoninitrecord` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+
+        <rollback>
+            DROP TABLE `horizoninitrecord_clsaccesstag`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

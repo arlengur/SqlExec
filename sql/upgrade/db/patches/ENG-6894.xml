@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6894-01" author="dchettupuzha">
+        <comment>Modify Sequencing Target Set for Horizon NGS (change from horizon to empty)</comment>
+        <sql>
+            SET sql_safe_updates=0;
+            update `hts`.`sequencingtargetset` set `name` = 'empty' where `name` = 'horizon';
+            SET sql_safe_updates=1;
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+            update `hts`.`sequencingtargetset` set `name` = 'horizon' where `name` = 'empty';
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

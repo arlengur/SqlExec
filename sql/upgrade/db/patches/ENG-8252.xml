@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8252-01" author="irazin">
+        <comment>Add Tissue Block and Tissue Glass container types</comment>
+        <sql>
+            INSERT INTO `prodlims`.`containertype` (`name`, `displayname`)
+            VALUES ('Tissue Block', 'Tissue Block'), ('Tissue Glass', 'Tissue Glass');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`containertype` WHERE name IN ('Tissue Block', 'Tissue Glass');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

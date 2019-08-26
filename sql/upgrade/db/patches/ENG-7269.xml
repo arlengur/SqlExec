@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7269-01" author="mdaly">
+        <comment>Generic templates and ids (autosomal recessive).
+            Path: 12
+            Likely Path: 13
+            2 unknown: 14
+            2 cis: 15
+            2 trans: 16
+
+            GBA-specific templates and ids.
+            c.1226A>G: 138
+        </comment>
+        <sql>
+            -- Update text for GBA-specific template
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Positive for the pathogenic variant c.1226A>G (p.N409S) (N370S) in the GBA gene. Please note, individuals with at least one copy of the c.1226A>G (p.N409S) (N370S) variant do not develop primary neurologic disease. When present in the homozygous form, the disease phenotype may vary from asymptomatic to severe, although usually tends to be milder than the disease resulting from other genotypes. Recent studies suggest that carriers for Gaucher Disease may have a slightly increased risk of developing Parkinson''s disease in late adulthood; however, most carriers never develop this condition. If the patient''s partner is a carrier for Gaucher Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 138;
+
+            -- New templates for GBA
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (159, 6, 'PATHOGENIC', 'Pathogenic variant detected', 'CARRIER for Gaucher Disease', 'Positive for the pathogenic variant ${results[0].variantName} in the GBA gene. Recent studies suggest that carriers for Gaucher Disease may have a slightly increased risk of developing Parkinson''s disease in late adulthood; however, most carriers never develop this condition. If this individual''s partner is a carrier for Gaucher Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (160, 7, 'LIKELY_PATHOGENIC', 'Likely pathogenic variant detected', 'CARRIER for Gaucher Disease', 'Positive for the likely pathogenic variant ${results[0].variantName} in the GBA gene. Recent studies suggest that carriers for Gaucher Disease may have a slightly increased risk of developing Parkinson''s disease in late adulthood; however, most carriers never develop this condition. If this individual''s partner is a carrier for Gaucher Disease, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+            (162, 8, 'TWO_CIS', 'Two variants detected (cis)', 'CARRIER for Gaucher Disease', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in cis (on the same chromosome) in the GBA gene. Recent studies suggest that carriers for Gaucher Disease may have a slightly increased risk of developing Parkinson''s disease in late adulthood; however, most carriers never develop this condition. If this individual''s partner is a carrier for Gaucher Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'),
+
+            -- Copies of generic; done to totally break GBA from the generics
+            (161, 8, 'TWO_UNKNOWN', 'Two variants detected (cis or trans unknown)', 'POSITIVE for two variants in the gene associated with Gaucher Disease', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the GBA gene. This individual may be affected with Gaucher Disease. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This analysis cannot determine if the GBA variants are on the same (in cis) or opposite (in trans) chromosomes in this individual. Testing of parents or other close family members may assist in determining the phase of these variants. If this individual''s partner is a carrier for Gaucher Disease, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.'),
+            (163, 8, 'TWO_TRANS', 'Two variants detected (trans)', 'POSITIVE for two variants in the gene associated with Gaucher Disease', 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in the GBA gene. This individual is predicted to be affected with Gaucher Disease. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Gaucher Disease, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested.');
+
+            -- Update any existing GBA HorizonLdtDiseaseResults using the generic template
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 159 WHERE `template_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 160 WHERE `template_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 161 WHERE `template_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 162 WHERE `template_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`HorizonLdtDiseaseResult` SET `template_id` = 163 WHERE `template_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+
+            -- Update association between GBA HorizonDisease and generic templates.
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 159 WHERE `diseaseResultTemplate_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 160 WHERE `diseaseResultTemplate_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 161 WHERE `diseaseResultTemplate_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 162 WHERE `diseaseResultTemplate_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseaseresulttemplate` SET `diseaseResultTemplate_id` = 163 WHERE `diseaseResultTemplate_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+
+            -- Update the template-supplement association
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 159 WHERE `template_id` = 12 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 160 WHERE `template_id` = 13 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 161 WHERE `template_id` = 14 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 162 WHERE `template_id` = 15 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+            UPDATE `prodlims`.`horizondisease_horizondiseasesupplement` SET `template_id` = 163 WHERE `template_id` = 16 AND `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'GBA');
+        </sql>
+        <!-- Rollback: Tables will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

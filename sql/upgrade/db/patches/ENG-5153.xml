@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5153-01" author="mdaly">
+        <comment>Remove triplication from the list of reported variants.</comment>
+        <sql>
+            UPDATE `prodlims`.`horizondisease` SET `variationsAndExons` = 'c.427T>C, gene deletions' WHERE `name` = 'Alpha-Thalassemia' AND `provider` = 'MTSINAI';
+            UPDATE `prodlims`.`horizondisease` SET `variationsAndExons` = 'Deletions and pathogenic point mutations' WHERE `name` = 'Alpha-Thalassemia' AND `provider` = 'BMGL';
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondisease` SET `variationsAndExons` = 'c.427T>C, gene deletions, triplications' WHERE `name` = 'Alpha-Thalassemia' AND `provider` = 'MTSINAI';
+            UPDATE `prodlims`.`horizondisease` SET `variationsAndExons` = 'Deletions, Triplications and point mutations' WHERE `name` = 'Alpha-Thalassemia' AND `provider` = 'BMGL';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

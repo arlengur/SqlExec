@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8409-01" author="mdaly">
+        <comment>Insert Ladder R2 QC type for FRAX</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Ladder R2 Error', 'LADDER_R2_ERROR', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'LADDER_R2_ERROR';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8409-02" author="mdaly">
+        <comment>Insert Ladder R2 QC stats type for FRAX</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) VALUES
+            ('Ladder R2 Error', 'LADDER_R2_ERROR', 'ALL');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` = 'LADDER_R2_ERROR';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

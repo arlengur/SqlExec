@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9088-01" author="mdaly">
+        <comment>Change the call for pseudodeficient IDUA (template 168) to negative.
+            call ids (from HorizonResultCall.xml)
+            Pathogenic variant: 6
+            Negative: 2
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`horizondiseaseresulttemplate`
+            SET `associatedCall_id` = 2
+            WHERE `id` = 168 AND `lookupCode` = 'IDUA_PSEUDODEFICIENT';
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`horizondiseaseresulttemplate`
+            SET `associatedCall_id` = 6
+            WHERE `id` = 168 AND `lookupCode` = 'IDUA_PSEUDODEFICIENT';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

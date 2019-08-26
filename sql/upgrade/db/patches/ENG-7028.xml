@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7028-01" author="hharidas">
+        <comment>Revert the referralformversions value for Micro-4 and Pano-4 to the correct ones. These values were modified to temporarily fix the issue described in ENG-7028</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE prodlims.organization
+            SET  referralFormVersions="MICRO-4"
+            WHERE referralFormVersions="Micro-4";
+
+            UPDATE prodlims.organization
+            SET  referralFormVersions="PANO-4"
+            WHERE referralFormVersions="Pano-4";
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE prodlims.organization
+            SET  referralFormVersions="Micro-4"
+            WHERE referralFormVersions="MICRO-4";
+
+            UPDATE prodlims.organization
+            SET  referralFormVersions="Pano-4"
+            WHERE referralFormVersions="PANO-4";
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7947-01" author="apotekhin">
+        <comment>
+            Add the column to npt_handcall_result to store results for FFBR algorithm
+        </comment>
+
+        <sql>
+            ALTER TABLE prodlims.npt_handcall_result
+            ADD chr13chr18Triploidy_result bigint(20) DEFAULT NULL AFTER chr21_result;
+            ALTER TABLE `prodlims`.`npt_handcall_result`
+            ADD CONSTRAINT `FKNPTHANDCALLRESULTCHR13_18` FOREIGN KEY (`chr13chr18Triploidy_result`) REFERENCES `alg_probabilityofdata` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`npt_handcall_result` DROP FOREIGN KEY `FKNPTHANDCALLRESULTCHR13_18`;
+            ALTER TABLE prodlims.npt_handcall_result DROP COLUMN chr13chr18Triploidy_result;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7947-02" author="hharidas">
+        <comment>
+            Add column to store combined trisomy13_18_triploidy chromosome results for FFBR handcalls
+        </comment>
+        <sql>
+            ALTER TABLE `prodlims`.`cloudpanoramareport`
+            ADD COLUMN `testreport_trisomy13_18_triploidy_risk` varchar(255) DEFAULT NULL AFTER `testreport_digeorge_microdeletionScore`,
+            ADD COLUMN `testreport_trisomy13_18_triploidy_agebasedriskscore` double DEFAULT NULL AFTER `testreport_trisomy13_18_triploidy_risk`,
+            ADD COLUMN `testreport_trisomy13_18_triploidy_panoramariskscore` double DEFAULT NULL AFTER `testreport_trisomy13_18_triploidy_agebasedriskscore`;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`cloudpanoramareport` drop column `testreport_trisomy13_18_triploidy_risk`;
+            alter table `prodlims`.`cloudpanoramareport` drop column `testreport_trisomy13_18_triploidy_agebasedriskscore`;
+            alter table `prodlims`.`cloudpanoramareport` drop column `testreport_trisomy13_18_triploidy_panoramariskscore`;
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>

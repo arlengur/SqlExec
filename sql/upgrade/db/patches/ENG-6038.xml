@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6038-01" author="hharidas">
+        <comment>
+            As major changes are being made to  disease related information, back up the table before the changes.
+        </comment>
+
+        <sql>
+            CREATE TABLE `prodlims`.`horizondiseasetemplate_backup_eng6038` LIKE `prodlims`.`horizondiseasetemplate`;
+            INSERT `prodlims`.`horizondiseasetemplate_backup_eng6038` SELECT * FROM `prodlims`.`horizondiseasetemplate`;
+
+        </sql>
+
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng6038`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6038-02" author="hharidas">
+        <comment>
+            Change the length of status and variant fields (per JIRA requirements).
+        </comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizondiseasetemplate` MODIFY `variant` VARCHAR(2000);
+            ALTER TABLE `prodlims`.`horizondiseasetemplate` MODIFY `status`  VARCHAR(1000);
+            ALTER TABLE `prodlims`.`horizon_report_disease_result_template_variables` MODIFY `variablesmap` VARCHAR(2000);
+            ALTER TABLE `prodlims`.`horizon_report_disease_results` MODIFY `mutationnote` VARCHAR(2000);
+
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`horizondiseasetemplate` MODIFY `variant` VARCHAR(1000);
+            ALTER TABLE `prodlims`.`horizondiseasetemplate` MODIFY `status` VARCHAR(255);
+            ALTER TABLE `prodlims`.`horizon_report_disease_result_template_variables` MODIFY `variablesmap` VARCHAR(255);
+            ALTER TABLE `prodlims`.`horizon_report_disease_results` MODIFY `mutationnote` VARCHAR(1000);
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6038-03" author="hharidas">
+        <comment>
+            Combine the variant and resultnotetext field values and store it in variant field.
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `variant` = CONCAT(COALESCE(`variant`,'')," ",COALESCE(`resultnotetext`,''))
+            WHERE `diseasename` != "Generic" and `templatecode` != "BLANK";
+
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET `resultnotetext`= null;
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE
+            `prodlims`.`horizondiseasetemplate` hdt
+            JOIN `prodlims`.`horizondiseasetemplate_eng_6040` bkp
+            ON hdt.id = bkp.id
+            SET hdt.variant = bkp.variant,
+            hdt.resultnotetext = bkp.resultnotetext
+            where hdt.id = bkp.id;
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

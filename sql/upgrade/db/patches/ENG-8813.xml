@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8813-01" author="mdaly">
+        <comment>Blank out exon and variant information. (Dropping the columns is a pain because the data importers
+        would still reference.</comment>
+        <sql>
+            UPDATE `prodlims`.`horizondisease` SET
+            `variationsAndExons` = NULL,
+            `exonsSequenced` = NULL;
+        </sql>
+
+        <!-- rollback will require manually inserting the deleted data. If this is needed, the deleted data can be
+        retreived from the HorizonDisease.xml file -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

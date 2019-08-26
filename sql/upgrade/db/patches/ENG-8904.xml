@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8904-01" author="nfleming">
+        <comment>Allow npt_handcall_microdel_result_alg_probabilityofdata.results_KEY to be NULL</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            ALTER TABLE `prodlims`.`npt_handcall_microdel_result_alg_probabilityofdata`
+            DROP PRIMARY KEY;
+
+            ALTER TABLE `prodlims`.`npt_handcall_microdel_result_alg_probabilityofdata`
+            MODIFY `results_KEY` INT;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            ALTER TABLE `prodlims`.`npt_handcall_microdel_result_alg_probabilityofdata`
+            MODIFY `results_KEY` INT NOT NULL;
+
+            ALTER TABLE `prodlims`.`npt_handcall_microdel_result_alg_probabilityofdata`
+            ADD PRIMARY KEY(`handcallmicrodelresults_id`, `results_KEY`);
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

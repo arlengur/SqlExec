@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7506-01" author="mdubrovin">
+        <comment>Track reopened cases</comment>
+        <sql>
+            ALTER TABLE casefile ADD COLUMN reopened boolean NOT NULL DEFAULT false AFTER closed;
+        </sql>
+        <rollback>
+            ALTER TABLE casefile DROP COLUMN reopened;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

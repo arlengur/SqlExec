@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9190-01" author="jdavid">
+        <comment>Associate HBA, DMD, SMA diseases to CNV assay</comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondiseases_assays` (`horizondisease_id`, `assays`) SELECT `id`, 'NGS_CNV' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'ATHAL';
+            INSERT INTO `prodlims`.`horizondiseases_assays` (`horizondisease_id`, `assays`) SELECT `id`, 'NGS_CNV' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'DMD';
+            INSERT INTO `prodlims`.`horizondiseases_assays` (`horizondisease_id`, `assays`) SELECT `id`, 'NGS_CNV' FROM `prodlims`.`horizondisease` WHERE `cloudID` = 'SMN1';
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizondiseases_assays` WHERE `assays` = 'NGS_CNV';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

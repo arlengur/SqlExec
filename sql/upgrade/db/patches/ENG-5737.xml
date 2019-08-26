@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5737-01" author="mdaly">
+        <comment>Remove the TSE HorizonDisease that was created in changeset ENG-5583-03 and associate
+            the MSSM TSE HorizonDisease with the TSE HorizonLDTPanel.</comment>
+        <sql>
+            UPDATE `panel_disease`
+            SET `disease_id` = (SELECT `id` FROM `horizondisease` WHERE `name` = 'Tay-Sachs Disease (enzyme only)' AND `provider` = 'MTSINAI')
+            WHERE `panel_id` IN (SELECT `id` FROM `panel` WHERE `dtype` = 'HorizonLDTPanel' AND `shipdestinationtype` = 'NA' AND `name` = 'TSE');
+
+            DELETE FROM `horizondisease` WHERE `name` = 'Tay-Sachs Disease (enzyme only)' AND `provider` = 'NATERA_LAB';
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

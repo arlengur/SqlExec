@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="ENG-4211-02" author="kzakharov">
+        <comment>
+            Align groovy scripts with data model changes - correct the line-break escaping
+        </comment>
+        <sqlFile path="ENG-4211-02/sqlFile.sql" relativeToChangelogFile="true" dbms="mysql" endDelimiter=";;;"/>
+        <rollback>
+            <sqlFile path="ENG-4211-02/rollbackFile.sql" relativeToChangelogFile="true" dbms="mysql" endDelimiter=";;;"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

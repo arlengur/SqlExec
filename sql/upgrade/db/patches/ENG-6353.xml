@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6353-01" author="hharidas">
+        <comment>Update the template variable text from "name of variant" to "name of pseudodeficiency variant" for  TSE disease variant text</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            <!--TSE (DNA Only) - One pathogenic variant and one pseudodeficiency variant detected -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of pseudodeficiency variant"
+            where code="name of variant-7192616402876520754";
+
+            <!-- TSE (DNA and Enzyme) - One pathogenic variant and one pseudodeficiency variant detected; negative enzyme -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of pseudodeficiency variant"
+            where code="name of variant-7387419884838655815";
+
+            <!-- TSE (DNA and Enzyme) - One pathogenic variant and one pseudodeficiency variant detected; indeterminate enzyme -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of pseudodeficiency variant"
+            where code="name of variant-4758473752979495176";
+
+            <!-- TSE (DNA and Enzyme) - One pathogenic variant and one pseudodeficiency variant detected; positive enzyme -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of variant"
+            where code="name of mutation-5228245642862013918";
+
+            UPDATE horizontemplatevariable
+            set displayname = "name of pseudodeficiency variant"
+            where code="name of variant-5907726729248210961";
+
+            UPDATE horizondiseasetemplate
+            set variant="Positive for the pathogenic variant name of mutation-5228245642862013918 and the pseudodeficiency variant name of variant-5907726729248210961 in the HEXA gene. Positive enzyme analysis. Hexosaminidase Activity. Plasma: add HEX activity plasma nmol/hr/ml-8556389554680849037; WBC: add HEX activity WBC nmol/hr/mg-5885862496505997625; Hex A %. Plasma add HEX A % plasma-6603330144072006990; WBC add HEX A % WBC-6021985578873302910. If this individual's partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual's partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease."
+            where gene="HEXA"
+            and templatecode="One pathogenic variant and one pseudodeficiency variant detected; positive enzyme";
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            <!--TSE (DNA Only) - One pathogenic variant and one pseudodeficiency variant detected -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of variant"
+            where code="name of variant-7192616402876520754";
+
+            <!-- TSE (DNA and Enzyme) - One pathogenic variant and one pseudodeficiency variant detected; negative enzyme -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of variant"
+            where code="name of variant-7387419884838655815";
+
+            <!-- TSE (DNA and Enzyme) - One pathogenic variant and one pseudodeficiency variant detected; indeterminate enzyme -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of variant"
+            where code="name of variant-4758473752979495176";
+
+            <!-- TSE (DNA and Enzyme) - One pathogenic variant and one pseudodeficiency variant detected; positive enzyme -->
+            UPDATE horizontemplatevariable
+            set displayname = "name of mutation"
+            where code="name of mutation-5228245642862013918";
+
+            UPDATE horizontemplatevariable
+            set displayname = "name of variant"
+            where code="name of variant-5907726729248210961";
+
+            UPDATE horizondiseasetemplate
+            set variant="Positive for the pathogenic variant name of mutation-5228245642862013918 and the pseudodeficiency variant name of variant-5907726729248210961 in the HEXA gene. Positive enzyme analysis. Hexosaminidase Activity. Plasma: add HEX activity plasma nmol/hr/ml-8556389554680849037; WBC: add HEX activity WBC nmol/hr/mg-5885862496505997625; Hex A %. Plasma add HEX A % plasma-6603330144072006990; WBC add HEX A % WBC-6021985578873302910. If this individual's partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual's partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease."
+            where gene="HEXA"
+            and templatecode="One pathogenic variant and one pseudodeficiency variant detected; positive enzyme";
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6951-01" author="jdavid">
+        <comment>Add assay workflow table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`assayworkflow` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `casefile_id` bigint(20) DEFAULT NULL,
+            `assay` varchar(125) DEFAULT NULL,
+            `state` varchar(125) DEFAULT NULL,
+            `last_state_change` datetime DEFAULT NULL,
+            `variants` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FK_AW_CASEID_idx` (`casefile_id`),
+            CONSTRAINT `FK_AW_CASEID_idx` FOREIGN KEY (`casefile_id`) REFERENCES `prodlims`.`casefile` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`assayworkflow`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6951-02" author="jdavid">
+        <comment>Renamed variants column to variant</comment>
+        <sql>
+            alter table `prodlims`.`assayworkflow` CHANGE COLUMN `variants` `variant` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`assayworkflow` CHANGE COLUMN `variant` `variants` varchar(255) DEFAULT NULL;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

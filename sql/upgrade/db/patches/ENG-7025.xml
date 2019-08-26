@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7025-01" author="dchettupuzha">
+        <comment>Modify column name for table Horizon Plate Info (assay to subassay)</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonplate_info` CHANGE COLUMN `assay` `subassay` VARCHAR(255);
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`horizonplate_info` CHANGE COLUMN `subassay` `assay` VARCHAR(255);
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-7025-02" author="jdavid">
+        <comment>Modify column name for Sequencing Run (workflow to assay)</comment>
+        <sql>
+            ALTER TABLE `hts`.`sequencingrun` CHANGE COLUMN `workflow` `assay` VARCHAR(255);
+        </sql>
+        <rollback>
+            ALTER TABLE `hts`.`sequencingrun` CHANGE COLUMN `assay` `workflow` VARCHAR(255);
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-7025-03" author="jdavid">
+        <comment>Modify column name from workflows to assays</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizondiseases_workflows` CHANGE COLUMN `workflows` `assays` VARCHAR(255);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizondiseases_workflows` CHANGE COLUMN `assays` `workflows` VARCHAR(255);
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-7025-04" author="jdavid">
+        <comment>Alter table name from horizondiseases_workflows to horizondiseases_assays</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizondiseases_workflows` RENAME  `horizondiseases_assays`;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizondiseases_assays` RENAME  `horizondiseases_workflows`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6550-01" author="hharidas">
+        <comment>Update carrier rate and residual risk values - change "n/a" occurences to unknown</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE horizon_risk_data
+            SET riskbefore="unknown"
+            WHERE riskbefore="n/a";
+
+            UPDATE horizon_risk_data
+            SET riskafter="unknown"
+            WHERE riskafter="n/a";
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-6550-02" author="hharidas">
+        <comment>Update risk table rows - change all occurences of "African" to "African American"</comment>
+        <sql>
+
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE horizon_risk_data
+            SET ethnicity="African American"
+            WHERE ethnicity="African";
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

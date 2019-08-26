@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8592-01" author="mdaly">
+        <comment>Add "pathogenic" to the 5/9 and 7/9 R117H templates for CS2.</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `variant` = REPLACE(`variant`, 'Positive for the p.R117H variant and the', 'Positive for the pathogenic p.R117H variant and the')
+            WHERE `templatecode` IN ('R117H variant and 5T/9T detected', 'R117H variant and 7T/9T detected');
+
+            SET SQL_SAFE_UPDATES = 0;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `variant` = REPLACE(`variant`, 'Positive for the pathogenic p.R117H variant and the', 'Positive for the p.R117H variant and the')
+            WHERE `templatecode` IN ('R117H variant and 5T/9T detected', 'R117H variant and 7T/9T detected');
+
+            SET SQL_SAFE_UPDATES = 0;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

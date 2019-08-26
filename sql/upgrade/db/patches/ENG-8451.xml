@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8451-01" author="mdaly">
+        <comment>Fix spacing for Gaucher variants. The data imported in ENG-7139 had spacing issues that were not
+            transferred
+            to the DBUnit files and so were not noticed. This changeSet will bring the production db in line with the
+            (correct)
+            data in the DBUnit files.
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`horizondisease`
+            SET `variationsAndExons` = 'c.84dupG (p.Leu29Alafs*18), c.115+1G>A, c.1226A>G (p.Asn409Ser), c.1263_1317del
+            (p.Leu422Profs*4), c.1297G>T (p.Val433Leu), c.1342G>C (p.Asp448His), c.1343A>T (p.Asp448Val), c.1448T>C
+            (p.Leu483Pro), c.1504C>T (p.Arg502Cys), c.1505G>A (p.Arg502His), c.1604G>A (p.Arg535His)'
+            WHERE `mutation` = 'GBA' AND `provider` IN ('MTSINAI', 'NATERA_LAB');
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`horizondisease`
+            SET `variationsAndExons` = 'c.84dupG (p. Leu29Alafs*18), c.115+1G>A, c.1226A>G(p. Asn409Ser),
+            c.1263_1317del(p. Leu422Profs*4), c.1297G>T(p. Val433Leu), c.1342G>C(p. Asp448His), c.1343A>T(p. Asp448Val),
+            c.1448T>C(p. Leu483Pro), c.1504C>T(p. Arg502Cys), c.1505G>A(p. Arg502His), c.1604G>A(p.Arg535His)'
+            WHERE `mutation` = 'GBA' AND `provider` IN ('MTSINAI', 'NATERA_LAB');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

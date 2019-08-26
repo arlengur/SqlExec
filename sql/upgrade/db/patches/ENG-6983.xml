@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6983-01" author="dchettupuzha">
+        <comment>Insert new QC types for NGS Control Samples</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA00852', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA03770', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA04330', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA04408', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA07732', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA11283', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA11285', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA11287', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA11288', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA11370', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA11468', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA12794', 0),
+            ('SAMPLE', 'VcfFullMatchControlCheck', 'CONTROL_NA12878', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA16193', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA17821', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA18929', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA20737', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA20741', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA20745', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA20836', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA20924', 0),
+            ('SAMPLE', 'VcfContainsOnlyControlCheck', 'CONTROL_NA20925', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE  `name` IN (
+            'CONTROL_NA00852',
+            'CONTROL_NA03770',
+            'CONTROL_NA04330',
+            'CONTROL_NA04408',
+            'CONTROL_NA07732',
+            'CONTROL_NA11283',
+            'CONTROL_NA11285',
+            'CONTROL_NA11287',
+            'CONTROL_NA11288',
+            'CONTROL_NA11370',
+            'CONTROL_NA11468',
+            'CONTROL_NA12794',
+            'CONTROL_NA12878',
+            'CONTROL_NA16193',
+            'CONTROL_NA17821',
+            'CONTROL_NA18929',
+            'CONTROL_NA20737',
+            'CONTROL_NA20741',
+            'CONTROL_NA20745',
+            'CONTROL_NA20836',
+            'CONTROL_NA20924',
+            'CONTROL_NA20925');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6983-02" author="dchettupuzha">
+        <comment>Insert new QC stats types</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA00852', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA03770', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA04330', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA04408', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA07732', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA11283', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA11285', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA11287', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA11288', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA11370', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA11468', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA12794', 'ALL'),
+            ('VcfFullMatchControlCheck', 'CONTROL_NA12878', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA16193', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA17821', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA18929', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA20737', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA20741', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA20745', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA20836', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA20924', 'ALL'),
+            ('VcfContainsOnlyControlCheck', 'CONTROL_NA20925', 'ALL');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA00852' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA03770' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA04330' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA04408' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA07732' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA11283' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA11285' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA11287' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA11288' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA11370' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA11468' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA12794' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfFullMatchControlCheck' AND `name` = 'CONTROL_NA12878' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA16193' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA17821' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA18929' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA20737' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA20741' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA20745' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA20836' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA20924' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'VcfContainsOnlyControlCheck' AND `name` = 'CONTROL_NA20925' AND `applicability` = 'ALL';
+
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

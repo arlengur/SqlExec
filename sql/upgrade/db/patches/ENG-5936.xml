@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5936-01" author="jdavid">
+        <comment>Create case bundling table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`casebundling` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `casebundlingtype` varchar(255) NOT NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casebundling`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5936-02" author="jdavid">
+        <comment>Create casebundling_casefile table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`casefile_casebundling` (
+            `casebundling_id` bigint(20) NOT NULL,
+            `casefile_id` bigint(20) NOT NULL,
+            PRIMARY KEY (`casebundling_id`,`casefile_id`),
+            KEY `FKcasefilecasebundling_casebundling` (`casebundling_id`),
+            KEY `FKcasefilecasebundling_casefile` (`casefile_id`),
+            CONSTRAINT `FKcasefilecasebundling_casebundling` FOREIGN KEY (`casebundling_id`) REFERENCES `casebundling` (`id`),
+            CONSTRAINT `FKcasefilecasebundling_casefile` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`casefile_casebundling`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

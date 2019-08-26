@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8515-01" author="mdubrovin">
+        <comment>Add consent signature fields for partner/egg donor</comment>
+        <sql>
+            ALTER TABLE `paternity_fields`
+                ADD COLUMN `partner_consent_signature` BIT(1) AFTER `partner_signature`,
+                ADD COLUMN `egg_donor_consent_signature` BIT(1) AFTER `egg_donor_signature`;
+        </sql>
+
+        <rollback>
+            ALTER TABLE `paternity_fields`
+                DROP COLUMN `partner_consent_signature`,
+                DROP COLUMN `egg_donor_consent_signature`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

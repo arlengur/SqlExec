@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6804-01" author="dchettupuzha">
+        <comment>Modify row in qc_type and qc_statistics_type table</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            update `prodlims`.`qc_type` set `name` = 'EPT_TEMPERATURE_MAX' where `name` = 'EPT_TEMPERATURE';
+            update `prodlims`.`qc_statistics_type` set `name` = 'EPT_TEMPERATURE_MAX' where `name` = 'EPT_TEMPERATURE';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            update `prodlims`.`qc_type` set `name` = 'EPT_TEMPERATURE' where `name` = 'EPT_TEMPERATURE_MAX';
+            update `prodlims`.`qc_statistics_type` set `name` = 'EPT_TEMPERATURE' where `name` = 'EPT_TEMPERATURE_MAX';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6804-02" author="dchettupuzha">
+        <comment>Add rows in qc_statistics_type table</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Temperature, measured (degrees C)', 'EPT_TEMPERATURE_MEAN', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE
+            `description` = 'Temperature, measured (degrees C)' AND
+            `name` = 'EPT_TEMPERATURE_MEAN' AND
+            `applicability` = 'ALL';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

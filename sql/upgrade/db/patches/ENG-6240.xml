@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6240-01" author="mdaly">
+        <comment>Merge selected alpha-thalassemia and beta-thalassema/beta-hemoglobinapathy tempaltes.</comment>
+        <sql>
+            <!-- update 111 with text from 1849 -->
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'likely pathogenic variant detected for beta-hemoglobinopathy or thalassemia',
+            `status` = 'CARRIER for Beta-Hemoglobinopathy or Beta-Thalassemia',
+            `variant` = 'Positive for the likely pathogenic variant name of variant-6665962740842455942 in the HBB gene. Carriers of Beta-Hemoglobinopathy/Beta-Thalassemia can have mild to moderate anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for a Beta-Hemoglobinopathy or Beta-Thalassemia, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 111;
+
+            <!-- update 101 with text from 1840 -->
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'likely pathogenic variant detected for beta-thalassemia',
+            `variant` = 'Positive for the likely pathogenic variant name of variant-7028559850394368730 in the HBB gene. Carriers for Beta-Thalassemia can have mild to moderate anemia. If this individual''s partner is a carrier for Beta-Thalassemia or Beta-Hemoglobinopathy, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 115;
+
+            <!-- update 111 with text from 1849 -->
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'One gene deleted (deletion other than 3.7 or 4.2)',
+            `variant` = 'Positive for the pathogenic insert deletion-8145794917549137487 of the insert HBA1 or HBA2-5742550775322718018 gene. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with Hemoglobin H Disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 101;
+
+            <!-- update 105 with text from 1851 -->
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'pathogenic variant detected for beta-hemoglobinopathy or thalassemia',
+            `status` = 'CARRIER for Beta-Hemoglobinopathy or Beta-Thalassemia',
+            `variant` = 'Positive for the pathogenic variant name of mutation-8763764564059690383 in the HBB gene. Carriers of Beta-Hemoglobinopathy/Beta-Thalassemia can have mild to moderate anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Beta-Hemoglobinopathy or Beta-Thalassemia, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 105;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'pathogenic variant detected for beta-thalassemia'
+            WHERE `id` = 112;
+
+            -- These need to be run manually (w/ FK checks off) in case new FK associations are created.
+            -- DELETE FROM horizontemplatevariable where id in (select variable_id  from template_variable tv where tv.template_id IN (1840, 1849, 1850,1851));
+            -- DELETE FROM template_variable WHERE `template_id` IN (1840, 1849, 1850);
+            -- DELETE FROM horizondiseasetemplate WHERE `id` IN (1840, 1849, 1850);
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'likely pathogenic variant detected for beta-hemoglobinopathy',
+            `status` = 'CARRIER for a Beta-Hemoglobinopathy',
+            `variant` = 'Positive for the likely pathogenic variant name of variant-6665962740842455942 in the HBB gene. If the patient''s partner is a carrier for a Beta-Hemoglobinopathy, their chance to have a child with a Beta-Hemoglobinopathy may be as high as 1 in 4 (25%)'
+            WHERE `id` = 111;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'likely pathogenic variant detected for beta-thal',
+            `variant` = 'Positive for the likely pathogenic variant name of variant-7028559850394368730 in the HBB gene. If the patient''s partner is a carrier for Beta-Hemoglobinopathy, their chance to have a child with a Beta-Hemoglobinopathy may be as high as 1 in 4 (25%).'
+            WHERE `id` = 115;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'One gene deleted',
+            `variant` = 'Positive for the pathogenic insert deletion-8145794917549137487 of the insert HBA1 or HBA2-5742550775322718018 gene. Depending on the carrier status of the patient’s partner, this couple may be at increased risk to have a child with Hemoglobin H Disease.'
+            WHERE `id` = 101 ;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'pathogenic variant detected for beta-hemoglobinopathy',
+            `status` = 'CARRIER for a Beta-Hemoglobinopathy',
+            `variant` = 'Positive for the pathogenic variant name of mutation-8763764564059690383 in the HBB gene. If the patient''s partner is a carrier for Beta-Hemoglobinopathy, their chance to have a child with a Beta-Hemoglobinopathy is 1 in 4 (25%).'
+            WHERE `id` = 105;
+
+            UPDATE `prodlims`.`horizondiseasetemplate` SET
+            `templateCode` = 'pathogenic variant detected for beta-thal'
+            WHERE `id` = 112 ;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

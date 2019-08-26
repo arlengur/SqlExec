@@ -1,0 +1,40 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+
+    <changeSet id="20160526-02" author="dchettupuzha">
+        <comment>Populate table insuranceproviderdetail</comment>
+        <sql>
+            insert into insuranceproviderdetail(insuranceprovider_name, insuranceprovider_states, validfromdate)
+            values('Cigna', null, null);
+            insert into insuranceproviderdetail(insuranceprovider_name, insuranceprovider_states, validfromdate)
+            values('HealthNet', null, null);
+            insert into insuranceproviderdetail(insuranceprovider_name, insuranceprovider_states, validfromdate)
+            values('Medicaid', 'TX|TEXAS', '2016-05-01');
+            insert into insuranceproviderdetail(insuranceprovider_name, insuranceprovider_states, validfromdate)
+            values('UnitedHealthcare|United Health Care|United HealthCare', null, '2016-07-01');
+        </sql>
+    </changeSet>
+
+    <changeSet id="20160602-01" author="dchettupuzha">
+        <comment>Update United Health Care name</comment>
+        <sql>
+            update insuranceproviderdetail set insuranceprovider_name = 'UnitedHealthcare|United Health Care|United
+            HealthCare|UHC' where
+            id = 4 and insuranceprovider_name = 'UnitedHealthcare|United Health Care|United HealthCare';
+        </sql>
+    </changeSet>
+
+    <changeSet id="20160629-01" author="dchettupuzha">
+        <comment>Update United Health Care start date</comment>
+        <sql>
+            update insuranceproviderdetail set validfromdate = '2017-01-01' where id = 4 and validfromdate =
+            '2016-07-01';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

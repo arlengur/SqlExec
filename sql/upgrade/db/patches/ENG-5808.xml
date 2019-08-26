@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5808-01" author="apotekhin">
+        <comment>Update default referral version for clinics</comment>
+        <sql>
+            update `prodlims`.`organization` set `referralFormVersions` = 'UNIV-8' where `referralFormVersions` = 'UNIV-7';
+            update `prodlims`.`organization` set `referralFormVersions` = 'UNIV-8-Panel_3' where `referralFormVersions` = 'UNIV-7-Panel_3';
+        </sql>
+        <rollback>
+            update `prodlims`.`organization` set `referralFormVersions` = 'UNIV-7' where `referralFormVersions` = 'UNIV-8';
+            update `prodlims`.`organization` set `referralFormVersions` = 'UNIV-7-Panel_3' where `referralFormVersions` = 'UNIV-8-Panel_3';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

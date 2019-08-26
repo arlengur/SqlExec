@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8157-01" author="apotekhin">
+        <comment>Update testcondition table with stubbed values for Signatera</comment>
+        <sql>
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 1', 'Variant 1');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 1')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 2', 'Variant 2');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 2')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 3', 'Variant 3');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 3')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 4', 'Variant 4');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 4')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 5', 'Variant 5');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 5')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 6', 'Variant 6');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 6')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 7', 'Variant 7');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 7')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 8', 'Variant 8');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 8')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 9', 'Variant 9');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 9')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 10', 'Variant 10');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 10')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 11', 'Variant 11');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 11')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 12', 'Variant 12');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 12')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 13', 'Variant 13');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 13')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 14', 'Variant 14');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 14')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 15', 'Variant 15');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 15')
+            );
+
+            INSERT INTO `prodlims`.`testcondition` (name, mutation) VALUES ('Variant 16', 'Variant 16');
+            INSERT INTO `prodlims`.`sendoutpanel_testcondition` (panel_id, testcondition_id) VALUES (
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN'),
+                (select id from testcondition where name = 'Variant 16')
+            );
+        </sql>
+
+        <rollback>
+            DELETE from `prodlims`.`sendoutpanel_testcondition` where panel_id =
+                (select id from sendoutpanel where name = 'RM_PRIMER_DESIGN');
+            DELETE from `prodlims`.`testcondition` where name in
+                ('Variant 1', 'Variant 2', 'Variant 3', 'Variant 4', 'Variant 5', 'Variant 6', 'Variant 7', 'Variant 8',
+            'Variant 9', 'Variant 10', 'Variant 11', 'Variant 12', 'Variant 13', 'Variant 14', 'Variant 15', 'Variant 16');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

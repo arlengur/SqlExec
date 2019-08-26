@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9077-01" author="nfleming">
+        <comment>Update Primer Design metric names</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_MEDIAN_VAF' WHERE name = 'POOL_MEDIAN_VAF_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_MEDIAN_RANK' WHERE name = 'POOL_MEDIAN_RANK_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_SOMATIC_TRANSVERSIONS' WHERE name = 'POOL_SOMATIC_TRANSVERSIONS_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_SOMATIC_TRANSITIONS' WHERE name = 'POOL_SOMATIC_TRANSITIONS_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_SOMATIC_INDELS' WHERE name = 'POOL_SOMAITC_INDELS_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'NUMBER_OF_ASSAYS_IN_POOL' WHERE name = 'NUMBER_OF_ASSAYS_IN_POOL_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_MEDIAN_MOTIF_BUCKET' WHERE name = 'POOL_MEDIAN_MOTIF_BUCKET_METRIC';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_HOTSPOT_MUTATIONS' WHERE name = 'POOL_HOTSPOT_MUTATIONS_METRIC';
+
+            UPDATE `prodlims`.`qc_type` SET name = 'NUMBER_OF_ASSAYS_IN_POOL' WHERE name = 'NUMBER_OF_ASSAYS_IN_POOL_METRIC';
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_MEDIAN_VAF_METRIC' WHERE name = 'POOL_MEDIAN_VAF';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_MEDIAN_RANK_METRIC' WHERE name = 'POOL_MEDIAN_RANK';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_SOMATIC_TRANSVERSIONS_METRIC' WHERE name = 'POOL_SOMATIC_TRANSVERSIONS';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_SOMATIC_TRANSITIONS_METRIC' WHERE name = 'POOL_SOMATIC_TRANSITIONS';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_SOMAITC_INDELS_METRIC' WHERE name = 'POOL_SOMATIC_INDELS';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'NUMBER_OF_ASSAYS_IN_POOL_METRIC' WHERE name = 'NUMBER_OF_ASSAYS_IN_POOL';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_MEDIAN_MOTIF_BUCKET_METRIC' WHERE name = 'POOL_MEDIAN_MOTIF_BUCKET';
+            UPDATE `prodlims`.`qc_statistics_type` SET name = 'POOL_HOTSPOT_MUTATIONS_METRIC' WHERE name = 'POOL_HOTSPOT_MUTATIONS';
+
+            UPDATE `prodlims`.`qc_type` SET name = 'NUMBER_OF_ASSAYS_IN_POOL_METRIC' WHERE name = 'NUMBER_OF_ASSAYS_IN_POOL';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

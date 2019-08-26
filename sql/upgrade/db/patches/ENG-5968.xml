@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5968-01" author="apotekhin">
+        <comment>
+            Columns to store additional zygosity and fetal sex for twins report
+        </comment>
+        <sql>
+            alter table `prodlims`.`npt_report` add column `result_zygosity` VARCHAR(255) DEFAULT NULL;
+            alter table `prodlims`.`npt_report` add column `reported_gender2` VARCHAR(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`npt_report` drop column `result_zygosity`;
+            alter table `prodlims`.`npt_report` drop column `reported_gender2`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

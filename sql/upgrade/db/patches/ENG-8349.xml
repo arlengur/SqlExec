@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="ENG-8349-01" author="jdavid">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists schemaName="hts" tableName="sequencingsample" columnName="labQcPassed"/></not>
+        </preConditions>
+        <comment>Added labQcPassed column to sequencingsample table</comment>
+        <addColumn schemaName="hts" tableName="sequencingsample">
+            <column name="labQcPassed" type="BOOLEAN"/>
+        </addColumn>
+        <rollback>
+            alter table `hts`.`sequencingsample` drop column `labQcPassed`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8349-02" author="jdavid">
+        <comment>Set lvQCPassed to true for NGS sequencing samples</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `hts`.`sequencingsample` set `labQcPassed` = true
+            where `run_id` in (select `id` from `hts`.`sequencingrun` where assay = 'NGS');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `hts`.`sequencingsample` set `labQcPassed` = null
+            where `run_id` in (select `id` from `hts`.`sequencingrun` where assay = 'NGS');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

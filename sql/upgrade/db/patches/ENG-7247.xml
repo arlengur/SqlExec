@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7247-01" author="mdaly">
+        <comment>Migrate existing results to new 'NA' value; primarily to help SQA</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`horizoncloudresult` SET `constantSpringCall`='NA' WHERE `constantSpringCall`='NOT_AVAILABLE';
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`horizoncloudresult` SET `constantSpringCall`='NOT_AVAILABLE' WHERE `constantSpringCall`='NA';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

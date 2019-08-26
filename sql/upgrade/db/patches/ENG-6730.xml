@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6730-01" author="dchettupuzha">
+        <comment>Insert new Control Sequencing Subject type</comment>
+        <sql>
+            insert into `hts`.`sequencingsubject` (`familyid`,`familyposition`,`subjectid`) values ('Control', 'Control', 'Control');
+        </sql>
+        <rollback>
+            SET sql_safe_updates=0;
+            delete from `hts`.`sequencingsubject` where `familyid` = 'Control';
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

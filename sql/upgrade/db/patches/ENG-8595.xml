@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8595-01" author="mdaly">
+        <comment>Add new templates for Tay-Sachs DNA and enzyme when enzyme is TNP</comment>
+        <sql>
+            -- New templates
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate`
+            (`id`,`associatedCall_id`,`lookupCode`, `label`,`headLine`,`clinicalDetails`)
+            VALUES
+            (169, 2, 'NEGATIVE__TNP', 'No variants detected; enzyme TNP', 'NEGATIVE Tay-Sachs Disease Results', 'No pathogenic variants detected. ${_tse_tnp_reason} Redraw recommended.'),
+            (170, 7, 'LIKELY_PATHOGENIC__TNP', 'Likely pathogenic variant detected; enzyme TNP', 'CARRIER for Tay-Sachs Disease', '${_tsd_likely_pathogenic} ${_tse_tnp_reason} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'),
+            (171, 6, 'PATHOGENIC__TNP', 'One pathogenic variant detected; enzyme TNP', 'CARRIER for Tay-Sachs Disease', '${_tsd_pathogenic} ${_tse_tnp_reason} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'),
+            (172, 6, 'PATHOGENIC_PSEUDODEFICIENT__TNP', 'One pathogenic variant and one pseudodeficiency variant detected; enzyme TNP', 'CARRIER for Tay-Sachs Disease', '${_tsd_pathogenic_pseudodeficient} ${_tse_tnp_reason} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'),
+            (173, 2, 'PSEUDODEFICIENT__TNP', 'One pseudodeficiency variant detected; enzyme TNP', 'Pseudodeficiency VARIANT DETECTED for Tay-Sachs Disease', '${_tsd_pseudodeficient} ${_tse_tnp_reason} This pseudodeficiency allele is known to cause false positive results on enzyme-based Tay-Sachs Disease carrier screening. This benign variant does not increase the risk for Tay-Sachs Disease in this individual''s children.'),
+            (174, 2, 'TWO_PSEUDODEFICIENT__TNP', 'Two pseudodeficiency variants detected; enzyme TNP', 'Two Pseudodeficiency VARIANTS DETECTED for Tay-Sachs Disease', '${_tsd_two_pseudodeficient} ${_tse_tnp_reason} These pseudodeficiency alleles are known to cause false positive results on enzyme-based Tay-Sachs Disease carrier screening and do not increase the risk for Tay-Sachs Disease in this individual''s children.'),
+            (175, 8, 'TWO_CIS__TNP', 'Two variants detected (cis); enzyme TNP', 'CARRIER for Tay-Sachs Disease', '${_tsd_two_cis} ${_tse_tnp_reason} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'),
+            (176, 8, 'TWO_TRANS__TNP', 'Two variants detected (trans); enzyme TNP', 'POSITIVE for two variants in the gene associated with Tay-Sachs Disease', '${_tsd_two} ${_tse_tnp_reason} This individual is predicted to be affected with Tay-Sachs Disease. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'),
+            (177, 8, 'TWO_UNKNOWN__TNP', 'Two variants detected (cis or trans unknown); enzyme TNP', 'POSITIVE for two variants in the gene associated with Tay-Sachs Disease', '${_tsd_two} ${_tse_tnp_reason} This individual may be affected with Tay-Sachs Disease. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This analysis cannot determine if the HEXA variants are on the same (in cis) or opposite (in trans) chromosomes in this individual. Testing of parents or other close family members may assist in determining the phase of these variants. If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition may be as high as 1 in 2 (50%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.');
+
+            -- Tay-Sachs templates use subtemplates/template fragments.
+            INSERT INTO `prodlims`.`HorizonDiseaseResultTemplate_HorizonDiseaseResultTemplate`
+            (`diseaseResultTemplate_id`, `subtemplates_id`, `processingOrder`)
+            VALUES
+            (170, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_LIKELY_PATHOGENIC'), 0),
+            (171, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_PATHOGENIC'), 0),
+            (172, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_PATHOGENIC_PSEUDODEFICIENT'), 0),
+            (173, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_ONE_PSEUDODEFICIENT'), 0),
+            (174, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_TWO_PSEUDODEFICIENT'), 0),
+            (175, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_TWO_CIS'), 0),
+            (176, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_TWO'), 0),
+            (177, (SELECT `id` FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `lookupCode` = '_TWO'), 0);
+
+            -- Associate disease with new template
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`)
+            VALUES
+            (169, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (170, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (171, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (172, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (173, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (174, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (175, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (176, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (177, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO'));
+        </sql>
+
+        <rollback>
+            -- Unlink templates from disease
+            DELETE FROM `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` WHERE
+            `diseaseResultTemplate_id` IN (169, 170, 171, 172, 173, 174, 175, 176, 177) AND
+            `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO');
+
+            -- Unlink subtemplates
+            DELETE FROM `prodlims`.`HorizonDiseaseResultTemplate_HorizonDiseaseResultTemplate` WHERE
+            `diseaseResultTemplate_id` IN (170, 171, 172, 173, 174, 175, 176, 177);
+
+            -- Finally, delete templates
+            DELETE FROM `prodlims`.`HorizonDiseaseResultTemplate` WHERE `id` IN (169, 170, 171, 172, 173, 174, 175, 176, 177);
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8595-02" author="mdaly">
+        <comment>Associate new templates with a positive DNA supplement</comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondisease_horizondiseasesupplement`
+            (`supplement_id`, `template_id`, `disease_id`)
+            VALUES
+            (149, 170, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (149, 171, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (149, 172, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (149, 175, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (149, 176, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO')),
+            (149, 177, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizondisease_horizondiseasesupplement` WHERE
+            `supplement_id` = 149 AND
+            `template_id` IN (170, 171, 172, 175, 176, 177) AND
+            `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSCOMBO');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8595-03" author="mdaly">
+        <comment>Add field for a possible TNP reason (currently the ShortTNPReason Enum)</comment>
+        <addColumn tableName="HorizonCloudResult">
+            <column name="tnpReason" afterColumn="finalCall_id" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="ENG-8595-04" author="mdaly">
+        <comment>Add a variable for a message to the TNP templates and use empty string as the default when not set.
+            TNP: 3
+            TNP_REDRAW: 4
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = '${tnpMessage!""}'
+            WHERE `id` IN (3, 4);
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = NULL
+            WHERE `id` IN (3, 4);
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8595-05" author="mdaly">
+        <comment>Fix capitalization of "Redraw" (per comment on Approval doc).*
+                PSEUDODEFICIENT__INDETERMINATE: 122
+         </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = '${_tsd_pseudodeficient} Indeterminate enzyme analysis; redraw not recommended. ${_enzyme_details} This pseudodeficiency allele is known to cause false positive results on enzyme-based Tay-Sachs Disease carrier screening. This benign variant does not increase the risk for Tay-Sachs Disease in this individual''s children.'
+            WHERE `id` = 122;
+        </sql>
+        <rollback>
+            -- MySQL chokes due to semicolon after analysis. Since this isn't critical, skipping rollback.
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

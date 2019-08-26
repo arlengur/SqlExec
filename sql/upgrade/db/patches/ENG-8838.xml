@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8338-01" author="irazin">
+        <comment>Add sample statistics for Signatera primer designer pipeline</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) VALUES
+            ('Median variant allele frequency within 16-plex pool', 'POOL_MEDIAN_VAF_METRIC', 'ALL'),
+            ('Median rank of variants within 16-plex pool', 'POOL_MEDIAN_RANK_METRIC', 'ALL'),
+            ('Total number of transversions for 16-plex pool', 'POOL_SOMATIC_TRANSVERSIONS_METRIC', 'ALL'),
+            ('Total number of transitions for 16-plex pool', 'POOL_SOMATIC_TRANSITIONS_METRIC', 'ALL'),
+            ('Total number of small insertion/deletion for 16-plex pool', 'POOL_SOMAITC_INDELS_METRIC', 'ALL'),
+            ('The number of assay in the 16-plex pool', 'NUMBER_OF_ASSAYS_IN_POOL_METRIC', 'ALL'),
+            ('Median motif bucket ID for 16-plex pool', 'POOL_MEDIAN_MOTIF_BUCKET_METRIC', 'ALL'),
+            ('The number of hotspot mutations in16-plex pool', 'POOL_HOTSPOT_MUTATIONS_METRIC', 'ALL');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'POOL_MEDIAN_VAF_METRIC',
+            'POOL_MEDIAN_RANK_METRIC',
+            'POOL_SOMATIC_TRANSVERSIONS_METRIC',
+            'POOL_SOMATIC_TRANSITIONS_METRIC',
+            'POOL_SOMAITC_INDELS_METRIC',
+            'NUMBER_OF_ASSAYS_IN_POOL_METRIC',
+            'POOL_MEDIAN_MOTIF_BUCKET_METRIC',
+            'POOL_HOTSPOT_MUTATIONS_METRIC'
+            );
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

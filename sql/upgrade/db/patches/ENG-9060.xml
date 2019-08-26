@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9060-01" author="jdavid">
+        <comment>Update non-NY, EMR integrated clinics from UNIV-10 to UNIV-11</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`organization` o
+            JOIN `prodlims`.`organization_deliverydestination` od ON
+            od.organization_id = o.id
+            JOIN `prodlims`.`deliverydestination` d ON
+            od.deliverydestinations_id = d.id
+            JOIN `prodlims`.`deliverydestination_testtypes` dt ON
+            dt.DeliveryDestination_id = d.id
+            JOIN `prodlims`.`contactinfo` ci ON
+            o.address_id = ci.id
+            SET o.`referralFormVersions` = 'UNIV-11'
+            WHERE ci.`state` NOT IN ('NY','N.Y.','New York')
+            AND o.`referralFormVersions` = 'UNIV-10'
+            AND dt.`testtypes` = 'CARRIER_SCREENING_3'
+            AND d.`deliverymethod` = 'HL7';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`organization` o
+            JOIN `prodlims`.`organization_deliverydestination` od ON
+            od.organization_id = o.id
+            JOIN `prodlims`.`deliverydestination` d ON
+            od.deliverydestinations_id = d.id
+            JOIN `prodlims`.`deliverydestination_testtypes` dt ON
+            dt.DeliveryDestination_id = d.id
+            JOIN `prodlims`.`contactinfo` ci ON
+            o.address_id = ci.id
+            SET o.`referralFormVersions` = 'UNIV-10'
+            WHERE ci.`state` NOT IN ('NY','N.Y.','New York')
+            AND o.`referralFormVersions` = 'UNIV-11'
+            AND dt.`testtypes` = 'CARRIER_SCREENING_3'
+            AND d.`deliverymethod` = 'HL7';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9060-02" author="jdavid">
+        <comment>Update non-NY, EMR integrated clinics from UNIV-10-Panel_3 to UNIV-11-Panel_3</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`organization` o
+            JOIN `prodlims`.`organization_deliverydestination` od ON
+            od.organization_id = o.id
+            JOIN `prodlims`.`deliverydestination` d ON
+            od.deliverydestinations_id = d.id
+            JOIN `prodlims`.`deliverydestination_testtypes` dt ON
+            dt.DeliveryDestination_id = d.id
+            JOIN `prodlims`.`contactinfo` ci ON
+            o.address_id = ci.id
+            SET o.`referralFormVersions` = 'UNIV-11-Panel_3'
+            WHERE ci.`state` NOT IN ('NY','N.Y.','New York')
+            AND o.`referralFormVersions` = 'UNIV-10-Panel_3'
+            AND dt.`testtypes` = 'CARRIER_SCREENING_3'
+            AND d.`deliverymethod` = 'HL7';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`organization` o
+            JOIN `prodlims`.`organization_deliverydestination` od ON
+            od.organization_id = o.id
+            JOIN `prodlims`.`deliverydestination` d ON
+            od.deliverydestinations_id = d.id
+            JOIN `prodlims`.`deliverydestination_testtypes` dt ON
+            dt.DeliveryDestination_id = d.id
+            JOIN `prodlims`.`contactinfo` ci ON
+            o.address_id = ci.id
+            SET o.`referralFormVersions` = 'UNIV-10-Panel_3'
+            WHERE ci.`state` NOT IN ('NY','N.Y.','New York')
+            AND o.`referralFormVersions` = 'UNIV-11-Panel_3'
+            AND dt.`testtypes` = 'CARRIER_SCREENING_3'
+            AND d.`deliverymethod` = 'HL7';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

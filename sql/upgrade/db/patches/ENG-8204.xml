@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8204-01" author="mdaly">
+        <comment>Update template text (adding sentence regarding cis/trans relationship of variants).
+
+          Template IDs (from HorizonDiseaseResultTemplate.xml)
+          ONE_DEL_ONE_MUT_CIS: 141
+          ONE_DEL_ONE_MUT_TRANS: 142
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the ${results[0].type} variant ${results[0].variantName} and the pathogenic ${results[1].variantName} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. These two variants are located on the same chromosome (in cis). Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 141;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the ${results[0].type} variant ${results[0].variantName} and the pathogenic ${results[1].variantName} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. These two variants are located on opposite chromosomes (in trans). Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 142;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the ${results[0].type} variant ${results[0].variantName} and the pathogenic ${results[1].variantName} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 141;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the ${results[0].type} variant ${results[0].variantName} and the pathogenic ${results[1].variantName} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 142;
+        </rollback>
+    </changeSet>
+
+
+
+</databaseChangeLog>
+

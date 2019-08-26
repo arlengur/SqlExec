@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6057-01" author="hharidas">
+        <comment>Add new disease supplements to Horizon Report</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/3-hydroxy-3-methylglutaryl-coenzyme-a-lyase-deficiency.xml' WHERE `gene` = 'HMGCL' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected');
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/achromatopsia-cngb3-related.xml' WHERE `gene` = 'CNGB3' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected','c.1208G>A (p.R403Q)');
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/argininosuccinate-lyase-deficiency.xml' WHERE `gene` = 'ASL' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected');
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/3-hydroxy-3-methylglutaryl-coa-lyase-deficiency.xml' WHERE `gene` = 'HMGCL' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected');
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/achromatopsia.xml' WHERE `gene` = 'CNGB3' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected','c.1208G>A (p.R403Q)');
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/argininosuccinic-lyase-deficiency.xml' WHERE `gene` = 'ASL' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected');
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6057-02" author="hharidas">
+        <comment>Add new disease supplements to Horizon Report</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/leber-congenital-amaurosis-type-lca5.xml' WHERE `gene` = 'LCA5' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected');
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+             UPDATE `prodlims`.`horizondiseasetemplate` SET `supplementpath` = 'com/natera/lims/service/horizon/report/supplements/leber-congenital-amaurosis.xml' WHERE `gene` = 'LCA5' AND `templatecode` IN ('pathogenic variant detected','likely pathogenic variant detected');
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

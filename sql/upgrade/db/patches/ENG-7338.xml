@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7338-01" author="mdaly">
+        <comment>Update the "One premutation 55-90 CGG and one premutation 91-200 CGG" scenario for FMR1.
+            Id for "One premutation 55-90 CGG and one premutation 91-200 CGG" scenario is 37
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Two premutation size ${(results[0].cggRepeats[0])!"cgg1"} and ${(results[0].cggRepeats[1])!"cgg2"} CGG repeat alleles were detected in the FMR1 gene. Female premutation carriers have an increased risk for Fragile X associated Primary Ovarian Insufficiency (POI) and a late-onset neurological condition called Fragile X associated Tremor/Ataxia Syndrome (FXTAS). Occasionally, females with a premutation may have issues related to attention span such as Attention Deficit Disorder and some may have behavior problems, social anxiety, and/or difficulty with social skills. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. This individual is at increased risk to have a child with Fragile X Syndrome. AGG testing through Asuragen Laboratories will be performed and a separate report will be sent. This report will refine the chance for expansion of the CGG repeat tract.'
+            WHERE `id` = 37;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

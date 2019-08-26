@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7473-01" author="aarustamov">
+        <comment>Add new script to find Vistara cases that have received only once parent kit</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            INSERT INTO `prodlims`.`script` (name, code)
+            VALUES ('Vistara cases with a single parent kit',
+'
+import com.natera.lims.datamodel.ivf.prod.CaseFile
+
+def phase1CaseFiles = new HashSet()
+
+phase1CaseFiles.addAll(caseFileDAO.session.createSQLQuery(
+        "select distinct cf.* from CaseFile cf " +
+                "join SendoutOrder so on so.casefile_id = cf.id " +
+                "join SendoutPanelOrder spo on spo.order_id = so.id " +
+                "join sendoutpanelorder_draw draw on spo.id = draw.panelorder_id " +
+                "where draw.sampledraw = 0 " +
+                "and cf.closed is null " +
+                "and cf.testType = ''SNV_SENDOUT'' " +
+                "and CAST(cf.opened as date) between :fromDate and :toDate")
+        .setParameter("fromDate", fromDate)
+        .setParameter("toDate", toDate)
+        .addEntity(CaseFile.class)
+        .list())
+
+println("CaseFile, Maternal Name, Paternal Name, Egg Donor Name");
+println("Vistara Phase 1 Cases with a kit missing");
+
+phase1CaseFiles.each { cf ->
+    println(cf.getId() + ", " + cf.getPatient().getFullName() + ", " + cf.getPartner().getFullName() + ", " + cf.getEggDonor().getFullName());
+}
+
+
+def phase0CaseFiles = new HashSet()
+
+phase0CaseFiles.addAll(caseFileDAO.session.createSQLQuery(
+        "select distinct cf.* from CaseFile cf " +
+                "where cf.closed is null " +
+                "and cf.testType = ''SEND_OUT_PHASE_0'' ")
+        .addEntity(CaseFile.class)
+        .list())
+
+def listOfCasesWithSameNames = []
+
+phase1CaseFiles.each { p1Case ->
+    phase0CaseFiles.each { p0Case ->
+        if (p1Case.getPatient().getFullName().equals(p0Case.getPatient().getFullName())
+                || p1Case.getPartner().getFullName().equals(p0Case.getPartner().getFullName())
+                || p1Case.getEggDonor().getFullName().equals(p0Case.getEggDonor().getFullName())) {
+            listOfCasesWithSameNames.add(p1Case)
+        }
+    }
+}
+
+println("\\nList of Vistara Phase 1 Cases that have a parent kit missing and subject shares full name with Vistara Phase 0 case");
+
+println("CaseFile, Maternal Name, Paternal Name, Egg Donor Name");
+listOfCasesWithSameNames.each { cf ->
+    println(cf.getId() + ", " + cf.getPatient().getFullName() + ", " + cf.getPartner().getFullName() + ", " + cf.getEggDonor().getFullName());
+}
+
+return "End of cases"
+');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`script` WHERE name = 'Vistara cases with a single parent kit';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-7473-02" author="aarustamov">
+        <comment>Insert parameters for Vistara cases that have received only once parent kit</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'fromDate',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases with a single parent kit'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'toDate',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases with a single parent kit'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`scriptparameter`
+            WHERE script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases with a single parent kit');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6957-01" author="dchettupuzha">
+        <comment>Add new QC into QC_TYPE table</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', '', 'NA12878_IDENTITY_CHECK', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name`='NA12878_IDENTITY_CHECK';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6957-02" author="dchettupuzha">
+        <comment>Insert new QC statistics type</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('SAMPLE', 'NA12878_IDENTITY_CHECK', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name`='NA12878_IDENTITY_CHECK';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

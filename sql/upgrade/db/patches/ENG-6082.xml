@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6082-01" author="aarustamov">
+        <comment>Add new GC template to prodlims.GCTemplate table to support SNV Sendout Phase 0</comment>
+        <sql>
+            <![CDATA[
+            INSERT INTO `prodlims`.`GCTemplate` (`name`, `text`)
+            VALUES ('SNV Sendout  Phase 0', '<p>Dear Dr. [MD name],</p>\n<p>&nbsp;</p>\n<p>Sincerely,</p>\n<p>&nbsp;</p>\n<p>Natera, Inc.</p>');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`GCTemplate` WHERE name = 'SNV Sendout  Phase 0';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

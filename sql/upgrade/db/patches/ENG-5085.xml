@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5085_01" author="nfleming">
+        <comment>Add ALLEGED_TRACER_INDEX as a QC Result</comment>
+        <sql>
+            INSERT INTO `qc_type` (category, description, name, ismultisample)
+            VALUES ('AMPLIFICATION', 'Check the alleged tracer index', 'ALLEGED_TRACER_INDEX', false);
+        </sql>
+        <rollback>
+            DELETE FROM 'qc_type' WHERE category = 'AMPLIFICATION' AND name = 'ALLEGED_TRACER_INDEX';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

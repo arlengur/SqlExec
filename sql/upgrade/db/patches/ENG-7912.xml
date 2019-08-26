@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7912" author="kzakharov">
+        <comment>Update detection rates for Vistara related genes</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>92%'
+            where mutation = 'TSC1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>91%'
+            where mutation = 'TSC2';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>86%'
+            where mutation = 'JAG1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>47%'
+            where mutation = 'NSD1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>86%'
+            where mutation = 'SYNGAP1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>94%'
+            where mutation = 'CBL';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>75%'
+            where mutation = 'HDAC8';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 1;
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>96%'
+            where mutation = 'TSC1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>82%'
+            where mutation = 'TSC2';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>79%'
+            where mutation = 'JAG1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>87%'
+            where mutation = 'NSD1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>89%'
+            where mutation = 'SYNGAP1';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>86%'
+            where mutation = 'CBL';
+
+            update `prodlims`.`testcondition`
+            set detectionrate = '>66%'
+            where mutation = 'HDAC8';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

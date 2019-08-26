@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6863-01" author="hharidas">
+        <comment>
+            Update TSE (enzyme only) scenario.
+        </comment>
+
+        <sql>
+            SET sql_safe_updates=0;
+            UPDATE prodlims.horizondiseasetemplate
+            SET templatecode = "No DNA; negative enzyme (possible Sandhoff carrier)",
+            status = "NEGATIVE ENZYME ANALYSIS for Tay-Sachs Disease",
+            variant="Negative enzyme analysis for Tay-Sachs Disease. Hexosaminidase Activity. Plasma: add HEX activity plasma nmol/hr/ml-4826535551394785644; WBC: add HEX activity WBC nmol/hr/mg-5548703135136609112; Hex A %. Plasma add HEX A % plasma-6859847319861418202; WBC add HEX A % WBC-7498200777519059856. The Hex A% activity is high in this specimen suggesting a possible carrier status for Sandhoff disease.  It is recommended that the patient have HEXB DNA analysis for Sandhoff Disease. Sandhoff Disease carrier screening for the patient's partner can be considered."
+            WHERE templatecode="No DNA; indeterminate enzyme (possible Sandhoff carrier)"
+            and gene="" and diseasename="Tay-Sachs Disease (enzyme only)";
+            SET sql_safe_updates=1;
+        </sql>
+
+        <rollback>
+            set sql_safe_updates=0;
+            UPDATE prodlims.horizondiseasetemplate
+            set templatecode = "No DNA; indeterminate enzyme (possible Sandhoff carrier)",
+            status = "INDETERMINATE ENZYME ANALYSIS for Tay-Sachs Disease",
+            variant="Indeterminate enzyme analysis. Hexosaminidase Activity. Plasma: add HEX activity plasma nmol/hr/ml-4826535551394785644; WBC: add HEX activity WBC nmol/hr/mg-5548703135136609112; Hex A %. Plasma add HEX A % plasma-6859847319861418202; WBC add HEX A % WBC-7498200777519059856. The Hex A% activity is high in this specimen suggesting a possible carrier status for Sandhoff disease. It is recommended that the patient have DNA testing for Sandhoff disease."
+            where templatecode="No DNA; negative enzyme (possible Sandhoff carrier)"
+            and gene="" and diseasename="Tay-Sachs Disease (enzyme only)";
+            set sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

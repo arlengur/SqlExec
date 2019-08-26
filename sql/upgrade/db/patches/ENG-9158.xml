@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9158-01" author="nfleming">
+        <comment>Insert new QC type for Signatera Plasma pipeline</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Total Filtered Target NOR', 'TOTAL_FILTERED_TARGET_NOR', 0);
+
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Total Filtered Target NOR', 'TOTAL_FILTERED_TARGET_NOR', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'TOTAL_FILTERED_TARGET_NOR';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` = 'TOTAL_FILTERED_TARGET_NOR';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-9158-02" author="nfleming">
+        <comment>Update QC type for Signatera Plasma pipeline</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET `name` = 'AMPLICON_UNIFORMITY_80_20' WHERE `name` = 'AMPLICON_DOR_UNIFORMITY_20_80';
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `prodlims`.`qc_statistics_type` SET `name` = 'AMPLICON_DOR_UNIFORMITY_20_80' WHERE `name` = 'AMPLICON_UNIFORMITY_80_20';
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

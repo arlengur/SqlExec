@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6042-01" author="mdaly">
+        <comment>Rename HorizonClassification to HorizonResultCall</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonclassification`
+                RENAME `prodlims`.`HorizonResultCall`,
+                DROP COLUMN `requiresReview`,
+                DROP COLUMN `nonPathogenic`,
+                ADD COLUMN `cloudIdentifier` VARCHAR(100);
+
+            ALTER TABLE `prodlims`.`HorizonCloudResult`
+                CHANGE COLUMN `resultClassification_id` `finalCall_id` BIGINT(20),
+                DROP INDEX `FK_horizoncloudresult_horizonclassification`,
+                DROP FOREIGN KEY `FK_horizoncloudresult_horizonclassification_id`,
+                ADD CONSTRAINT `FK_horizoncloudresult_horizonresultcall_id` FOREIGN KEY (`finalCall_id`) REFERENCES `HorizonResultCall` (`id`);
+
+            DROP TABLE `prodlims`.`horizondisease_classifications`;
+        </sql>
+        <rollback>
+            rename table `prodlims`.`HorizonResultCall` to `prodlims`.`horizonclassification`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6042-02" author="mdaly">
+        <comment>Add entity, HorizonDiseaseSupplement</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`HorizonDiseaseSupplement` (
+                `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                `label` VARCHAR(100),
+                `content` VARCHAR(20480),
+
+                CONSTRAINT `UK_horizondiseasesupplement_label` UNIQUE (`label`),
+
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            drop table if exists `prodlims`.`HorizonDiseaseSupplement`;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6042-03" author="mdaly">
+        <comment>Update HorizonLdtDiseaseResult (better types and for HorizonDiseaseSupplement)</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonLdtDiseaseResult`
+                MODIFY COLUMN `clinicaldetails` VARCHAR(5000),
+                MODIFY COLUMN `headline` VARCHAR(5000),
+                DROP COLUMN `supplementPath`,
+                ADD COLUMN `supplement_id` BIGINT(20),
+                ADD CONSTRAINT `FK_HorizonLdtDiseaseResult_HorizonDiseaseSupplement_id` FOREIGN KEY (`supplement_id`) REFERENCES `prodlims`.`HorizonDiseaseSupplement` (`id`);
+        </sql>
+    </changeSet>
+    <changeSet id="ENG-6042-04" author="mdaly">
+        <comment>Create entity, DiseaseResultTemplate</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`HorizonDiseaseResultTemplate` (
+                `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                `associatedCall_id` BIGINT(20) NOT NULL,
+                `label` VARCHAR(200),
+                `headLine` VARCHAR(5000),
+                `clinicalDetails` VARCHAR(5000),
+                CONSTRAINT `FK_HznDiseaseResultTemplate_HznResultCall_id` FOREIGN KEY (`associatedCall_id`) REFERENCES `HorizonResultCall` (`id`),
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB;
+
+            CREATE TABLE `prodlims`.`HorizonDiseaseResultTemplate_HorizonDiseaseResultTemplate` (
+                `diseaseResultTemplate_id` BIGINT(20) NOT NULL,
+                `subtemplates_id` BIGINT(20) NOT NULL,
+                CONSTRAINT `FK_HznDiseaseResultTemplate_diseaseResultTemplate_id` FOREIGN KEY (`diseaseResultTemplate_id`) REFERENCES `prodlims`.`HorizonDiseaseResultTemplate` (`id`),
+                CONSTRAINT `FK_HznDiseaseResultTemplate_subtemplates_id` FOREIGN KEY (`subtemplates_id`) REFERENCES `prodlims`.`HorizonDiseaseResultTemplate` (`id`)
+            ) ENGINE=InnoDB;
+
+            CREATE TABLE `HorizonDisease_HorizonDiseaseResultTemplate` (
+                `disease_id` BIGINT(20) NOT NULL,
+                `diseaseResultTemplate_id` BIGINT(20) NOT NULL,
+
+                CONSTRAINT `FK_hd_HznDiseaseResultTemplate__diseaseResultTemplate_id` FOREIGN KEY (`diseaseResultTemplate_id`) REFERENCES `HorizonDiseaseResultTemplate` (`id`),
+                CONSTRAINT `FK_hd_HznDiseaseResultTemplate__disease_id` FOREIGN KEY (`disease_id`) REFERENCES `prodlims`.`horizondisease` (`id`),
+
+                PRIMARY KEY (`disease_id`, `diseaseResultTemplate_id`)
+            ) ENGINE=InnoDB;
+
+            CREATE TABLE `prodlims`.`HorizonDisease_HorizonDiseaseSupplement` (
+                `disease_id` BIGINT(20) NOT NULL,
+                `supplement_id` BIGINT(20) NOT NULL,
+                `template_id` BIGINT(20) NOT NULL,
+
+                CONSTRAINT `FK_hd_hzndiseasesupplement__supplements_id` FOREIGN KEY (`supplement_id`) REFERENCES `HorizonDiseaseSupplement` (`id`),
+                CONSTRAINT `FK_hd_hzndiseasesupplement__template_id` FOREIGN KEY (`template_id`) REFERENCES `HorizonDiseaseResultTemplate` (`id`),
+                CONSTRAINT `FK_hd_hzndiseasesupplement__disease_id` FOREIGN KEY (`disease_id`) REFERENCES `prodlims`.`horizondisease` (`id`),
+
+                PRIMARY KEY (`disease_id`, `template_id`)
+            ) ENGINE=InnoDB;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            drop table if exists `prodlims`.`HorizonDisease_HorizonDiseaseSupplement`;
+            drop table if exists `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate`;
+            drop table if exists `prodlims`.`HorizonDiseaseResultTemplate_HorizonDiseaseResultTemplate`;
+            drop table if exists `prodlims`.`HorizonDiseaseResultTemplate`;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

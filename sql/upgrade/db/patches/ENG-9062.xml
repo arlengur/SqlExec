@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9062-01" author="mdaly">
+        <comment>Create table to store results and interpretation text that is extracted from HL7 messages</comment>
+        <createTable tableName="HL7BasedInterpretation"
+                     schemaName="prodlims">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="messageControlId" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resultDate" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resultsAndInterpretation" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resultsInterpretationTitle" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="ENG-9062-02" author="mdaly">
+        <comment>Associate extracted info to HorizonDiseaseResult</comment>
+        <addColumn tableName="horizondiseaseresult"
+                   schemaName="prodlims">
+            <column name="resultsAndInterpretation_id" type="BIGINT">
+                <constraints foreignKeyName="FK__hdr_resultsAndInterpretation__HL7BasedInterpretation_id"
+                             referencedTableName="HL7BasedInterpretation"
+                             referencedColumnNames="id"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

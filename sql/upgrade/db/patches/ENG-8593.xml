@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8593-01" author="mdaly">
+        <comment>Add "pathogenic" to the 5/9 R117H template (id: 43) for CS3.</comment>
+        <sql>
+            UPDATE `prodlims`.`horizondiseaseresulttemplate` SET
+            `clinicalDetails` = REPLACE(`clinicalDetails`, 'Positive for the p.R117H variant and the', 'Positive for the pathogenic p.R117H variant and the')
+            WHERE `id` = 43;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`horizondiseaseresulttemplate` SET
+            `clinicalDetails` = REPLACE(`clinicalDetails`, 'Positive for the pathogenic p.R117H variant and the', 'Positive for the p.R117H variant and the')
+            WHERE `id` = 43;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

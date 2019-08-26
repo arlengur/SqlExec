@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <!-- This patch set includes updates for categories and groups for Vistara
+         which was introduced in scope of:
+         * ENG-6637
+         * ENG-6727
+         * ENG-6939
+         * ENG-7392
+     -->
+
+    <changeSet id="ENG-6939-01" author="irazin">
+        <comment>Add Vistara categories</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`category` (name, deleted)
+            VALUES
+            ('Missing DOC',0),
+            ('Missing EDD',0),
+            ('Verify Egg Donor Case',0),
+            ('Missing Maternal Linkage',0),
+            ('Duplicate Sample',0),
+            ('Verify Vistara Billing Information',0),
+            ('Needs Customer Support review',0),
+            ('Needs GC Callout', 0),
+            ('Redraw egg donor',0);
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`category`
+            WHERE name IN (
+            'Missing DOC',
+            'Missing EDD',
+            'Verify Egg Donor Case',
+            'Missing Maternal Linkage',
+            'Duplicate Sample',
+            'Verify Vistara Billing Information',
+            'Needs Customer Support review',
+            'Needs GC Callout',
+            'Redraw egg donor'
+            );
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6939-02" author="irazin">
+        <comment>Add Vistara Hold Reasons group and add applicable categories to it</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`categorygroup` (`name`, `fordisplay`) VALUES ('Vistara Hold Reasons', 0);
+
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT
+            (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Hold Reasons') AS categorygroup_id
+            ,id
+            FROM `prodlims`.`category` WHERE name IN (
+            'Verify Egg Donor Case',
+            'Missing Maternal Linkage',
+            'Low gestational age',
+            'Multiple gestation',
+            'Missing Requisition',
+            'Verify Test Order',
+            'Verify patient name order (FN/LN)',
+            'Missing Gender',
+            'Verify Vistara Billing Information',
+            'Duplicate Sample',
+            'GENERIC HOLD (enter case note with hold reason)',
+            'Report hold',
+            'Other hold reason',
+            'Identifier Discrepancy',
+            'Verify Clinic',
+            'Needs Customer Support review'
+            );
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE categorygroup_id = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Hold Reasons');
+
+            DELETE FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Hold Reasons';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6939-03" author="irazin">
+        <comment>Add Vistara Testing group and add applicable categories to it</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO `prodlims`.`categorygroup` (`name`, `fordisplay`) VALUES ('Vistara Testing', 0);
+
+            INSERT INTO `prodlims`.`categorygroup_category`
+            SELECT
+            (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Testing') AS categorygroup_id
+            ,id
+            FROM `prodlims`.`category` WHERE name IN (
+            'Missing DOC',
+            'Missing EDD',
+            'Candidate for TNP',
+            'No ICD code',
+            'Consultation Case',
+            'Don''t Dispose',
+            'Lab Hold',
+            'Must Be GC Reviewed',
+            'NOT for research use',
+            'Redraw mother',
+            'Redraw father',
+            'Redraw egg donor',
+            'Needs GC Callout'
+            );
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `prodlims`.`categorygroup_category`
+            WHERE categorygroup_id = (SELECT id FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Testing');
+
+            DELETE FROM `prodlims`.`categorygroup` WHERE name = 'Vistara Testing';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

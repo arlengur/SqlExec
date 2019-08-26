@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8073-01" author="mdaly">
+        <comment>Remove placeholder text for gene from specified Alpha-Thalassemia templates.
+
+          Template IDs (from HorizonDiseaseResultTemplate.xml)
+          DEL_OTHER: 55
+          LIKELY_PATHOGENIC: 140
+          PATHOGENIC: 139
+          THREE_DEL: 59
+          TWO_CIS: 56
+          TWO_TRANS: 57
+          TWO_UNKNOWN: 58
+        </comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${results[0].variantName} deletion of the HBA1/HBA2 genes. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with Hemoglobin H Disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 55;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the likely pathogenic variant ${results[0].variantName} of the HBA1/HBA2 genes. Depending on the carrier status of this individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 140;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic variant ${results[0].variantName} of the HBA1/HBA2 genes. Depending on the carrier status of this individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 139;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${"[name of deletion]"} and ${"[name of deletion]"} of the HBA1/HBA2 genes. Individuals with Hemoglobin H Disease can have mild to severe anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with either Alpha-Thalassemia Major or Hemoglobin H disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 59;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${results[0].variantName!"[name of deletion]"} deletion of the HBA1/HBA2 genes. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with either Alpha-Thalassemia Major or Hemoglobin H disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 56;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${"[name of deletion(s)]"} of the HBA1/HBA2 genes. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with Hemoglobin H Disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 57;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${"[name of deletion(s)]"} of the HBA1/HBA2 genes. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with either Alpha-Thalassemia Major or Hemoglobin H disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 58;
+        </sql>
+
+        <rollback>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${results[0].variantName} deletion of the ${gene} gene. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with Hemoglobin H Disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 55;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the likely pathogenic variant ${results[0].variantName} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. Depending on the carrier status of this individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 140;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic variant ${results[0].variantName} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. Depending on the carrier status of this individual''s partner, this couple may be at increased risk to have a child with a form of Alpha-Thalassemia. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 139;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${"[name of deletion]"} and ${"[name of deletion]"} of the ${gene!"[HBA1/HBA2 genes]"}. Individuals with Hemoglobin H Disease can have mild to severe anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with either Alpha-Thalassemia Major or Hemoglobin H disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 59;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${results[0].variantName!"[name of deletion]"} deletion of the ${gene!"[HBA1/HBA2 genes]"}. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with either Alpha-Thalassemia Major or Hemoglobin H disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 56;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${"[name of deletion(s)]"} of the ${gene!"[HBA1, HBA2, or HBA1/HBA2 genes]"}. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with Hemoglobin H Disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 57;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate`
+            SET `clinicalDetails` = 'Positive for the pathogenic ${"[name of deletion(s)]"} of the ${gene!"[HBA1/HBA2 genes]"}. Carriers for Alpha-Thalassemia can sometimes have mild anemia. Depending on the carrier status of the individual''s partner, this couple may be at increased risk to have a child with either Alpha-Thalassemia Major or Hemoglobin H disease. Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 58;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
+

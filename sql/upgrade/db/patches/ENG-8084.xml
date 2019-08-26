@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="ENG-8084-01" author="kzakharov">
+        <comment>Added the data structure for smart cases mapping: original case -- copy case</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`smart_case_mapping` (
+            `original_id` bigint(20) NOT NULL,
+            `smart_id` bigint(20) NOT NULL);
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`smart_case_mapping`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8084-02" author="kzakharov">
+        <comment>Added the constraint - case can be cloned only once</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`smart_case_mapping` ADD CONSTRAINT unique_clone UNIQUE(original_id);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`smart_case_mapping` DROP unique_clone;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8084-03" author="kzakharov">
+        <comment>Added the data structure for smart cases mapping: original job -- copy job</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`smart_job_mapping` (
+            `smart_id` bigint(20) NOT NULL,
+            `original_job` varchar(255) NOT NULL,
+            `smart_job` varchar(255) NOT NULL,
+            UNIQUE KEY (`smart_id`, `original_job`));
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`smart_job_mapping`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8084-04" author="kzakharov">
+        <comment>Added the data structure for smart cases mapping: original handcall -- copy handcall</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`smart_handcall_mapping` (
+            `smart_id` bigint(20) NOT NULL,
+            `original_handcall_id` bigint(20) NOT NULL,
+            `smart_handcall_id` bigint(20) NOT NULL,
+            UNIQUE KEY (`smart_id`, `original_handcall_id`));
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`smart_handcall_mapping`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-8084-05" author="kzakharov">
+        <comment>Added the data structure for smart cases mapping: original microdel handcall -- copy microdel handcall</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`smart_handcall_microdel_mapping` (
+            `smart_id` bigint(20) NOT NULL,
+            `original_handcall_id` bigint(20) NOT NULL,
+            `smart_handcall_id` bigint(20) NOT NULL,
+            UNIQUE KEY (`smart_id`, `original_handcall_id`));
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`smart_handcall_microdel_mapping`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

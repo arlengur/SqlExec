@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9819-01" author="jdavid">
+        <comment>Add new run QC BLOOD_REFERENCES_COUNT</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SEQUENCING_RUN', 'Number of blood references', 'BLOOD_REFERENCES_COUNT', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'BLOOD_REFERENCES_COUNT';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

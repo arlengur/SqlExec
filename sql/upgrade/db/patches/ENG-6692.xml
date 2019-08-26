@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6692-01" author="dchettupuzha">
+        <comment>Insert new QC types for MLPA</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SEQUENCING_RUN', 'Number of MLPA Reference samples', 'MLPA_REFERENCE_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of BPC samples', 'BPC_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of DMD2 Rotating control samples', 'DMD2_ROTATING_CONTROL_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of HBA Rotating control samples', 'HBA_ROTATING_CONTROL_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of SMA Rotating control samples', 'SMA_ROTATING_CONTROL_SAMPLE_COUNT', 0),
+            ('SEQUENCING_RUN', 'Number of DMD1 Rotating control samples', 'DMD1_ROTATING_CONTROL_SAMPLE_COUNT', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'MLPA_REFERENCE_SAMPLE_COUNT',
+            'BPC_SAMPLE_COUNT',
+            'DMD2_ROTATING_CONTROL_SAMPLE_COUNT',
+            'HBA_ROTATING_CONTROL_SAMPLE_COUNT',
+            'SMA_ROTATING_CONTROL_SAMPLE_COUNT',
+            'DMD1_ROTATING_CONTROL_SAMPLE_COUNT');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

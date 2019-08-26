@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5428-01" author="dchettupuzha">
+        <comment>Delete from insuranceproviderdetail table provider with name - Medicaid</comment>
+        <sql>
+            delete from `prodlims`.`insuranceproviderdetail` where `insuranceprovider_name` = 'Medicaid' and id = 3;
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-5428-02" author="dchettupuzha">
+        <comment>Add new insurance carriers to insuranceproviderdetail table</comment>
+        <sql>
+            <![CDATA[
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Medicaid TX', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Medicaid-TX', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TX-Medicaid', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TX Medicaid', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Texas Medicaid Health', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Texas Medicaid Health Care', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Medicaid Traditional', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Traditional Medicaid', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Texas Medicaid & Healthcare Partnership', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Medicaid - RHC', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Health and Human Services', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TMHP', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TMHP-H', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TMHP Health Network', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TMHP Medicaid', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('TMHP Texas Medicaid', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Medicaid Texas', null, '2016-05-01');
+            insert into `prodlims`.`insuranceproviderdetail`(`insuranceprovider_name`, `insuranceprovider_states`, `validfromdate`) values('Texas Medicaid', null, '2016-05-01');
+            ]]>
+        </sql>
+        <rollback>
+            delete from `prodlims`.`insuranceproviderdetail` where `id` > 4;
+        </rollback>
+    </changeSet>
+
+
+
+</databaseChangeLog>

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6829-01" author="jdavid">
+        <comment>updating script: Customer Care Followup List</comment>
+        <sql>
+
+
+            SET sql_safe_updates=0;
+
+            <![CDATA[
+
+            update `prodlims`.`script` set code =
+'
+/*
+ ENG-4107: Added kit barcode and received date, and TAT for POC and Paraffin POC cases. - JD 10/15
+ */
+
+import com.natera.lims.datamodel.ivf.prod.ParentKit
+import com.natera.lims.datamodel.ivf.prod.CaseFile
+import com.natera.lims.service.npt.NPTParentKitValidator
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.apache.poi.ss.usermodel.*
+import com.natera.lims.api.model.core.TestType
+import com.natera.lims.service.horizon.support.HorizonParentKitValidator
+import com.natera.lims.service.horizonldt.HorizonLDTParentKitValidator
+
+def holidays = holidayService.getHolidayList(holidayDAO.getHolidays())
+
+def today = new Date()
+def subject = "Case Followup Report ${today.format("MM/dd/yyyy")}"
+def body = "Case followup report from LIMS for ${today.format("MM/dd/yyyy")} attached."
+def filename = "followup_report_${today.format("MM_dd_yyyy")}.xlsx"
+
+def parentKits = new HashSet()
+
+//NPT cases
+parentKits.addAll(parentKitDAO.getAwaitingInfoPanoramaKits())
+parentKits.addAll(parentKitDAO.getSupportFollowupPanoramaKits())
+
+//CS2 and CS3 cases
+parentKits.addAll(parentKitDAO.getAwaitingInfoHorizonKits(Arrays.asList(TestType.CARRIER_SCREENING_2,TestType.CARRIER_SCREENING_3)))
+parentKits.addAll(parentKitDAO.getSupportFollowupHorizonKits(Arrays.asList(TestType.CARRIER_SCREENING_2,TestType.CARRIER_SCREENING_3)))
+
+def holdCategories = categoryGroupDAO.getByName("Hold Reasons").getCategories()
+
+def caseFiles = new HashSet()
+caseFiles.addAll(caseFileDAO.session.createQuery("select distinct cf from CaseFile cf join cf.categories cat where (cat.name like ''%hold%'' or cat in (:holdCategories))" +
+        " and cf.closed is null and cf.testType not in (''RESEARCH'', ''NPT'', ''CARRIER_SCREENING_2'', ''CARRIER_SCREENING_3'')")
+        .setParameterList("holdCategories", holdCategories)
+        .list())
+
+/* Output:
+All Cases:
+- Case ID
+- White glove
+- Clinic name
+- Clinic ID
+- Region
+- Test Type
+- Missing Info Items for Kit (Panorama Only)
+- Case Note
+- Case Categories
+- Case Opened Date
+NPT, CS2 and CS3 Only:
+- Kit Barcode
+- Kit State
+- Kit Support State
+- Kit TAT
+- Kit Received Date
+
+*/
+def header = [''Case ID'', ''Clinic Case ID'', ''White Gloved'', ''Clinic Name'', ''Clinic ID'', ''Region'', ''Test Type'', ''Missing Info'', ''Dashboard Note'', ''Case Categories'', ''Case Opened'',
+              ''Kit Barcode'', ''Kit State'', ''Kit TAT'', ''Kit Received Date'', ''LIMS link'', ''Orders link'']
+
+def output = []
+parentKits.each { pk ->
+  if (caseFiles.contains(pk.caseFile)) {
+    caseFiles.remove(pk.caseFile)
+  }
+
+  def testType = pk.caseFile?.testType
+  def validator
+
+  if (testType != null) {
+    if (testType.isNPT()) {
+      validator = NPTParentKitValidator.class
+    } else if (testType.isCarrierScreening2()) {
+      validator = HorizonParentKitValidator.class
+    } else if (testType.isCarrierScreening3()) {
+      validator = HorizonLDTParentKitValidator.class
+    }
+  }
+
+  output.add([pk.caseFile?.id,
+              pk.caseFile?.thirdPartyId ?: "",
+              pk.caseFile?.whitegloved ? "YES" : "",
+              pk.caseFile?.clinic?.name,
+              pk.caseFile?.clinic?.id,
+              pk.caseFile?.clinic?.territory?.region,
+              pk.caseFile?.testType?.name,
+              _ctx.getBean(validator).getMissingInformation(pk)?.allErrors?.collect { it.defaultMessage }?.join("\\n"),
+              pk.caseFile?.dashboardNote,
+              pk.caseFile?.dashboardCategories?.collect { it.name }?.join("\\n"),
+              pk.caseFile?.opened?.format("MM/dd/yyyy"),
+              pk.barcode,
+              pk.state?.getName(),
+              holidayService.getTurnaroundTimeDays(pk.received, today, holidays),
+              pk.received?.format("MM/dd/yyyy")])
+}
+
+caseFiles.each { cf ->
+
+    def isPOCCase = cf.testType.isPOC()
+    def parentKitBarcodes = ""
+    def parentKitTATs = ""
+    def parentKitReceivedDates = ""
+    if (isPOCCase) {
+        def pocKits = cf.getParentKits()
+        pocKits.each {
+            parentKitBarcodes += it.barcode + "\\n"
+            if (it.received != null) {
+                parentKitTATs += holidayService.getTurnaroundTimeDays(it.received, today, holidays) + "\\n"
+                parentKitReceivedDates += it.received.format("MM/dd/yyyy").toString() + "\\n"
+            }
+        }
+    }
+
+
+    output.add([cf.id,
+                cf.thirdPartyId ?: "",
+                cf.whitegloved ? "YES" : "",
+                cf.clinic?.name,
+                cf.clinic?.id,
+                cf.clinic?.territory?.region,
+                cf.testType?.name,
+                null,
+                cf.dashboardNote,
+                cf.dashboardCategories?.collect { it.name }?.join("\\n"),
+                cf.opened?.format("MM/dd/yyyy"),
+                (isPOCCase) ? parentKitBarcodes : null,
+                null,
+                (isPOCCase) ? parentKitTATs : null,
+                (isPOCCase) ? parentKitReceivedDates : null])
+}
+
+output = output.sort { a, b -> a[2] <=> b[2] ?: a[0] <=> b[0] }
+output.add(0, header)
+def maxColumnCount = 0
+
+def wb = new XSSFWorkbook()
+def sheet = wb.createSheet("Support Followup Report")
+
+output.eachWithIndex { r, i ->
+    def row = sheet.createRow((short) i)
+    r.eachWithIndex { c, j ->
+        def cs = wb.createCellStyle()
+        cs.setWrapText(true)
+        def cell = row.createCell(j)
+        cell.setCellValue(c == null ? "" : c)
+        cell.setCellStyle(cs)
+    }
+    if (i > 0) {
+        def cs = wb.createCellStyle()
+        def hlink_font = wb.createFont()
+        hlink_font.setUnderline(Font.U_SINGLE)
+        hlink_font.setColor(IndexedColors.BLUE.getIndex())
+        cs.setFont(hlink_font)
+
+        def limsLinkCell = row.createCell(r.size())
+        def limsLink = wb.creationHelper.createHyperlink(Hyperlink.LINK_URL)
+        limsLink.setAddress("http://lims/prod-lims/app/case/view?id=${r[0]}")
+        limsLinkCell.setCellValue("LIMS/LIMS Case")
+        limsLinkCell.setHyperlink(limsLink)
+        limsLinkCell.setCellStyle(cs)
+
+        def ordersLinkCell = row.createCell(r.size() + 1)
+        def ordersLink = wb.creationHelper.createHyperlink(Hyperlink.LINK_URL)
+        ordersLink.setAddress("http://lims/extranet/app/case/show?caseId=${r[0]}")
+        ordersLinkCell.setCellValue("LIMS/Orders Case")
+        ordersLinkCell.setHyperlink(ordersLink)
+        ordersLinkCell.setCellStyle(cs)
+    }
+
+    if (r.size() + 2 > maxColumnCount) maxColumnCount = r.size() + 2
+}
+
+(0 .. maxColumnCount - 1).each { sheet.autoSizeColumn(it) }
+
+def outStream = new ByteArrayOutputStream()
+try {
+    wb.write(outStream)
+    secureEmailSender.send(toAddresses as List, subject as String, body as String, filename as String, outStream.toByteArray(), false as Boolean)
+} finally {
+    outStream.close()
+}
+
+return "Sent to ${toAddresses.join(", ")}"
+'
+WHERE name = 'Customer Care Followup List';
+
+
+            ]]>
+            SET sql_safe_updates=1;
+        </sql>
+        <rollback>
+
+
+            SET sql_safe_updates=0;
+
+            <![CDATA[
+
+            update `prodlims`.`script` set code =
+'
+/*
+ ENG-4107: Added kit barcode and received date, and TAT for POC and Paraffin POC cases. - JD 10/15
+ */
+
+import com.natera.lims.datamodel.ivf.prod.ParentKit
+import com.natera.lims.datamodel.ivf.prod.CaseFile
+import com.natera.lims.service.npt.NPTParentKitValidator
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.apache.poi.ss.usermodel.*
+import com.natera.lims.api.model.core.TestType
+import com.natera.lims.service.horizon.support.HorizonParentKitValidator
+
+def holidays = holidayService.getHolidayList(holidayDAO.getHolidays())
+
+def today = new Date()
+def subject = "Case Followup Report ${today.format("MM/dd/yyyy")}"
+def body = "Case followup report from LIMS for ${today.format("MM/dd/yyyy")} attached."
+def filename = "followup_report_${today.format("MM_dd_yyyy")}.xlsx"
+
+def parentKits = new HashSet()
+
+//NPT cases
+parentKits.addAll(parentKitDAO.getAwaitingInfoPanoramaKits())
+parentKits.addAll(parentKitDAO.getSupportFollowupPanoramaKits())
+
+//CS2 cases
+parentKits.addAll(parentKitDAO.getAwaitingInfoHorizonKits())
+parentKits.addAll(parentKitDAO.getSupportFollowupHorizonKits())
+
+def holdCategories = categoryGroupDAO.getByName("Hold Reasons").getCategories()
+
+def caseFiles = new HashSet()
+caseFiles.addAll(caseFileDAO.session.createQuery("select distinct cf from CaseFile cf join cf.categories cat where (cat.name like ''%hold%'' or cat in (:holdCategories))" +
+        " and cf.closed is null and cf.testType not in (''RESEARCH'', ''NPT'', ''CARRIER_SCREENING_2'')")
+        .setParameterList("holdCategories", holdCategories)
+        .list())
+
+/* Output:
+All Cases:
+- Case ID
+- White glove
+- Clinic name
+- Clinic ID
+- Region
+- Test Type
+- Missing Info Items for Kit (Panorama Only)
+- Case Note
+- Case Categories
+- Case Opened Date
+Panorama Only:
+- Kit Barcode
+- Kit State
+- Kit Support State
+- Kit TAT
+- Kit Received Date
+
+*/
+def header = [''Case ID'', ''Clinic Case ID'', ''White Gloved'', ''Clinic Name'', ''Clinic ID'', ''Region'', ''Test Type'', ''Missing Info'', ''Dashboard Note'', ''Case Categories'', ''Case Opened'',
+              ''Kit Barcode'', ''Kit State'', ''Kit TAT'', ''Kit Received Date'', ''LIMS link'', ''Orders link'']
+
+def output = []
+parentKits.each { pk ->
+    if (caseFiles.contains(pk.caseFile)) caseFiles.remove(pk.caseFile)
+    def validator = (pk.caseFile?.testType.isNPT()) ? NPTParentKitValidator.class : HorizonParentKitValidator.class
+    output.add([pk.caseFile?.id,
+                pk.caseFile?.thirdPartyId ?: "",
+                pk.caseFile?.whitegloved ? "YES" : "",
+                pk.caseFile?.clinic?.name,
+                pk.caseFile?.clinic?.id,
+                pk.caseFile?.clinic?.territory?.region,
+                pk.caseFile?.testType?.name,
+                _ctx.getBean(validator).getMissingInformation(pk)?.allErrors?.collect { it.defaultMessage }?.join("\\n"),
+                pk.caseFile?.dashboardNote,
+                pk.caseFile?.dashboardCategories?.collect { it.name }?.join("\\n"),
+                pk.caseFile?.opened?.format("MM/dd/yyyy"),
+                pk.barcode,
+                pk.state?.getName(),
+                holidayService.getTurnaroundTimeDays(pk.received, today, holidays),
+                pk.received?.format("MM/dd/yyyy")])
+}
+
+caseFiles.each { cf ->
+
+    def isPOCCase = cf.testType.isPOC();
+    def parentKitBarcodes = "";
+    def parentKitTATs = "";
+    def parentKitReceivedDates = "";
+    if (isPOCCase) {
+        def pocKits = cf.getParentKits();
+        pocKits.each {
+            parentKitBarcodes += it.barcode + "\\n";
+            if (it.received != null) {
+                parentKitTATs += holidayService.getTurnaroundTimeDays(it.received, today, holidays) + "\\n"
+                parentKitReceivedDates += it.received.format("MM/dd/yyyy").toString() + "\\n"
+            }
+        }
+    }
+
+
+    output.add([cf.id,
+                cf.thirdPartyId ?: "",
+                cf.whitegloved ? "YES" : "",
+                cf.clinic?.name,
+                cf.clinic?.id,
+                cf.clinic?.territory?.region,
+                cf.testType?.name,
+                null,
+                cf.dashboardNote,
+                cf.dashboardCategories?.collect { it.name }?.join("\\n"),
+                cf.opened?.format("MM/dd/yyyy"),
+                (isPOCCase) ? parentKitBarcodes : null,
+                null,
+                (isPOCCase) ? parentKitTATs : null,
+                (isPOCCase) ? parentKitReceivedDates : null])
+}
+
+output = output.sort { a, b -> a[2] <=> b[2] ?: a[0] <=> b[0] }
+output.add(0, header)
+def maxColumnCount = 0
+
+def wb = new XSSFWorkbook()
+def sheet = wb.createSheet("Support Followup Report")
+
+output.eachWithIndex { r, i ->
+    def row = sheet.createRow((short) i)
+    r.eachWithIndex { c, j ->
+        def cs = wb.createCellStyle()
+        cs.setWrapText(true)
+        def cell = row.createCell(j)
+        cell.setCellValue(c == null ? "" : c)
+        cell.setCellStyle(cs)
+    }
+    if (i > 0) {
+        def cs = wb.createCellStyle()
+        def hlink_font = wb.createFont()
+        hlink_font.setUnderline(Font.U_SINGLE)
+        hlink_font.setColor(IndexedColors.BLUE.getIndex())
+        cs.setFont(hlink_font)
+
+        def limsLinkCell = row.createCell(r.size())
+        def limsLink = wb.creationHelper.createHyperlink(Hyperlink.LINK_URL);
+        limsLink.setAddress("http://lims/prod-lims/app/case/view?id=${r[0]}");
+        limsLinkCell.setCellValue("LIMS/LIMS Case")
+        limsLinkCell.setHyperlink(limsLink);
+        limsLinkCell.setCellStyle(cs);
+
+        def ordersLinkCell = row.createCell(r.size() + 1)
+        def ordersLink = wb.creationHelper.createHyperlink(Hyperlink.LINK_URL);
+        ordersLink.setAddress("http://lims/extranet/app/case/show?caseId=${r[0]}");
+        ordersLinkCell.setCellValue("LIMS/Orders Case")
+        ordersLinkCell.setHyperlink(ordersLink);
+        ordersLinkCell.setCellStyle(cs);
+    }
+
+    if (r.size() + 2 > maxColumnCount) maxColumnCount = r.size() + 2
+}
+
+(0 .. maxColumnCount - 1).each { sheet.autoSizeColumn(it) }
+
+def outStream = new ByteArrayOutputStream()
+try {
+    wb.write(outStream)
+    secureEmailSender.send(toAddresses as List, subject as String, body as String, filename as String, outStream.toByteArray(), false as Boolean)
+} finally {
+    outStream.close()
+}
+
+return "Sent to ${toAddresses.join(", ")}"
+'
+WHERE name = 'Customer Care Followup List';
+
+
+            ]]>
+            SET sql_safe_updates=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

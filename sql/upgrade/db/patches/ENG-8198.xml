@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="ENG-8198-01" author="irazin">
+        <comment>Create table tissuesampleinfo</comment>
+        <sql>
+            create table `prodlims`.`tissuesampleinfo` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `sample_id` BIGINT(20) NOT NULL,
+            `numberOfSlides` INT(11) DEFAULT NULL,
+            `slideThickness` INT(11) DEFAULT NULL,
+            `cancerType` VARCHAR(255) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            CONSTRAINT `FK_tissuesampleinfo_sample` FOREIGN KEY(`sample_id`) REFERENCES `prodlims`.`sample`(`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`tissuesampleinfo`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

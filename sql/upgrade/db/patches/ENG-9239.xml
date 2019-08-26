@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9239-01" author="irazin">
+        <comment>Insert new QC types for Signatera Plasma pipeline</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Working targets', 'WORKING_TARGETS', 0),
+            ('SAMPLE', 'Median transition error rate', 'MEDIAN_TRANSITION_ERROR_RATE', 0),
+            ('SAMPLE', 'Median transversion error rate', 'MEDIAN_TRANSVERSION_ERROR_RATE', 0),
+            ('SAMPLE', 'Ambient contamination', 'AMBIENT_CONTAMINATION', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'WORKING_TARGETS',
+            'MEDIAN_TRANSITION_ERROR_RATE',
+            'MEDIAN_TRANSVERSION_ERROR_RATE',
+            'AMBIENT_CONTAMINATION'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-9239-02" author="irazin">
+        <comment>Insert new QC statistics for Signatera Plasma pipeline</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) VALUES
+            ('On target reads', 'ON_TARGET_READS', 'ALL'),
+            ('Working targets', 'WORKING_TARGETS', 'ALL'),
+            ('Efficient targets', 'EFFICIENT_TARGETS', 'ALL'),
+            ('Dropout targets', 'DROPOUT_TARGETS', 'ALL'),
+            ('Ambient contamination', 'AMBIENT_CONTAMINATION', 'ALL'),
+            ('Genotyped contamination', 'GENOTYPED_CONTAMINATION', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'ON_TARGET_READS',
+            'WORKING_TARGETS',
+            'EFFICIENT_TARGETS',
+            'DROPOUT_TARGETS',
+            'AMBIENT_CONTAMINATION',
+            'GENOTYPED_CONTAMINATION'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-9239-03" author="irazin">
+        <comment>Remove redundant QC statistics for Signatera Plasma pipeline</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'ON_TARGET_READS_UNFILTERED',
+            'OFF_TARGET_READS',
+            'AMPLICON_READS',
+            'WORKING_ASSAYS',
+            'EFFICIENT_ASSAYS',
+            'DROPOUT_ASSAYS',
+            'FRACTION_OF_BASES_WITH_INDEL',
+            'SNP_TRACER_DOR_MEDIAN',
+            'INDEL_ERROR_MEDIAN'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="ENG-9239-04" author="irazin">
+        <comment>Remove redundant QC types for Signatera Plasma pipeline</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'EFFICIENT_ASSAYS'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

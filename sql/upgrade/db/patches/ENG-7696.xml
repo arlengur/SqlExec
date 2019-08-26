@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7696-01" author="irazin">
+        <comment>Add sendout panel for Signatera product</comment>
+        <sql>
+            INSERT INTO `prodlims`.`sendoutpanel` (testtype, name, hl7Name, hl7Code, description)
+            VALUES ('RM_BLOOD', 'RM_PLASMA_NATERA_LAB', 'n/a', 'n/a', 'Signatera panel for blood analysis for Natera Lab');
+            INSERT INTO `prodlims`.`sendoutpanel` (testtype, name, hl7Name, hl7Code, description)
+            VALUES ('RM_BLOOD', 'RM_MATCH_NORMAL', 'n/a', 'n/a', 'Signatera panel for blood analysis for Sendout provider');
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`sendoutpanel` WHERE testtype = 'RM_BLOOD';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

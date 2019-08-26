@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5849-01" author="jdavid">
+        <comment>Add baylor routing rules for DMD a la carte </comment>
+        <sql>
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF,DMD_F:MALE", "MALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF,DMD_F:MALE" and panel.name in ("CF", "DMD_F")
+            and panel.shipDestinationType = "MTSINAI";
+
+            insert into `prodlims`.`baylorroutingrule` (name, gender, baylorClinic, disabled)
+            values("CF,DMD_F,SMA_SMN1:MALE", "MALE", false, false);
+            insert into `prodlims`.`baylorroutingrule_panel` (`baylorroutingrule_id`, `panel_id`)
+            select baylorroutingrule.id, panel.id from `prodlims`.`baylorroutingrule`, `prodlims`.`panel`
+            where baylorroutingrule.name = "CF,DMD_F,SMA_SMN1:MALE" and panel.name in ("CF", "DMD_F","SMA_SMN1")
+            and panel.shipDestinationType = "MTSINAI";
+
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

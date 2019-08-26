@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-10009-01" author="tmcfarlin">
+        <comment>ParentKitData</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`parentkit_data` (
+            `id` bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            `casefile_id` bigint(20) NOT NULL,
+            `collection_date` datetime NULL,
+            `third_party_patient_id` varchar(55) NULL,
+            `medical_record_number` varchar(55) NULL,
+            `gestational_age` int NULL,
+            `genetic_age_mother` int NULL,
+            `expected_due_date` datetime NULL,
+            `gestational_age_loss` int NULL,
+            CONSTRAINT `parentkit_data_casefile_id` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE `prodlims`.`parentkit_data`
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

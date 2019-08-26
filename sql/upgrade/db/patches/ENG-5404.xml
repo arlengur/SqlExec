@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5404-01" author="mdaly">
+        <comment>Initial sql table check-in for StateTransitions</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`StateTransition` (
+                `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                `entity_class` VARCHAR(255),
+                `entity_id` BIGINT(20),
+                `state` VARCHAR(255),
+                `startdate` DATETIME,
+                `enddate` DATETIME,
+                PRIMARY KEY (`id`),
+                INDEX `idx_statetransition_entity`(`entity_class`, `entity_id`),
+                INDEX `idx_statetransition_enddate`(`enddate`))
+            ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`StateTransition`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6293-01" author="hharidas">
+        <comment>Update variant text for COL4A4</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE horizondiseasetemplate
+            SET VARIANT = REPLACE(VARIANT,"COL4A3","COL4A4")
+            WHERE diseasename="Alport Syndrome, COL4A4-Related"
+            AND gene="COL4A4"
+            AND templatecode IN ("pathogenic variant detected","likely pathogenic variant detected","2 variants detected (cis or trans unknown)","2 variants detected (cis)","2 variants detected (trans)");
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5790-01" author="jdavid">
+        <comment>Add HCS_DMD into horizoncustompanel</comment>
+        <sql>
+            insert into `prodlims`.`horizoncustompanel` (ce_id, ce_text, ce_system) values('HCS_DMD', 'DMD', 'L');
+        </sql>
+        <rollback>
+            delete from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5790-02" author="jdavid">
+        <comment>Update horizoncustompanel_panels</comment>
+        <sql>
+            insert into `prodlims`.`horizoncustompanel_panels` (horizoncustompanel_id, horizonpanel_id)
+            values ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD'),
+            (select id from `prodlims`.`horizonpanel` where name = 'DMD_F'));
+        </sql>
+        <rollback>
+            delete from `prodlims`.`horizoncustompanel_panels`
+            where horizoncustompanel_id = (select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD') and
+            horizonpanel_id = (select id from `prodlims`.`horizonpanel` where name = 'DMD_F');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5790-03" author="jdavid">
+        <comment>Update horizoncustompanel_panels</comment>
+        <sql>
+            insert into `prodlims`.`horizoncustompanel_panels` (horizoncustompanel_id, horizonpanel_id)
+            values ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD'),
+            (select id from `prodlims`.`horizonpanel` where name = 'DMD_F_B'));
+        </sql>
+        <rollback>
+            delete from `prodlims`.`horizoncustompanel_panels`
+            where horizoncustompanel_id = (select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_DMD') and
+            horizonpanel_id = (select id from `prodlims`.`horizonpanel` where name = 'DMD_F_B');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5790-04" author="jdavid">
+        <comment>Update horizoncustompanel_panels</comment>
+        <sql>
+            insert into `prodlims`.`horizoncustompanel_panels` (horizoncustompanel_id, horizonpanel_id)
+            values ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_SMA'),
+            (select id from `prodlims`.`horizonpanel` where name = 'SMA_SMN1_B'));
+        </sql>
+        <rollback>
+            delete from `prodlims`.`horizoncustompanel_panels`
+            where horizoncustompanel_id = (select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_SMA') and
+            horizonpanel_id = (select id from `prodlims`.`horizonpanel` where name = 'SMA_SMN1_B');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
+

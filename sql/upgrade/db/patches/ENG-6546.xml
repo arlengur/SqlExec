@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6546-01" author="mdaly">
+        <comment>Make 2nd CLS reviewer optional</comment>
+        <sql>
+            ALTER TABLE `HorizonCloudResult` CHANGE `clsReviewer2` `clsReviewer2` VARCHAR(255);
+        </sql>
+
+        <rollback>
+            ALTER TABLE `HorizonCloudResult` CHANGE `clsReviewer2` `clsReviewer2` VARCHAR(255) NOT NULL;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

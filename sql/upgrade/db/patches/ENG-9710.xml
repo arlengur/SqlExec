@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9710-01" author="jdavid">
+        <comment>Add new table laboratory</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`laboratory` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `shipDestinationType` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `UK_laboratory_shipDestinationType` (`shipDestinationType`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`laboratory`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-02" author="jdavid">
+        <comment>Add new entries into laboratory table</comment>
+        <sql>
+            INSERT INTO `prodlims`.`laboratory`
+            (shipDestinationType)
+            VALUES
+            ('NATERA_LAB'),('MTSINAI'),('BMGL');
+        </sql>
+        <rollback>
+            DELETE
+            FROM `prodlims`.`laboratory`
+            WHERE shipDestinationType in ('NATERA_LAB','MTSINAI','BMGL');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-03" author="jdavid">
+        <comment>Create initial rule tables</comment>
+        <sql>
+            CREATE TABLE `horizoncaseroutingrule` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `name` varchar(255) DEFAULT NULL,
+            `routingrulereason` varchar(255) DEFAULT NULL,
+            `enabled` bit(1) DEFAULT b'0',
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `UK_horizoncaseroutingrule_name` (`name`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `prodlims`.`horizoncaseroutingrule_samplerule` (
+            `id` bigint(20) NOT NULL,
+            `containertype_id` bigint(20) DEFAULT NULL,
+            `containersize` double DEFAULT NULL,
+            `bloodvolume` double DEFAULT NULL,
+            PRIMARY KEY `horizoncaseroutingrule_samplerule_id` (`id`),
+            KEY `horizoncaseroutingrule_samplerule_containertype` (`containertype_id`),
+            CONSTRAINT `horizoncaseroutingrule_samplerule_id` FOREIGN KEY (`id`) REFERENCES `horizoncaseroutingrule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_samplerule_containertype` FOREIGN KEY (`containertype_id`) REFERENCES `containertype` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizoncaseroutingrule_samplerule_laboratory` (
+            `samplerule_id` bigint(20) DEFAULT NULL,
+            `laboratory_id` bigint(20) DEFAULT NULL,
+            KEY `horizoncaseroutingrule_samplerule_laboratory_rule` (`samplerule_id`),
+            KEY `horizoncaseroutingrule_samplerule_laboratory_laboratory` (`laboratory_id`),
+            CONSTRAINT `horizoncaseroutingrule_samplerule_laboratory_rule` FOREIGN KEY (`samplerule_id`) REFERENCES `horizoncaseroutingrule_samplerule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_samplerule_laboratory_laboratory` FOREIGN KEY (`laboratory_id`) REFERENCES `laboratory` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_samplerule`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-04" author="jdavid">
+        <comment>Add horizoncaseroutingrule entries</comment>
+        <sql>
+            -- Adding SampleRule_Saliva rule
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('SampleRule_Saliva', 'SALIVA_SAMPLE', true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Saliva'),
+            (SELECT id from `prodlims`.`containertype` where `name` = 'Oragene'), null, null;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Saliva') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('MTSINAI','BMGL');
+
+
+            -- Adding SampleRule_NateraSampleRequirement rule
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('SampleRule_NateraSampleRequirement', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_NateraSampleRequirement'),
+            (SELECT id from `prodlims`.`containertype` where `name` = 'EDTA Tube'), 10.0, 3.0;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_NateraSampleRequirement') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('NATERA_LAB','MTSINAI','BMGL');
+
+
+            -- Adding SampleRule_Other rule
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('SampleRule_Other', 'DEFAULT_SAMPLE_RULE', true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Other'),
+            null, null, null;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'SampleRule_Other') as samplerule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('MTSINAI','BMGL');
+        </sql>
+        <rollback>
+            -- delete SampleRules
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule_laboratory`
+            WHERE `samplerule_id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` IN ('SampleRule_Other', 'SampleRule_NateraSampleRequirement', 'SampleRule_Saliva'));
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_samplerule`
+            WHERE `id` IN (select id from `prodlims`.`horizoncaseroutingrule` where `name` IN ('SampleRule_Other', 'SampleRule_NateraSampleRequirement', 'SampleRule_Saliva'));
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` IN ('SampleRule_Other', 'SampleRule_NateraSampleRequirement', 'SampleRule_Saliva');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-05" author="jdavid">
+        <comment>Add new tables horizoncaseroutingrulegroup and horizoncaseroutingrulegroup_horizoncaseroutingrule</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizoncaseroutingrulegroup` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `name` varchar(255) DEFAULT NULL,
+            `executiontype` varchar(255) DEFAULT NULL,
+            `rank` int(11) DEFAULT NULL,
+            `enabled` bit(1) DEFAULT b'0',
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `UK_horizoncaseroutingrulegroup_name` (`name`),
+            UNIQUE KEY `UK_horizoncaseroutingrulegroup_rank` (`rank`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule` (
+            `rulegroup_id` bigint(20) DEFAULT NULL,
+            `rule_id` bigint(20) DEFAULT NULL,
+            `ruleorder` int(11) NOT NULL,
+            KEY `FK_HORIZONCASEROUTINGRULEGROUPRULE_RULEGROUP_idx` (`rulegroup_id`),
+            KEY `FK_HORIZONCASEROUTINGRULEGROUPRULE_RULE_idx` (`rule_id`),
+            CONSTRAINT `FK_HORIZONCASEROUTINGRULEGROUPRULE_RULEGROUP_idx` FOREIGN KEY (`rulegroup_id`) REFERENCES `horizoncaseroutingrulegroup` (`id`),
+            CONSTRAINT `FK_HORIZONCASEROUTINGRULEGROUPRULE_RULE_idx` FOREIGN KEY (`rule_id`) REFERENCES `horizoncaseroutingrule` (`id`),
+            CONSTRAINT `horizoncaseroutingrulegroup_rulegroupid_ruleid` UNIQUE (`rulegroup_id`, `rule_id`),
+            CONSTRAINT `horizoncaseroutingrulegroup_rulegroupid_ruleorder` UNIQUE (`rulegroup_id`, `ruleorder`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrulegroup`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-06" author="jdavid">
+        <comment>Populate horizoncaseroutingrulegroup and horizoncaseroutingrulegroup_horizoncaseroutingrule</comment>
+        <sql>
+            -- Insert new rule group SampleCheckGroup
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup` (`name`, `executiontype`, `rank`, `enabled`)
+            VALUES('SampleCheckGroup', 'STOP_EXECUTION_WHEN_RULE_IS_TRUE', 1, true);
+
+            -- Associate SampleCheckGroup with SampleRule_Saliva
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'SampleCheckGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'SampleRule_Saliva') as rule_id, 0;
+
+            -- Associate SampleCheckGroup with SampleRule_NateraSampleRequirement
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'SampleCheckGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'SampleRule_NateraSampleRequirement') as rule_id, 1;
+
+            -- Associate SampleCheckGroup with SampleRule_Other
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'SampleCheckGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'SampleRule_Other') as rule_id, 2;
+        </sql>
+        <rollback>
+            -- Disassociate SampleRule_Other from SampleCheckGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='SampleCheckGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='SampleRule_Other' );
+
+            -- Disassociate SampleRule_NateraSampleRequirement from SampleCheckGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='SampleCheckGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='SampleRule_NateraSampleRequirement' );
+
+            -- Disassociate SampleRule_Saliva from SampleCheckGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='SampleCheckGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='SampleRule_Saliva' );
+
+            -- Delete SampleCheckGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup`
+            WHERE `name`='SampleCheckGroup';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-07" author="jdavid">
+        <comment>Add new tables horizoncaseroutingrule_staterule, horizoncaseroutingrule_staterule_laboratory, and horizoncaseroutingrule_staterule_statevariation</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizoncaseroutingrule_staterule` (
+            `id` bigint(20) NOT NULL,
+            PRIMARY KEY `horizoncaseroutingrule_staterule_id` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_staterule_id` FOREIGN KEY (`id`) REFERENCES `horizoncaseroutingrule` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizoncaseroutingrule_staterule_laboratory` (
+            `staterule_id` bigint(20) DEFAULT NULL,
+            `laboratory_id` bigint(20) DEFAULT NULL,
+            KEY `horizoncaseroutingrule_staterule_laboratory_state` (`staterule_id`),
+            KEY `horizoncaseroutingrule_staterule_laboratory_laboratory` (`laboratory_id`),
+            CONSTRAINT `horizoncaseroutingrule_staterule_laboratory_state` FOREIGN KEY (`staterule_id`) REFERENCES `horizoncaseroutingrule_staterule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_staterule_laboratory_laboratory` FOREIGN KEY (`laboratory_id`) REFERENCES `laboratory` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizoncaseroutingrule_staterule_statevariation` (
+            `staterule_id` bigint(20) NOT NULL,
+            `statevariation` varchar(255) DEFAULT NULL,
+            KEY `horizoncaseroutingrule_staterule_state_staterule` (`staterule_id`),
+            CONSTRAINT `horizoncaseroutingrule_staterule_state_staterule` FOREIGN KEY (`staterule_id`) REFERENCES `horizoncaseroutingrule_staterule` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_staterule_statevariation`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_staterule_laboratory`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_staterule`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-08" author="jdavid">
+        <comment>Populate horizoncaseroutingrule_staterule, horizoncaseroutingrule_staterule_laboratory, and horizoncaseroutingrule_staterule_statevariation</comment>
+        <sql>
+            -- Adding StateRule_NY
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('StateRule_NY', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_staterule`
+            SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'StateRule_NY';
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_staterule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'StateRule_NY') as staterule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in  ('NATERA_LAB','MTSINAI');
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_staterule_statevariation`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'StateRule_NY') as staterule_id, 'ny';
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_staterule_statevariation`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'StateRule_NY') as staterule_id, 'newyork';
+
+        </sql>
+        <rollback>
+            -- delete StateRule_NY
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_staterule_statevariation`
+            WHERE `staterule_id`= (select id from `prodlims`.`horizoncaseroutingrule` where `name`='StateRule_NY');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_staterule_laboratory`
+            WHERE `staterule_id`= (select id from `prodlims`.`horizoncaseroutingrule` where `name`='StateRule_NY');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_staterule`
+            WHERE `id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='StateRule_NY');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name`='StateRule_NY';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-09" author="jdavid">
+        <comment>Add new entry StateRuleGroup to horizoncaseroutingrulegroup and horizoncaseroutingrulegroup_horizoncaseroutingrule</comment>
+        <sql>
+            -- Insert new rule group StateRuleGroup
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup` (`name`, `executiontype`, `rank`, `enabled`)
+            VALUES('StateRuleGroup', 'STOP_EXECUTION_WHEN_RULE_IS_TRUE', 2, true);
+
+            -- Associate StateRuleGroup with StateRule_NY
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'StateRuleGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'StateRule_NY') as rule_id, 0;
+
+        </sql>
+        <rollback>
+            -- Disassociate StateRule_NY from StateRuleGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='StateRuleGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='StateRule_NY' );
+
+            -- Delete StateRuleGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup`
+            WHERE `name`='StateRuleGroup';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-10" author="jdavid">
+        <comment>Add new tables horizoncaseroutingrule_panelrule and horizoncaseroutingrule_panelrule_laboratory</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizoncaseroutingrule_panelrule` (
+            `id` bigint(20) NOT NULL,
+            `panel_id` bigint(20) DEFAULT NULL,
+            `onlyorderedpanel` bit(1) DEFAULT b'0',
+            PRIMARY KEY `horizoncaseroutingrule_panelrule_id` (`id`),
+            KEY `horizoncaseroutingrule_panelrule_panel` (`panel_id`),
+            CONSTRAINT `horizoncaseroutingrule_panelrule_id` FOREIGN KEY (`id`) REFERENCES `horizoncaseroutingrule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_panelrule_panel` FOREIGN KEY (`panel_id`) REFERENCES `panel` (`id`),
+            CONSTRAINT `UK_hcaserouting_panelrule_panel_onlyorderedpanel` UNIQUE (`panel_id`, `onlyorderedpanel`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizoncaseroutingrule_panelrule_laboratory` (
+            `panelrule_id` bigint(20) DEFAULT NULL,
+            `laboratory_id` bigint(20) DEFAULT NULL,
+            KEY `horizoncaseroutingrule_panelrule_laboratory_panel` (`panelrule_id`),
+            KEY `horizoncaseroutingrule_panelrule_laboratory_laboratory` (`laboratory_id`),
+            CONSTRAINT `horizoncaseroutingrule_panelrule_laboratory_panel` FOREIGN KEY (`panelrule_id`) REFERENCES `horizoncaseroutingrule_panelrule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_panelrule_laboratory_laboratory` FOREIGN KEY (`laboratory_id`) REFERENCES `laboratory` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_panelrule`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-11" author="jdavid">
+        <comment>Populate horizoncaseroutingrule_panelrule, and horizoncaseroutingrule_panelrule_laboratory</comment>
+        <sql>
+            -- Adding PanelRule_NoPanel
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_NoPanel', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_NoPanel'), null, false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_NoPanel') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` = 'MTSINAI';
+
+
+            -- Adding PanelRule_H274
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H274', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H274'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H274'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H274') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` = 'MTSINAI';
+
+
+            -- Adding PanelRule_H137
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H137', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H137'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H137'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H137') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` = 'MTSINAI';
+
+
+            -- Adding PanelRule_H106
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H106', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H106'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H106'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H106') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` = 'MTSINAI';
+
+
+            -- Adding PanelRule_H27
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H27', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H27'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H27'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H27') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB', 'BMGL');
+
+
+            -- Adding PanelRule_H14
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H14', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H14'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H14'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H14') as panelrule_id,
+            id FROM `prodlims`.`laboratory` WHERE `shipDestinationType` = 'NATERA_LAB';
+
+
+            -- Adding PanelRule_H4
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H4', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H4'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H4'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H4') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB', 'BMGL');
+
+
+            -- Adding PanelRule_H3
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_H3', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_H3'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'H3'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_H3') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB', 'BMGL');
+
+
+            -- Adding PanelRule_CF
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_CF', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_CF'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'CF'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_CF') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB', 'BMGL');
+
+
+            -- Adding PanelRule_DMD
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_DMD', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_DMD'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'DMD'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_DMD') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB');
+
+
+            -- Adding PanelRule_SMA
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_SMA', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_SMA'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'SMA'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_SMA') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB');
+
+
+            -- Adding PanelRule_TseOnlyOrderedPanel
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_TseOnlyOrderedPanel', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_TseOnlyOrderedPanel'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'TSE'), true;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_TseOnlyOrderedPanel') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` = 'MTSINAI';
+
+
+            -- Adding PanelRule_TSE
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `routingrulereason`, `enabled`) VALUES('PanelRule_TSE', null, true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule`
+            SELECT (SELECT id FROM `prodlims`.`horizoncaseroutingrule` WHERE `name` = 'PanelRule_TSE'),
+            (SELECT id FROM `prodlims`.`panel` WHERE `DTYPE` = 'HorizonLDTPanel' AND `name` = 'TSE'), false;
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'PanelRule_TSE') as panelrule_id,
+            id from `prodlims`.`laboratory` where `shipDestinationType` in ('MTSINAI', 'NATERA_LAB');
+
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_panelrule_laboratory`
+            WHERE `panelrule_id` IN (select id from `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` IN ('PanelRule_H274', 'PanelRule_H137', 'PanelRule_H106', 'PanelRule_H27',
+            'PanelRule_H14', 'PanelRule_H4', 'PanelRule_H3', 'PanelRule_CF',
+            'PanelRule_DMD', 'PanelRule_SMA', 'PanelRule_TseOnlyOrderedPanel',
+            'PanelRule_TSE') );
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_panelrule`
+            WHERE `id` IN (select id from `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` IN ('PanelRule_H274', 'PanelRule_H137', 'PanelRule_H106', 'PanelRule_H27',
+            'PanelRule_H14', 'PanelRule_H4', 'PanelRule_H3', 'PanelRule_CF',
+            'PanelRule_DMD', 'PanelRule_SMA', 'PanelRule_TseOnlyOrderedPanel',
+            'PanelRule_TSE') );
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` IN ('PanelRule_H274', 'PanelRule_H137', 'PanelRule_H106', 'PanelRule_H27',
+            'PanelRule_H14', 'PanelRule_H4', 'PanelRule_H3', 'PanelRule_CF',
+            'PanelRule_DMD', 'PanelRule_SMA', 'PanelRule_TseOnlyOrderedPanel',
+            'PanelRule_TSE');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-12" author="jdavid">
+        <comment>Add new entry PanelRuleGroup to horizoncaseroutingrulegroup and horizoncaseroutingrulegroup_horizoncaseroutingrule</comment>
+        <sql>
+            -- Insert new rule group PanelRuleGroup
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup` (`name`, `executiontype`, `rank`, `enabled`)
+            VALUES('PanelRuleGroup', 'EVALUATE_ALL_THEN_RETURN_INTERSECTION_RESULT', 3, true);
+
+
+            -- Associate PanelRuleGroup with PanelRule_NoPanel
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_NoPanel'), 0;
+
+            -- Associate PanelRuleGroup with PanelRule_H274
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H274'), 1;
+
+
+            -- Associate PanelRuleGroup with PanelRule_H137
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H137'), 2;
+
+
+            -- Associate PanelRuleGroup with PanelRule_H106
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H106'), 3;
+
+
+            -- Associate PanelRuleGroup with PanelRule_H27
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H27'), 4;
+
+
+            -- Associate PanelRuleGroup with PanelRule_H14
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H14'), 5;
+
+
+            -- Associate PanelRuleGroup with PanelRule_H4
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H4'), 6;
+
+
+            -- Associate PanelRuleGroup with PanelRule_H3
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_H3'), 7;
+
+
+            -- Associate PanelRuleGroup with PanelRule_CF
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_CF'), 8;
+
+
+            -- Associate PanelRuleGroup with PanelRule_DMD
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_DMD'), 9;
+
+
+            -- Associate PanelRuleGroup with PanelRule_SMA
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_SMA'), 10;
+
+
+            -- Associate PanelRuleGroup with PanelRule_TseOnlyOrderedPanel
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup') ,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_TseOnlyOrderedPanel'), 11;
+
+            -- Associate PanelRuleGroup with PanelRule_TSE
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'PanelRuleGroup'),
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'PanelRule_TSE'), 12;
+
+        </sql>
+        <rollback>
+            -- Disassociate rules from PanelRuleGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE  `rulegroup_id` = (SELECT id
+                                     FROM   `prodlims`.`horizoncaseroutingrulegroup`
+                                     WHERE  `name` = 'PanelRuleGroup')
+                    AND `rule_id` IN (SELECT id
+                                      FROM   `prodlims`.`horizoncaseroutingrule`
+                                      WHERE  `name` IN ('PanelRule_NoPanel', 'PanelRule_H274', 'PanelRule_H137',
+                                                        'PanelRule_H106', 'PanelRule_H27', 'PanelRule_H14',
+                                                        'PanelRule_H4', 'PanelRule_H3', 'PanelRule_CF',
+                                                        'PanelRule_DMD', 'PanelRule_SMA','PanelRule_TSE',
+                                                        'PanelRule_TseOnlyOrderedPanel'));
+
+            -- Delete PanelRuleGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup`
+            WHERE `name`='PanelRuleGroup';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-13" author="jdavid">
+        <comment>Add new tables horizoncaseroutingrule_clinicrule</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizoncaseroutingrule_clinicrule` (
+            `id` bigint(20) NOT NULL,
+            PRIMARY KEY `horizoncaseroutingrule_clinicrule_id` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_clinicrule_id` FOREIGN KEY (`id`) REFERENCES `horizoncaseroutingrule` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_clinicrule`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-14" author="jdavid">
+        <comment>Populate horizoncaseroutingrule_clinicrule</comment>
+        <sql>
+            -- Adding ClinicRule_DEFAULT
+            INSERT INTO `prodlims`.`horizoncaseroutingrule` (`name`, `enabled`) VALUES('ClinicRule_DEFAULT', true);
+
+            INSERT INTO `prodlims`.`horizoncaseroutingrule_clinicrule`
+            SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` = 'ClinicRule_DEFAULT';
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`horizoncaseroutingrule_clinicrule`
+            WHERE `id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='ClinicRule_DEFAULT');
+
+            DELETE FROM `prodlims`.`horizoncaseroutingrule`
+            WHERE `name` = 'ClinicRule_DEFAULT';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-15" author="jdavid">
+        <comment>Add new entry ClinicRuleGroup to horizoncaseroutingrulegroup and horizoncaseroutingrulegroup_horizoncaseroutingrule</comment>
+        <sql>
+            -- Insert new rule group ClinicRuleGroup
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup` (`name`, `executiontype`, `rank`, `enabled`)
+            VALUES('ClinicRuleGroup', 'STOP_EXECUTION_WHEN_RULE_IS_TRUE', 4, true);
+
+            -- Associate ClinicRuleGroup with ClinicRule_DEFAULT
+            INSERT INTO `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            SELECT (SELECT id from `prodlims`.`horizoncaseroutingrulegroup` where `name` = 'ClinicRuleGroup') as rulegroup_id,
+            (SELECT id from `prodlims`.`horizoncaseroutingrule` where `name` =  'ClinicRule_DEFAULT') as rule_id, 0;
+
+        </sql>
+        <rollback>
+            -- Disassociate ClinicRule_DEFAULT from ClinicRuleGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup_horizoncaseroutingrule`
+            WHERE `rulegroup_id`= (select id from `prodlims`.`horizoncaseroutingrulegroup` where `name`='ClinicRuleGroup')
+            AND `rule_id`=(select id from `prodlims`.`horizoncaseroutingrule` where `name`='ClinicRule_DEFAULT' );
+
+            -- Delete ClinicRuleGroup
+            DELETE FROM `prodlims`.`horizoncaseroutingrulegroup`
+            WHERE `name`='ClinicRuleGroup';
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-16" author="jdavid">
+        <comment>Add new column horizonlaboratory_id to organization</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`organization`
+            ADD `horizonlaboratory_id` bigint(20) DEFAULT NULL,
+            ADD KEY `organization_horizonlaboratory` (`horizonlaboratory_id`),
+            ADD CONSTRAINT `organization_horizonlaboratory` FOREIGN KEY (`horizonlaboratory_id`)
+            REFERENCES `laboratory`(`id`);
+        </sql>
+        <rollback>
+            ALTER TABLE `organization`
+            DROP KEY `organization_horizonlaboratory`,
+            DROP FOREIGN KEY `organization_horizonlaboratory`;
+
+            ALTER TABLE `prodlims`.`organization` DROP COLUMN horizonlaboratory_id;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-17" author="jdavid">
+        <comment>Update horizon laboratory associated to organization</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`organization`
+            SET horizonlaboratory_id = (SELECT id FROM `prodlims`.`laboratory` WHERE `shipDestinationType` = 'NATERA_LAB');
+
+            UPDATE `prodlims`.`organization`
+            SET horizonlaboratory_id = (SELECT id FROM `prodlims`.`laboratory` WHERE `shipDestinationType` = 'BMGL')
+            WHERE `routeToBaylor` IS TRUE AND `routeInHouse` IS FALSE;
+
+
+            UPDATE `prodlims`.`organization`
+            SET horizonlaboratory_id = (SELECT id FROM `prodlims`.`laboratory` WHERE `shipDestinationType` = 'MTSINAI')
+            WHERE `routeToBaylor` IS FALSE AND `routeInHouse` IS FALSE;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`organization`
+            SET horizonlaboratory_id = null;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-18" author="jdavid">
+        <comment>Add new column horizontesttype to laboratory</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`laboratory`
+            ADD `horizontesttype` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`laboratory` DROP COLUMN horizontesttype;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-19" author="jdavid">
+        <comment>Update horizontesttype of laboratory entries</comment>
+        <sql>
+            UPDATE `prodlims`.`laboratory` SET `horizontesttype` = 'CARRIER_SCREENING_3' WHERE shipdestinationtype = 'NATERA_LAB';
+            UPDATE `prodlims`.`laboratory` SET `horizontesttype` = 'CARRIER_SCREENING_2' WHERE shipdestinationtype IN ('MTSINAI', 'BMGL');
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`laboratory` SET `horizontesttype` = null WHERE shipdestinationtype = 'NATERA_LAB';
+            UPDATE `prodlims`.`laboratory` SET `horizontesttype` = null WHERE shipdestinationtype IN ('MTSINAI', 'BMGL');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-20" author="jdavid">
+        <comment>Add new column horizonrank to laboratory</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`laboratory`
+            ADD `horizonrank` int(11) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`laboratory` DROP COLUMN horizonrank;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-21" author="jdavid">
+        <comment>Update horizonrank of laboratory entries</comment>
+        <sql>
+            UPDATE `prodlims`.`laboratory` SET `horizonrank` = '1' WHERE shipdestinationtype = 'NATERA_LAB';
+            UPDATE `prodlims`.`laboratory` SET `horizonrank` = '2' WHERE shipdestinationtype = 'MTSINAI';
+            UPDATE `prodlims`.`laboratory` SET `horizonrank` = '3' WHERE shipdestinationtype = 'BMGL';
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`laboratory` SET `horizontesttype` = null WHERE shipdestinationtype in ('NATERA_LAB', 'MTSINAI', 'BMGL');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-22" author="jdavid">
+        <comment>Add new column external to laboratory</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`laboratory` ADD `external` bit(1) DEFAULT b'0';
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`laboratory` DROP COLUMN external;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-23" author="jdavid">
+        <comment>Update horizonrank of laboratory entries</comment>
+        <sql>
+            UPDATE `prodlims`.`laboratory` SET `external` = TRUE WHERE shipdestinationtype IN ('MTSINAI', 'BMGL');
+        </sql>
+        <rollback>
+            UPDATE `prodlims`.`laboratory` SET `external` = FALSE WHERE shipdestinationtype IN ('MTSINAI', 'BMGL');
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-24" author="jdavid">
+        <comment>Associate HorizonLDTPanel H106, H137, and H274 to their diseases</comment>
+        <sql>
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = 'H106' and panel.DTYPE = 'HorizonLDTPanel'
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('COMPJ_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = 'H137' and panel.DTYPE = 'HorizonLDTPanel'
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('PANETH_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+
+            insert into `prodlims`.`panel_disease` (panel_id, disease_id)
+            select panel.id, horizondisease.id from `prodlims`.`panel`, `prodlims`.`horizondisease`
+            where panel.name = 'H274' and panel.DTYPE = 'HorizonLDTPanel'
+            and horizondisease.name in (select h.name from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            join `prodlims`.`horizondisease` h on
+            h.id = pd.disease_id where p.name in ('SUPER_F', 'SMA_SMN1') and p.shipDestinationType = 'MTSINAI') and horizondisease.provider = "NATERA_LAB";
+        </sql>
+        <rollback>
+            delete from `prodlims`.`panel_disease` where id in (select * from (select pd.id from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            where p.name = 'H106' and p.DTYPE='HorizonLDTPanel') as t);
+
+            delete from `prodlims`.`panel_disease` where id in (select * from (select pd.id from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            where p.name = 'H137' and p.DTYPE='HorizonLDTPanel') as t);
+
+            delete from `prodlims`.`panel_disease` where id in (select * from (select pd.id from `prodlims`.`panel_disease` pd
+            join `prodlims`.`panel` p on
+            p.id = pd.panel_id
+            where p.name = 'H274' and p.DTYPE='HorizonLDTPanel') as t);
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-9710-25" author="jdavid">
+        <comment>Create tables for PanelAndStateRule</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizoncaseroutingrule_panelandstaterule` (
+            `id` bigint(20) NOT NULL,
+            `panel_id` bigint(20) DEFAULT NULL,
+            PRIMARY KEY `horizoncaseroutingrule_panelandstaterule_id` (`id`),
+            KEY `horizoncaseroutingrule_panelandstaterule_panel` (`panel_id`),
+            CONSTRAINT `horizoncaseroutingrule_panelandstaterule_id` FOREIGN KEY (`id`) REFERENCES `horizoncaseroutingrule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_panelandstaterule_panel` FOREIGN KEY (`panel_id`) REFERENCES `panel` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizoncaseroutingrule_panelandstaterule_laboratory` (
+            `panelandstaterule_id` bigint(20) DEFAULT NULL,
+            `laboratory_id` bigint(20) DEFAULT NULL,
+            KEY `horizoncaseroutingrule_panelandstaterule_laboratory_panel` (`panelandstaterule_id`),
+            KEY `horizoncaseroutingrule_panelandstaterule_laboratory_laboratory` (`laboratory_id`),
+            CONSTRAINT `horizoncaseroutingrule_panelandstaterule_laboratory_panel` FOREIGN KEY (`panelandstaterule_id`) REFERENCES `horizoncaseroutingrule_panelandstaterule` (`id`),
+            CONSTRAINT `horizoncaseroutingrule_panelandstaterule_laboratory_laboratory` FOREIGN KEY (`laboratory_id`) REFERENCES `laboratory` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizoncaseroutingrule_panelandstaterule_statevariation` (
+            `panelandstaterule_id` bigint(20) NOT NULL,
+            `statevariation` varchar(255) DEFAULT NULL,
+            KEY `hcr_psr_statevariation_panelandstaterule_id` (`panelandstaterule_id`),
+            CONSTRAINT `hcr_psr_statevariation_panelandstaterule_id` FOREIGN KEY (`panelandstaterule_id`) REFERENCES `horizoncaseroutingrule_panelandstaterule` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_panelandstaterule_statevariation`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_panelandstaterule_laboratory`;
+            DROP TABLE IF EXISTS `prodlims`.`horizoncaseroutingrule_panelandstaterule`;
+        </rollback>
+    </changeSet>
+    
+</databaseChangeLog>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9051-01" author="irazin">
+        <comment>Add run reference to primer design references</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`rm_primer_design_panel_result_references` ADD COLUMN `sequencingrun_id` bigint(20);
+            ALTER TABLE `prodlims`.`rm_primer_design_panel_result_references` ADD CONSTRAINT rmprimerdesignpanelresultref_run FOREIGN KEY (`sequencingrun_id`) REFERENCES `hts`.`sequencingrun` (`id`);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`rm_primer_design_panel_result_references` DROP FOREIGN KEY rmprimerdesignpanelresultref_run;
+            ALTER TABLE `prodlims`.`rm_primer_design_panel_result_references` DROP COLUMN `sequencingrun_id`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

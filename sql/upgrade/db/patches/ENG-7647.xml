@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7647-01" author="mdubrovin">
+        <comment>
+            Add the signature file and line for Dalar Ratousi.
+        </comment>
+
+        <sql>
+            /* insert if not exists(QA and integration tests) */
+            INSERT INTO prodlims.`user` (dtype, created, deleted, email, lastlogin, passwordhash, changedpasswdon, numoftries, locked, legaleseacceptancedate, lastusedorganization_id)
+            SELECT * FROM (SELECT 'SecureUser', current_date, 0, 'dratousi@natera.com', null as lastlogin, 'INPUT_PASSWORD_HASH' as passwordhash, null as changedpasswdon, 0 as numoftries, 0 as locked, null as legaleseacceptancedate, 1 as lastusedorganization_id) AS tmp
+            WHERE NOT EXISTS (
+                select 1 from user where email='dratousi@natera.com'
+            ) LIMIT 1;
+
+            /* ADD REQUIRED INFO */
+            INSERT INTO prodlims.`user_properties` (user_id, propertyvalue, propertykey)
+            SELECT * FROM (SELECT (select id from user where email='dratousi@natera.com') as user_id, 'dratousi_sig.png', 'signature_file') AS tmp
+            WHERE NOT EXISTS (
+                select 1 from user u inner join user_properties up on u.id=up.user_id where email='dratousi@natera.com' and propertykey='signature_file'
+            ) LIMIT 1;
+
+            INSERT INTO prodlims.`user_properties` (user_id, propertyvalue, propertykey)
+            SELECT * FROM (SELECT (select id from user where email='dratousi@natera.com') as user_id, 'Dalar Ratousi, MS, CGC', 'signature_line') AS tmp
+            WHERE NOT EXISTS (
+                select 1 from user u inner join user_properties up on u.id=up.user_id where email='dratousi@natera.com' and propertykey='signature_line'
+            ) LIMIT 1;
+        </sql>
+
+        <rollback>
+            DELETE FROM user_properties
+            WHERE user_id=(select id from user where email='dratousi@natera.com')
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

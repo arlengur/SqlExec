@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9376-01" author="dzgursky">
+        <comment>Add new run level QC metrics for No Tempalte Control</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`)
+            values ('SEQUENCING_RUN', 'NTC aggregation metric', 'NTC_SAMPLE_OVERALL_RESULT', false);
+        </sql>
+        <rollback>
+            delete from `prodlims`.`qc_type` where `name` = 'NTC_SAMPLE_OVERALL_RESULT';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

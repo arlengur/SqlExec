@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9770-01" author="nfleming">
+        <comment>Add Medicare ABN fields</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`rmcasefileinfo`
+              ADD COLUMN `medicarePatient` BIT(1),
+              ADD COLUMN `abnOption` VARCHAR(20),
+              ADD COLUMN `abnSignature` BIT(1);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`rmcasefileinfo` DROP `medicarePatient`;
+            ALTER TABLE `prodlims`.`rmcasefileinfo` DROP `abnOption`;
+            ALTER TABLE `prodlims`.`rmcasefileinfo` DROP `abnSignature`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

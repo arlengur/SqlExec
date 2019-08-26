@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8032-01" author="mdaly">
+        <comment>Add new row for Inconclusive. Id of last entry is 50 (added in ENG-6333-03 from patches/ENG-6333.xml)</comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizonresultcall`
+            (`id`, `resulttype`, `description`, `cloudIdentifier`)
+            VALUES
+            (51, 'OTHER', 'Inconclusive', 'INCONCLUSIVE');
+        </sql>
+
+        <rollback>
+            DELETE FROM `prodlims`.`horizonresultcall` WHERE `id` = 51 and `cloudIdentifier` = 'INCONCLUSIVE';
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

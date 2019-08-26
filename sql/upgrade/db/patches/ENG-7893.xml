@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7893-01" author="nfleming">
+        <comment>Store Primer Design, Tissue, and Match Normal references on separate table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`rm_primer_design_panel_result_references` (
+            `id` BIGINT(20) NOT NULL,
+            `primerDesignReference` VARCHAR(100) DEFAULT NULL,
+            `tissueSequencingSampleReference` VARCHAR(100) DEFAULT NULL,
+            `matchNormalSequencingSampleReference` VARCHAR(100) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            CONSTRAINT `FK_primer_design_result_ref` FOREIGN KEY(`id`) REFERENCES `prodlims`.`sendoutpanelresult`(`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            DROP TABLE `prodlims`.`rm_primer_design_panel_result_references`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

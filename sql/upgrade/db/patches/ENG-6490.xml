@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6490-04" author="dchettupuzha">
+        <comment>Add column numOfAlgsJobRetry to horizonsequencingsample_info</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonsequencingsample_info`
+            ADD COLUMN `numOfAlgsJobRetry` TINYINT(1) NOT NULL DEFAULT '0';
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`horizonsequencingsample_info`
+            DROP COLUMN `numOfAlgsJobRetry`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6490-01" author="dchettupuzha">
+        <comment>Remove not null constraints in horizonsequencingsample_info</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonsequencingsample_info`
+            MODIFY COLUMN `filename` varchar(255) DEFAULT null,
+            MODIFY COLUMN `plate_position` varchar(255) DEFAULT null,
+            DROP INDEX `filename`;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

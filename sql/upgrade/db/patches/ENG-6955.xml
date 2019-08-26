@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6955-01" author="jdavid">
+        <comment>Change ALIGNMENT_PAIR_TOTAL_READS to ALIGNMENT_PAIR_TOTAL_UNIQUE_READS in the qc_type table</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_type` set `name`='ALIGNMENT_PAIR_TOTAL_UNIQUE_READS' where `name` = 'ALIGNMENT_PAIR_TOTAL_READS';
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_type` set `name`='ALIGNMENT_PAIR_TOTAL_READS' where `name` = 'ALIGNMENT_PAIR_TOTAL_UNIQUE_READS';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6955-02" author="jdavid">
+        <comment>Change ALIGNMENT_PAIR_TOTAL_READS to ALIGNMENT_PAIR_TOTAL_UNIQUE_READS in the qc_statistics_type table</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_statistics_type` set `name`='ALIGNMENT_PAIR_TOTAL_UNIQUE_READS' where `name` = 'ALIGNMENT_PAIR_TOTAL_READS';
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_statistics_type` set `name`='ALIGNMENT_PAIR_TOTAL_READS' where `name` = 'ALIGNMENT_PAIR_TOTAL_UNIQUE_READS';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

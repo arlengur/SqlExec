@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6409-01" author="nfleming">
+        <comment>Parent Kit Notes</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`parentkit_note` (
+                parentkits_id BIGINT(20) NOT NULL,
+                notes_id BIGINT(20) NOT NULL,
+
+                PRIMARY KEY (parentkits_id, notes_id)
+            );
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS `prodlims`.`parentkit_note`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

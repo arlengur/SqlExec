@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9690-01" author="kzakharov">
+        <comment>
+            Add the signature file and line for Jessica Zoladz.
+        </comment>
+
+        <sql>
+            /* insert if not exists(QA and integration tests) */
+            INSERT IGNORE INTO prodlims.`user` (dtype, created, deleted, email, lastlogin, passwordhash, changedpasswdon, numoftries, locked, legaleseacceptancedate, lastusedorganization_id)
+            VALUES('SecureUser', current_date, 0, 'jzoladz@natera.com', null, 'INPUT_PASSWORD_HASH', null, 0, 0, null, 1);
+
+            /* ADD REQUIRED INFO */
+            INSERT IGNORE INTO prodlims.`user_properties` (user_id, propertyvalue, propertykey)
+            VALUES((select id from user where email='jzoladz@natera.com'), 'jzoladz_sig.png','signature_file');
+
+
+            INSERT IGNORE INTO prodlims.`user_properties` (user_id, propertyvalue, propertykey)
+            VALUES((select id from user where email='jzoladz@natera.com'), 'Jessica Zoladz, MS, CGC', 'signature_line');
+        </sql>
+
+        <rollback>
+            DELETE FROM user_properties WHERE user_id=(select id from user where email='jzoladz@natera.com')
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

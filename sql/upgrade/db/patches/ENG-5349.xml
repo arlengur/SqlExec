@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5349-01" author="mjoshi">
+        <sql>
+            create table `prodlims`.`lv_sample` (
+            id bigint(20) NOT NULL auto_increment,
+            sampleid bigint(20) NOT NULL ,
+            caseid bigint(20),
+            parentkitid bigint(20),
+            barcode varchar(255),
+            collectiondate datetime,
+            bloodvolume double,
+            sampletype varchar(255),
+            gender varchar(255),
+            testtype varchar(255),
+            importstate varchar(255),
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `barcode` (`barcode`)
+            );
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`lv_sample`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5349-02" author="jdavid">
+        <comment>Create prodlims.lv_sample_disease table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`lv_sample_disease` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `lv_sample_id` bigint(20) NOT NULL,
+            `disease_id` bigint(20) NOT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `UKLVSAMPLEDISEASE_idx` (`lv_sample_id`,`disease_id`),
+            KEY `FKLVSDSAMPLEID_idx` (`lv_sample_id`),
+            KEY `FKLVSDDISEASEID_idx` (`disease_id`),
+            CONSTRAINT `FKLVSDSAMPLEID_idx`
+            FOREIGN KEY (`lv_sample_id`)
+            REFERENCES `prodlims`.`lv_sample` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT `FKLVSDDISEASEID_idx`
+            FOREIGN KEY (`disease_id`)
+            REFERENCES `prodlims`.`horizondisease` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`lv_sample_disease`;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

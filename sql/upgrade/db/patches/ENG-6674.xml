@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6674-01" author="mdaly">
+        <comment>Update ONLY Tay-Sachs template variables to use Strings.</comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `clinicalDetails` =  'Hexosaminidase Activity. Plasma: ${results["enz"].plasma.hexActivity} nmol/hr/ml; WBC: ${results["enz"].wbc.hexActivity} nmol/hr/mg; Hex A %. Plasma ${results["enz"].plasma.hexAPercentage}; WBC ${results["enz"].wbc.hexAPercentage}.'
+            WHERE `id` = 90;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'Positive for the pathogenic variant ${results["0"].variantName} in the HEXA gene.'
+            WHERE `id` = 91;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'Positive for the likely pathogenic variant ${results["0"].variantName} in the HEXA gene.'
+            WHERE `id` = 92;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'The pseudodeficiency variant ${results["0"].variantName} was detected in the HEXA gene.'
+            WHERE `id` = 93;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'Two pseudodeficiency variants ${results["0"].variantName} and ${results["1"].variantName} were detected in the HEXA gene.'
+            WHERE `id` = 94;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'Positive for the pathogenic variant ${results["0"].variantName} and the pseudodeficiency variant ${results["1"].variantName} in the HEXA gene.'
+            WHERE `id` = 95;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'Positive for the ${results["0"].type} variant ${results["0"].variantName} and ${results["1"].type} variant ${results["1"].variantName} in cis (on the same chromosome) in the HEXA gene.'
+            WHERE `id` = 96;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+                `clinicalDetails` = 'Positive for the ${results["0"].type} variant ${results["0"].variantName} and ${results["1"].type} variant ${results["1"].variantName} in the HEXA gene.'
+            WHERE `id` = 97;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+    </changeSet>
+    <changeSet id="ENG-6674-02" author="mdaly">
+        <comment>Associate negative TSE-only templates to the "normal" ResultCall (instead of "negative")</comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `associatedCall_id` = 23
+            WHERE `id` IN (100, 101);
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+    </changeSet>
+    <changeSet id="ENG-6674-03" author="mdaly">
+        <comment>Associate TNP templates to TSE.</comment>
+        <sql>
+            -- Other, TNPs
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`) SELECT 2, `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSE';
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`) SELECT 3, `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSE';
+            INSERT INTO `prodlims`.`HorizonDisease_HorizonDiseaseResultTemplate` (`diseaseResultTemplate_id`, `disease_id`) SELECT 4, `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'TSE';
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+    </changeSet>
+    <changeSet id="ENG-6674-04" author="mdaly">
+        <comment>Fix template errors: possible Sandhoff text; T-S DNA likley pathogenic</comment>
+        <sql>
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `clinicalDetails` =  '${_tse_indeterminate_enzyme} The Hex A% activity is high in this specimen suggesting a possible carrier status for Sandhoff disease. It is recommended that the patient have DNA testing for Sandhoff disease.'
+            WHERE `id` = 104;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `lookupCode` =  'NEGATIVE__POSITIVE'
+            WHERE `id` = 113;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `lookupCode` =  'PATHOGENIC_PSEUDODEFICIENT__POSITIVE'
+            WHERE `id` = 123;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `clinicalDetails` =  'NEGATIVE ENZYME ANALYSIS for Tay-Sachs Disease. No pathogenic variants were detected in the HEXA gene for Tay-Sachs. ${_enzyme_details} The Hex A% activity is high in this specimen suggesting a possible carrier status for Sandhoff Disease.'
+            WHERE `id` = 115;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+              `clinicalDetails` =  '${_tsd_likely_pathogenic} If this individual''s partner is a carrier for Tay-Sachs Disease, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested. A combination of both DNA and enzyme screening provides the highest detection rate for Tay-Sachs Disease.'
+            WHERE `id` = 108;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

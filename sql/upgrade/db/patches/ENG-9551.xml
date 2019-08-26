@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9551-1" author="vpiyanov">
+        <comment>Add 'gctemplate.title' column</comment>
+        <sql>
+            alter table prodlims.gctemplate add title varchar(100) null;
+            update prodlims.gctemplate set title = "Test Result Delay Notification" where delayednote and id != 0;
+            update prodlims.gctemplate set title = "Genetic Information Session Summary" where not delayednote and id != 0;
+        </sql>
+        <rollback>
+            alter table prodlims.gcreport drop title;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-9551-2" author="vpiyanov">
+        <comment>Add 'gctemplate.type' column</comment>
+        <sql>
+            alter table prodlims.gctemplate add type varchar(50) not null;
+            update prodlims.gctemplate set type = "COMMON" where id != 0;
+            update prodlims.gctemplate set type = "HORIZON" where name like "%Horizon%" and not archived and id != 0;
+        </sql>
+        <rollback>
+            alter table prodlims.gcreport drop type;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-9551-3" author="vpiyanov">
+        <comment>Add 'Horizon Joint Risk Assessment' report template</comment>
+        <sql><![CDATA[
+            insert into prodlims.gctemplate(name, title, text, type) VALUES ("Horizon Joint Risk Assessment", "Horizon Joint Risk Assessment", "<p>The above patient and partner had Horizon carrier screening. Please see their Horizon reports for detailed information on their individual results including exact variants detected and disease descriptions. Below are the combined reproductive risk assessments for conditions where the patient and/or partner screened positive as carrier(s). Reproductive risk is the likelihood this couple's child(ren) could inherit the named condition. Severity of the condition cannot be predicted. Residual risk after a negative screen is based on provided ethnicity and negative family history - if the patient or partner have an ethnicity different than what is listed below or have a positive family history, the reproductive risk listed could be inaccurate. Conditions where the patient and partner screened negative are not included in this summary; the reproductive risk for these conditions is low but not zero. Genetic counseling is recommended. Genetic counselors in the patient&#8217;s community may be found through www.nsgc.org.</p>
+<p>&#160;</p>
+<p>Female Patient Case ID:</p>
+<p>Ethnicity:&#160;</p>
+<p>&#160;</p>
+<p>Male Partner Case ID:</p>
+<p>Ethnicity:</p>
+<p>&#160;</p>
+<p><strong>High Reproductive Risk Conditions </strong></p>
+<p><strong>[Disease Name] [Gene]: </strong></p>
+<p>Female Patient: POSITIVE</p>
+<p>Male Partner: POSITIVE</p>
+<p>Reproductive Risk: 1 in 4</p>
+<p>&#160;</p>
+<p><strong>Reproductive Risk for Other Conditions </strong></p>
+<p><strong>[Disease Name] [Gene]: </strong></p>
+<p>Female Patient: [NEGATIVE / POSITIVE]</p>
+<p>Male Partner:&#160; [NEGATIVE / POSITIVE]</p>
+<p>Reproductive Risk:&#160; 1 in&#160;</p>
+<p>&#160;</p>
+<p>What is Congenital Adrenal Hyperplasia, 11-Beta-Hydroxylase Deficiency?</p>
+<p>Congenital Adrenal Hyperplasia, 11-Beta-Hydroxylase Deficiency is a rare inherited condition that is one of a group of disorders (called Congenital Adrenal Hyperplasia) that affect the adrenal glands. The adrenal glands sit on top of the kidneys and make hormones that control many functions in the body. In people with Congenital Adrenal Hyperplasia, 11-beta-hydroxylase deficiency, the adrenal glands produce too many male sex hormones called androgens. There are two types of Congenital Adrenal Hyperplasia, 11-Beta-Hydroxylase Deficiency, the classic form and the non-classic form. The classic form is the more severe of the two types. Females with the classic form of Congenital Adrenal Hyperplasia, 11-Beta-Hydroxylase Deficiency have external genitals that do not look clearly male or female. However, the internal reproductive organs develop normally. Males and females with the classic form of this condition have early development of their secondary sexual characteristics such as growth of facial and pubic hair, deepening of the voice, appearance of acne, and onset of a growth spurt. The early growth spurt can prevent growth later and lead to short stature in adulthood. About two-thirds of children with the classic form of this condition deficiency have high blood pressure (hypertension) that typically develops within the first year of life. Treatment includes hormone therapy and other medications as needed.</p>
+<p>&#160;</p>
+<p>If you have questions about this case, please call 650-249-9090 and ask for the carrier screening genetic counselor on call or e-mail carriergc@natera.com.</p>
+<p>The test described has been developed and its performance characteristics determined by the CLIA-certified laboratory performing the test. This test has not been cleared or approved by the U.S. Food and Drug Administration (FDA). Although FDA does not currently clear or approve laboratory-developed tests in the U.S., certification of the laboratory is required under CLIA to ensure the quality and validity of the tests.</p>
+<p>Corp 2019 Natera, Inc&#160;</p>", "HORIZON");
+        ]]></sql>
+        <rollback>
+            delete from prodlims.gctemplate where name = "Horizon Joint Risk Assessment";
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

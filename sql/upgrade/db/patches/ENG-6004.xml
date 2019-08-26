@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6004-01" author="hharidas">
+        <comment>
+            As major changes are being made to  disease related information, back up the table before the changes.
+        </comment>
+
+        <sql>
+            CREATE TABLE `prodlims`.`horizondiseasetemplate_backup_eng6004` LIKE `prodlims`.`horizondiseasetemplate`;
+            INSERT `prodlims`.`horizondiseasetemplate_backup_eng6004` SELECT * FROM `prodlims`.`horizondiseasetemplate`;
+
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="ENG-6004-02" author="hharidas">
+        <comment>
+            Set additional steps text to null for all horizon disease templates.
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET additionalsteps = null;
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE
+            `prodlims`.`horizondiseasetemplate` hdt
+            JOIN `prodlims`.`horizondiseasetemplate_backup_eng6004` bkp
+            ON hdt.id = bkp.id
+            SET hdt.additionalsteps = bkp.additionalsteps
+            where hdt.id = bkp.id
+            and hdt.diseasename = bkp.diseasename
+            and hdt.gene = bkp.gene
+            and hdt.templatecode = bkp.templatecode;
+
+            SET SQL_SAFE_UPDATES=1;
+
+            DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng6004`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-6004-03" author="hharidas">
+        <comment>
+            Set supplement path for one scenario
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            UPDATE `prodlims`.`horizondiseasetemplate`
+            SET supplementpath = "com/natera/lims/service/horizon/report/supplements/tay-sachs-dna-and-enzyme.xml"
+            WHERE gene="HEXA" and templatecode="One Pseudodeficiency variant detected; positive enzyme";
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+
+        <rollback>
+
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE
+            `prodlims`.`horizondiseasetemplate` hdt
+            SET supplementpath=null
+            WHERE gene="HEXA" and templatecode="One Pseudodeficiency variant detected; positive enzyme";
+
+            SET SQL_SAFE_UPDATES=1;
+
+            DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng6004`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

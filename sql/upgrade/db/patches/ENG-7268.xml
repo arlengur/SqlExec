@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-7268-01" author="mdaly">
+        <comment>Templates and ids for FANCC.
+            Path: 144
+            Likely Path: 145
+            2 cis: 147
+        </comment>
+        <sql>
+            -- Update text for FANCC templates
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Positive for the pathogenic variant ${results[0].variantName} in the FANCC gene. Some recent studies have suggested that carriers of Fanconi Anemia, Group C may have a slightly increased risk for certain cancers including, but not limited to, breast cancer and colon cancer. However, other studies show no increased risk for cancer. The actual risk for cancer in carriers of Fanconi Anemia, Group C, if increased, is not clear. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 144;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Positive for the likely pathogenic variant ${results[0].variantName} in the FANCC gene. Some recent studies have suggested that carriers of Fanconi Anemia, Group C may have a slightly increased risk for certain cancers including, but not limited to, breast cancer and colon cancer. However, other studies show no increased risk for cancer. The actual risk for cancer in carriers of Fanconi Anemia, Group C, if increased, is not clear. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition may be as high as 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 145;
+
+            UPDATE `prodlims`.`HorizonDiseaseResultTemplate` SET
+            `clinicalDetails` = 'Positive for the ${results[0].type} variant ${results[0].variantName} and ${results[1].type} variant ${results[1].variantName} in cis (on the same chromosome) in the FANCC gene. Some recent studies have suggested that carriers of Fanconi Anemia, Group C may have a slightly increased risk for certain cancers including, but not limited to, breast cancer and colon cancer. However, other studies show no increased risk for cancer. The actual risk for cancer in carriers of Fanconi Anemia, Group C, if increased, is not clear. Comprehensive genetic counseling and additional medical workup as clinically indicated should be considered. If this individual''s partner is a carrier for Fanconi Anemia, Group C, their chance to have a child with this condition is 1 in 4 (25%). Carrier screening for this individual''s partner is suggested.'
+            WHERE `id` = 147;
+        </sql>
+        <!-- Rollback: Table will be dropped if Horizon rolled back. -->
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

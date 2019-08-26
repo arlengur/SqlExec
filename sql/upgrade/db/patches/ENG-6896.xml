@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6896-01" author="dchettupuzha">
+        <comment>Create new NS3 groupkey</comment>
+        <sql>
+            INSERT INTO `hts`.`sequencingbarcode` (`groupkey`, `idx`, `sequence`, `defunct`)
+            select 'NS3', idx, sequence, defunct from `hts`.`sequencingbarcode` where groupkey = 'NS2';
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM `hts`.`sequencingbarcode` where `groupkey` = 'NS3';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6896-02" author="dchettupuzha">
+        <comment>Modify 240 and 245 Sequencing barcodes for NS3</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+            UPDATE `hts`.`sequencingbarcode` SET `sequence`='TGTTGCACT' WHERE `groupkey`='NS3' and `idx`=240;
+            UPDATE `hts`.`sequencingbarcode` SET `sequence`='CTCGTAGGC' WHERE `groupkey`='NS3' and `idx`=245;
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

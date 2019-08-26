@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="eng-5898-01" author="hharidas">
+        <comment>For UNIV-7 and UNIV-8 cases, the email selection was changed from "wantsEmail" to "emailOptOut", but the data handling was not modified until now.ENG-5898 is for modifying the receiveEmails field value for already existing casefiles. The rollback scripts are identical to the sql as it is attempting to flip a boolean field</comment>
+        <sql>
+            SET sql_safe_updates=0;
+            /* ODE case files update*/
+            /* Files processed before 2016-08-04*/
+            UPDATE odebatch ob
+            join odebatch_casefile ocf on ob.id = ocf.batch_id
+            join casefile cf on cf.id = ocf.case_id
+            join prodlims.family_subject fs on fs.families_id = cf.family_id
+            join prodlims.subject_contactinfo sub_con on sub_con.subject_id = fs.members_id
+            join prodlims.contactinfo con on sub_con.addresses_id = con.id
+            SET con.receiveEmails = !(con.receiveEmails)
+            where filesent &lt; "2016-08-04 00:00"
+            and cf.csreferralversion IN ("UNIV-7","UNIV-8")
+            and fs.familyPosition = "patient";
+
+            /* Files processed after 2016-12-14*/
+            UPDATE odebatch ob
+            join odebatch_casefile ocf on ob.id = ocf.batch_id
+            join casefile cf on cf.id = ocf.case_id
+            join prodlims.family_subject fs on fs.families_id = cf.family_id
+            join prodlims.subject_contactinfo sub_con on sub_con.subject_id = fs.members_id
+            join prodlims.contactinfo con on sub_con.addresses_id = con.id
+            SET con.receiveEmails = !(con.receiveEmails)
+            where filesent &gt; "2016-12-14 00:00"
+            and cf.csreferralversion IN ("UNIV-7","UNIV-8")
+            and fs.familyPosition = "patient";
+
+
+            /* UNIV-7, UNIV-8 cases handled by IDE */
+            UPDATE casefile cf
+            join prodlims.family_subject fs on fs.families_id = cf.family_id
+            join prodlims.subject_contactinfo sub_con on sub_con.subject_id = fs.members_id
+            join prodlims.contactinfo con on sub_con.addresses_id = con.id
+            left join odebatch_casefile ocf on cf.id = ocf.case_id
+            SET con.receiveEmails = !(con.receiveEmails)
+            where cf.csreferralversion IN ("UNIV-7","UNIV-8")
+            and fs.familyPosition = "patient"
+            and ocf.case_id is NULL;
+
+            SET sql_safe_updates=1;
+        </sql>
+        <rollback>
+
+            SET sql_safe_updates=0;
+            /* ODE case files update*/
+            /* Files processed before 2016-08-04*/
+            UPDATE odebatch ob
+            join odebatch_casefile ocf on ob.id = ocf.batch_id
+            join casefile cf on cf.id = ocf.case_id
+            join prodlims.family_subject fs on fs.families_id = cf.family_id
+            join prodlims.subject_contactinfo sub_con on sub_con.subject_id = fs.members_id
+            join prodlims.contactinfo con on sub_con.addresses_id = con.id
+            SET con.receiveEmails = !(con.receiveEmails)
+            where filesent &lt; "2016-08-04 00:00"
+            and cf.csreferralversion IN ("UNIV-7","UNIV-8")
+            and fs.familyPosition = "patient";
+
+            /* Files processed after 2016-12-14*/
+            UPDATE odebatch ob
+            join odebatch_casefile ocf on ob.id = ocf.batch_id
+            join casefile cf on cf.id = ocf.case_id
+            join prodlims.family_subject fs on fs.families_id = cf.family_id
+            join prodlims.subject_contactinfo sub_con on sub_con.subject_id = fs.members_id
+            join prodlims.contactinfo con on sub_con.addresses_id = con.id
+            SET con.receiveEmails = !(con.receiveEmails)
+            where filesent &gt; "2016-12-14 00:00"
+            and cf.csreferralversion IN ("UNIV-7","UNIV-8")
+            and fs.familyPosition = "patient";
+
+
+            /* UNIV-7, UNIV-8 cases handled by IDE */
+            UPDATE casefile cf
+            join prodlims.family_subject fs on fs.families_id = cf.family_id
+            join prodlims.subject_contactinfo sub_con on sub_con.subject_id = fs.members_id
+            join prodlims.contactinfo con on sub_con.addresses_id = con.id
+            left join odebatch_casefile ocf on cf.id = ocf.case_id
+            SET con.receiveEmails = !(con.receiveEmails)
+            where cf.csreferralversion IN ("UNIV-7","UNIV-8")
+            and fs.familyPosition = "patient"
+            and ocf.case_id is NULL;
+
+            SET sql_safe_updates=1;
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

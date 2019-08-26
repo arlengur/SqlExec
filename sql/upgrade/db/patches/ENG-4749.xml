@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="eng-4749-01" author="hharidas">
+        <comment>ENG-4749 is for Generic Hold Improvements in Slipstream. This JIRA aims to improve and clean up existing hold reasons in Slipstream and add new ones to meet actual business needs.</comment>
+        <comment>This script adds new hold reasons as categories and updates the categorygroup information. </comment>
+        <sql>
+            INSERT INTO prodlims.category(name, deleted)
+            SELECT 'Verify patient name order (FN/LN)',0
+            UNION
+            SELECT 'Missing Requisition',0
+            UNION
+            SELECT 'Missing Gender',0
+            UNION
+            SELECT 'Verify Clinic',0
+            UNION
+            SELECT 'Billing',0;
+
+            INSERT INTO prodlims.categorygroup_category
+            SELECT
+            (SELECT id from prodlims.categorygroup where name = 'Hold Reasons') as categorygroup_id
+            ,id
+            FROM prodlims.category WHERE name in ('Verify patient name order (FN/LN)','Missing Requisition','Missing Gender','Verify Clinic', 'Billing');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM prodlims.categorygroup_category
+            WHERE category_id IN (SELECT id FROM prodlims.category WHERE name in ('Verify patient name order (FN/LN)','Missing Requisition','Missing Gender','Verify Clinic', 'Billing'));
+
+            DELETE FROM prodlims.category
+            WHERE name IN ('Verify patient name order (FN/LN)','Missing Requisition','Missing Gender','Verify Clinic','Billing');
+            SET SQL_SAFE_UPDATES=1;
+
+        </rollback>
+    </changeSet>
+
+    <changeSet id="eng-4749-02" author="hharidas">
+        <comment>ENG-4749 is for Generic Hold Improvements in Slipstream. This JIRA aims to improve and clean up existing hold reasons in Slipstream and add new ones to meet actual business needs.</comment>
+        <comment>This script adds new hold reasons to nvstore</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            INSERT INTO prodlims.nvstore(json, name)
+            SELECT  "{\"notes\":[\"Verify validity of insurance\"],\"log\":[]}","HoldReason_BILLING"
+            UNION
+            SELECT  "{\"notes\":[],\"log\":[]}","HoldReason_MISSING_GENDER"
+            UNION
+            SELECT  "{\"notes\":[],\"log\":[]}","HoldReason_MISSING_REQUISITION"
+            UNION
+            SELECT  "{\"notes\":[],\"log\":[]}","HoldReason_VERIFY_PATIENT_NAME"
+            UNION
+            SELECT   "{\"notes\":[\"Check clinic\",\"Check satellite\"],\"log\":[]}","HoldReason_VERIFY_CLINIC";
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\":[\"Name\",\"DOB\",\"Accession ID\",\"Illegible\"],\"log\":[]}"
+            WHERE NAME="HoldReason_INDENTIFIERS_ISSUE";
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\": [\"No test selected\", \"Ambiguous and unclear panel orders\", \"Combo but no NPT samples provided (test requested)\", \"Combo but no CS samples provided (test requested)\"],\"log\":[]}"
+            WHERE NAME="HoldReason_VERIFY_ORDERS";
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\":[],\"log\":[]}"
+            WHERE NAME="HoldReason_GENERIC";
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            DELETE FROM prodlims.nvstore WHERE NAME IN ("HoldReason_BILLING","HoldReason_MISSING_GENDER","HoldReason_MISSING_REQUISITION","HoldReason_VERIFY_PATIENT_NAME","HoldReason_VERIFY_CLINIC");
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\":[\"Combo kit filled, but kit without carrier samples\"],\"log\":[]}"
+            WHERE NAME="HoldReason_VERIFY_ORDERS";
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\":[\"names on sample and referral do not match\"],\"log\":[]}"
+            WHERE NAME="HoldReason_INDENTIFIERS_ISSUE";
+            SET SQL_SAFE_UPDATES=1;
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\":[\"names on sample and referral do not match\"],\"log\":[]}"
+            WHERE NAME="HoldReason_INDENTIFIERS_ISSUE";
+
+            UPDATE prodlims.nvstore
+            SET json = "{\"notes\":[\"Illegible patient address\", \"No ICD Code\", \"Not enough info to determine correct clinic\", \"Missing payment type\", \"No patient signature\"],\"log\":[]}"
+            WHERE NAME="HoldReason_GENERIC";
+            SET SQL_SAFE_UPDATES=1;
+
+
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

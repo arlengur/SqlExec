@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6954-01" author="jdavid">
+        <comment>Change HETEROZYGOUS_PEAK_COUNT to HETEROZYGOUS_SIGNAL in the qc_type table</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_type` set `name`='HETEROZYGOUS_SIGNAL' where `name` = 'HETEROZYGOUS_PEAK_COUNT';
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_type` set `name`='HETEROZYGOUS_PEAK_COUNT' where `name` = 'HETEROZYGOUS_SIGNAL';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6954-02" author="jdavid">
+        <comment>Change HETEROZYGOUS_PEAK_COUNT to HETEROZYGOUS_SIGNAL in the qc_statistics_type table</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_statistics_type` set `name`='HETEROZYGOUS_SIGNAL' where `name` = 'HETEROZYGOUS_PEAK_COUNT';
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`qc_statistics_type` set `name`='HETEROZYGOUS_PEAK_COUNT' where `name` = 'HETEROZYGOUS_SIGNAL';
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

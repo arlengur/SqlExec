@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5683-01" author="jdavid">
+        <comment>Add new column gc_counter_result_type into the horizondiseasetemplate table </comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizondiseasetemplate` ADD COLUMN `gc_counter_result_type` varchar(30) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizondiseasetemplate` DROP COLUMN `gc_counter_result_type`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5683-02" author="jdavid">
+        <comment>Copy resulttype value of each horizondiseasetemplate to be its gc_counter_result_type value </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`horizondiseasetemplate` as `h1`
+            inner join `prodlims`.`horizondiseasetemplate` as `h2`
+            on h1.id = h2.id set h1.gc_counter_result_type = h2.resulttype;
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+            update `prodlims`.`horizondiseasetemplate` SET gc_counter_result_type = null;
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5683-03" author="jdavid">
+        <comment>Set specific horizondiseasetemplates' gc_counter_result_type to be NEGATIVE even when their resulttype is NON-NEGATIVE</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            update `prodlims`.`horizondiseasetemplate` set gc_counter_result_type = 'NEGATIVE' where diseasename = 'Tay-Sachs Disease (DNA only)' and templatecode = 'One pseudodeficiency variant detected';
+
+            update `prodlims`.`horizondiseasetemplate` set gc_counter_result_type = 'NEGATIVE' where diseasename = 'Tay-Sachs Disease (DNA and enzyme)'
+            and templatecode in ('One pseudodeficiency variant detected; positive enzyme', 'One pseudodeficiency variant detected; negative enzyme', 'One pseudodeficiency variant detected; inconclusive enzyme');
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            update `prodlims`.`horizondiseasetemplate` set gc_counter_result_type = 'NON-NEGATIVE' where diseasename = 'Tay-Sachs Disease (DNA only)' and templatecode = 'One pseudodeficiency variant detected';
+            update `prodlims`.`horizondiseasetemplate` set gc_counter_result_type = 'NON-NEGATIVE' where diseasename = 'Tay-Sachs Disease (DNA and enzyme)'
+            and templatecode in ('One pseudodeficiency variant detected; positive enzyme', 'One pseudodeficiency variant detected; negative enzyme', 'One pseudodeficiency variant detected; inconclusive enzyme');
+
+            SET SQL_SAFE_UPDATES=1;
+
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6394-01" author="dchettupuzha">
+        <comment>Insert new Sample types</comment>
+        <sql>
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('FRAGILE_X_AMPLIDEX', 'Amplidex', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('FRAGILE_X_NORMAL', 'NA12878', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('FRAGILE_X_INTERMEDIATE', 'NA20235', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('FRAGILE_X_PRE_MUTATION', 'NA06905', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('FRAGILE_X_FULL_MUTATION', 'NA07537', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_REFERENCE', 'NA12878', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_BINNING', 'Binning', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD1_49_52_DEL', 'NA04099', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD1_35_43_DEL', 'NA23094', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD1_8_17_DUP', 'NA23099', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD1_2_30_DUP', 'NA23087', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD2_49_52_DEL', 'NA04099', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD2_35_43_DEL', 'NA23094', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD2_8_17_DUP', 'NA23099', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_DMD2_2_30_DUP', 'NA23087', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_HBA_SEA', 'NA10799', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_HBA_FIL', 'NA10798', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_HBA_ALPHA37D_ASIANPOLY_POLY3B', 'NA20744', null, null, '','');
+            insert into `prodlims`.`sampletype` (`name`, `displayname`, `samplescale_id`, `tissuetype_id`, `sourcetypename`, `sampletypename`) values ('MLPA_SMA_7_8_DEL', 'NA23687 NA23688', null, null, '','');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `prodlims`.`sampletype` where `name` in (
+            'FRAGILE_X_AMPLIDEX',
+            'FRAGILE_X_NORMAL',
+            'FRAGILE_X_INTERMEDIATE',
+            'FRAGILE_X_PRE_MUTATION',
+            'FRAGILE_X_FULL_MUTATION',
+            'MLPA_REFERENCE',
+            'MLPA_BINNING',
+            'MLPA_DMD1_49_52_DEL',
+            'MLPA_DMD1_35_43_DEL',
+            'MLPA_DMD1_8_17_DUP',
+            'MLPA_DMD1_2_30_DUP',
+            'MLPA_DMD2_49_52_DEL',
+            'MLPA_DMD2_35_43_DEL',
+            'MLPA_DMD2_8_17_DUP',
+            'MLPA_DMD2_2_30_DUP',
+            'MLPA_HBA_SEA',
+            'MLPA_HBA_FIL',
+            'MLPA_HBA_ALPHA37D_ASIANPOLY_POLY3B',
+            'MLPA_SMA_7_8_DEL'
+            )
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6394-02" author="dchettupuzha">
+        <comment>Delete unwanted Sample types added in ENG-6201.xml</comment>
+        <sql>
+            SET sql_safe_updates=0;
+
+            delete from `prodlims`.`sampletype` where name = 'PREMUT';
+            delete from `prodlims`.`sampletype` where name = 'CONTROL';
+            delete from `prodlims`.`sampletype` where name = 'NORMAL';
+            delete from `prodlims`.`sampletype` where name = 'INT';
+            delete from `prodlims`.`sampletype` where name = 'MUT';
+
+            SET sql_safe_updates=1;
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

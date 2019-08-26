@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6597-01" author="kzakharov">
+        <comment>Add new script to find Vistara cases having a clinical indication</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            INSERT INTO `prodlims`.`script` (name, code)
+            VALUES ('Vistara cases having a clinical indication',
+'
+/*
+ * ENG-6597 Clinical Indication Follow Up
+ */
+
+import com.natera.lims.api.model.core.TestType;
+import com.natera.lims.api.model.core.QuestionnaireChoice;
+import com.natera.lims.datamodel.ivf.prod.CaseFile;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+
+List ICD_CODES = Arrays.asList("O28.3", "O28.4", "O28.5", "O28.8");
+
+String CASE_TEMPLATE = "Case #%s" +
+            "\\n\\tAbnormal ultrasound findings: %s" +
+            "\\n\\tFamily history background: %s" +
+            "\\n\\tICD codes: %s";
+String MESSAGE_BODY_TEMPLATE = "User %s requested lookup of the cases having a clinical indication with maternal kits accessioned from %s to %s.\\n\\nThe following cases match the criteria:\\n%s";
+String MESSAGE_SUBJECT = "Vistara cases having a clinical indication";
+
+def caseToString = { cf ->
+  	def pf = cf.getPaternityFields();
+  	def icdCodes = cf.getDiagnoses().isEmpty() ? "not provided" : cf.getDiagnoses().diagnosisCode.join(", ");
+  	def findings = pf.getAbnormalUltrasoundFindings() == QuestionnaireChoice.Y ? "provided" : "not provided";
+  	def familyHistory = pf.getFamilyHistoryInfo() ? "provided" : "not provided";
+	String.format(CASE_TEMPLATE,
+                  cf.getId(),
+                  findings,
+                  familyHistory,
+                  icdCodes);
+}
+
+List cases = caseFileDAO.getCaseFilesWithClinicalIndication(TestType.SNV_SENDOUT,
+    DateUtils.parseDate(receivedFrom, "yyyy-MM-dd"),
+    DateUtils.parseDate(receivedUntil, "yyyy-MM-dd"),
+    ICD_CODES);
+
+if(cases.isEmpty()) {
+	println("There are no cases matched the criteria");
+} else {
+	String messageBody = String.format(MESSAGE_BODY_TEMPLATE,
+	                                   currentUserBean.getCurrentUser().getEmail(),
+                                       receivedFrom,
+                                       receivedUntil,
+                                       cases.collect{cf -> caseToString(cf)}.join("\\n"));
+	if(StringUtils.isEmpty(emailTo)) {
+		println(messageBody);
+	} else {
+		emailSender.send(emailTo, MESSAGE_SUBJECT, messageBody);
+	}
+}
+');
+            ]]>
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`script` WHERE name = 'Vistara cases having a clinical indication';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6597-02" author="kzakharov">
+        <comment>insert parameters for Vistara cases having a clinical indication into scriptparameter table</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'receivedFrom',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases having a clinical indication'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'receivedUntil',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases having a clinical indication'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.String', 0, 'mailTo',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases having a clinical indication'));
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`scriptparameter`
+            WHERE script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Vistara cases having a clinical indication');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

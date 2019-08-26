@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5153-01" author="mdaly">
+        <comment>Update risks for diseases processed at BMGL</comment>
+        <sql><![CDATA[
+            -- Beta-thalassemia
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 10', `riskAfter` = '< 1 in 901'
+            WHERE `ethnicity` = 'African American' AND
+            `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'HBB' AND `provider` = 'BMGL');
+
+            -- Southeast Asian will become 7th, so increment the displayOrder for existing risks with an order of 7 or greater.
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `displayOrder` = `displayOrder` + 1
+            WHERE `displayOrder` >= 7 AND `disease_id` =
+            (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'HBB' AND `provider` = 'BMGL');
+
+            INSERT INTO `prodlims`.`horizon_risk_data` (`disease_id`,  `displayOrder`, `ethnicity`, `riskafter`, `riskbefore`)
+            VALUES ( (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'HBB' AND `provider` = 'BMGL'),
+            7, 'Southeast Asian', '< 1 in 2900', '1 in 30');
+
+            -- Bloom syndrome
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 140', `riskAfter` = '< 1 in 13901'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+            `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'BLM' AND `provider` = 'BMGL');
+
+            -- Canavan disease
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 60', `riskAfter` = '1 in 5901'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+            `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'ASPA' AND `provider` = 'BMGL');
+
+            -- Familial Dysautonomia
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 34', `riskAfter` = '< 1 in 3331'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+            `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'IKBKAP' AND `provider` = 'BMGL');
+
+            -- Fanconi Anemia, Group C
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 98', `riskAfter` = '< 1 in 9701'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+            `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'FANCC' AND `provider` = 'BMGL');
+
+            -- Mucolipidosis, Type IV
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 119', `riskAfter` = '1 in 11801'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+            `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'MCOLN1' AND `provider` = 'BMGL');
+            ]]>
+        </sql>
+        <rollback>
+            <![CDATA[
+            -- Beta-thalassemia
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 8', `riskAfter` = '< 1 in 701'
+            WHERE `ethnicity` = 'African American' AND
+                  `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'HBB' AND `provider` = 'BMGL');
+
+            -- Delete Southeast Asian and reset displayOrder for existing risks with an order of 7 or greater.
+            DELETE FROM `prodlims`.`horizon_risk_data` WHERE
+              `ethnicity` = 'Southeast Asian' AND
+              `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'HBB' AND `provider` = 'BMGL');
+
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `displayOrder` = `displayOrder` - 1
+            WHERE `displayOrder` >= 7 AND `disease_id` =
+                                          (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'HBB' AND `provider` = 'BMGL');
+
+            -- Bloom syndrome
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 100', `riskAfter` = '< 1 in 9901'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+                  `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'BLM' AND `provider` = 'BMGL');
+
+            -- Canavan disease
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 40', `riskAfter` = '1 in 3901'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+                  `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'ASPA' AND `provider` = 'BMGL');
+
+            -- Familial Dysautonomia
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 31', `riskAfter` = '< 1 in 3001'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+                  `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'IKBKAP' AND `provider` = 'BMGL');
+
+            -- Fanconi Anemia, Group C
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 96', `riskAfter` = '1 in 9501'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+                  `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'FANCC' AND `provider` = 'BMGL');
+
+            -- Mucolipidosis, Type IV
+            UPDATE `prodlims`.`horizon_risk_data`
+            SET `riskBefore` = '1 in 89', `riskAfter` = '1 in 8801'
+            WHERE `ethnicity` = 'Ashkenazi Jewish' AND
+                  `disease_id` = (SELECT `id` from `prodlims`.`horizondisease` WHERE `mutation` = 'MCOLN1' AND `provider` = 'BMGL');
+            ]]>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

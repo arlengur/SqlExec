@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9213-01" author="irazin">
+        <comment>Remove Transplant Type and add Most recent clinical note attached fields</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`rmcasefileinfo` DROP COLUMN `hastransplanttype`;
+            ALTER TABLE `prodlims`.`rmcasefileinfo` ADD COLUMN `has_clinic_note_or_report` BIT(1) DEFAULT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`rmcasefileinfo` ADD COLUMN `hastransplanttype` BIT(1) DEFAULT NULL;
+            ALTER TABLE `prodlims`.`rmcasefileinfo` DROP COLUMN `has_clinic_note_or_report`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

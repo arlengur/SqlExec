@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+
+    <changeSet id="ENG-4846-02" author="jdavid">
+        <comment>insert new templates into gctemplate table</comment>
+        <sql>
+            <![CDATA[
+            insert into `prodlims`.`gctemplate` (name, text, archived, delayednote)
+            values (
+'Horizon Test Result 7-Day Delay Notification',
+'<p>Dear Ordering Provider,</p>
+<p>This message is to notify you that your patient''s Horizon Carrier Screen results are delayed. We expect the results to return within the next 7 days. We apologize for any inconvenience this delay causes you. Please call Natera at 650-249-9090 with questions.&nbsp;</p>
+<p>Thanks,<br/>
+Natera</p>',
+            0,1);
+
+            insert into `prodlims`.`gctemplate` (name, text, archived, delayednote)
+            values (
+            'Horizon Test Result 14-Day Delay Notification',
+'<p>Dear Ordering Provider,</p>
+<p>This message is to notify you that your patient''s Horizon Carrier Screen results are delayed. We expect the results to return within the next 14 days. We apologize for any inconvenience this delay causes you. Please call Natera at 650-249-9090 with questions.&nbsp;</p>
+<p>Thanks,<br/>
+Natera</p>',
+            0,1);
+
+            insert into `prodlims`.`gctemplate` (name, text, archived, delayednote)
+            values (
+            'Panorama Test Result Delay Notification',
+'<p>Hello,</p>
+<p>We are contacting you in regards to this Panorama case to provide notification of a slight delay in the Panorama testing turnaround time. We are not anticipating any issue with the sample, it is just still in testing. Our staff members are working as quickly as possible and the report should go out within the next 48 hours. If the report is not issued within 48 hours, we will be in contact with you regarding an update. We apologize for the inconvenience to you and your patient. Please let us know if you have any additional questions or concerns.</p>
+<p>Thanks,<br/>
+Natera</p>',
+            0,1);
+            ]]>
+        </sql>
+        <rollback>
+            delete from `prodlims`.`gctemplate` where name = 'Horizon Test Result 7-Day Delay Notification';
+            delete from `prodlims`.`gctemplate` where name = 'Horizon Test Result 14-Day Delay Notification';
+            delete from `prodlims`.`gctemplate` where name = 'Panorama Test Result Delay Notification';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-4846-03" author="jdavid">
+        <comment>insert Horizon Test Result Delay Notification into script table</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            insert into `prodlims`.`script` (name, code)
+            values ('Horizon Test Result Delay Notification',
+'
+/*
+ * ENG-4846: Ability to send test result delay notification for Horizon cases.
+ */
+
+import com.natera.lims.datamodel.core.*;
+import org.apache.commons.lang.*;
+import com.natera.lims.datamodel.ivf.prod.*;
+import net.genesecurity.mail.util.*;
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName);
+def user = currentUserBean.getCurrentUser();
+def deliveryDestinations = new HashSet<DeliveryMethod>();
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null;
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+
+        caseFile = caseFileDAO.get(caseFileId)
+        if (!caseFile.testType.isCarrierScreening2()) {
+            println "Case " + caseFileId + " is not a CARRIER_SCREENING_2 case. Case is skipped, and note is not sent."
+            return;
+        }
+
+        emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+        if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+            println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for both CARRIER_SCREENING_2 and GC. Case is skipped, and note is not sent to ordering provider."
+            return;
+        }
+
+        gcReport = new GCReport()
+        gcReport.setGcTemplate(gcTemplate)
+        gcReport.setNotes(gcTemplate.text)
+        gcReport.caseFile = caseFile
+        gcReport.setCreatedBy(user)
+        gcReport.setCreated(new Date())
+
+        GCReportPublisher.publishGCReport(gcReport)
+        GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm);
+        caseFileDAO.update(caseFile);
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+    }
+}
+
+println "Script ran successfully!"');
+            ]]>
+        </sql>
+        <rollback>
+            delete from `prodlims`.`script`
+                where name = 'Horizon Test Result Delay Notification';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-4846-04" author="jdavid">
+        <comment>insert parameters for Horizon Test Result Delay Notification into scriptparameter table</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (code, elementtype, islist, name, script_id)
+            VALUES ('[''Horizon Test Result 7-Day Delay Notification'',''Horizon Test Result 14-Day Delay Notification'']', 'java.lang.String', 0, 'gcTemplateName',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Horizon Test Result Delay Notification'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+            VALUES ('java.lang.Long', 1, 'caseFileIds',
+            (SELECT id FROM `prodlims`.`script` WHERE name = 'Horizon Test Result Delay Notification'));
+        </sql>
+        <rollback>
+            delete from `prodlims`.`scriptparameter`
+                where script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Horizon Test Result Delay Notification');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-4846-05" author="jdavid">
+        <comment>insert Panorama Test Result Delay Notification into script table</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            INSERT INTO `prodlims`.`script` (name, code)
+            VALUES ('Panorama Test Result Delay Notification',
+'
+/*
+ * ENG-4846: Ability to send test result delay notification for Panorama cases.
+ */
+
+import com.natera.lims.datamodel.core.*;
+import org.apache.commons.lang.*;
+import com.natera.lims.datamodel.ivf.prod.*;
+import net.genesecurity.mail.util.*;
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName);
+def user = currentUserBean.getCurrentUser();
+def deliveryDestinations = new HashSet<DeliveryMethod>();
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null;
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+        caseFile = caseFileDAO.get(caseFileId)
+        if (!caseFile.testType.isNPT()) {
+            println "Case " + caseFileId + " is not an NPT case. Case is skipped, and note is not sent."
+            return;
+        }
+
+        emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+        if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+            println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for both NPT and GC. Case is skipped, and note is not sent to ordering provider."
+            return;
+        }
+
+        gcReport = new GCReport()
+        gcReport.setGcTemplate(gcTemplate)
+        gcReport.setNotes(gcTemplate.text)
+        gcReport.caseFile = caseFile
+        gcReport.setCreatedBy(user)
+        gcReport.setCreated(new Date())
+
+        GCReportPublisher.publishGCReport(gcReport)
+        GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm);
+        caseFileDAO.update(caseFile);
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+
+    }
+}
+
+println "Script ran successfully!"
+
+');
+            ]]>
+        </sql>
+        <rollback>
+            delete from `prodlims`.`script` where name = 'Panorama Test Result Delay Notification';
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="ENG-4846-06" author="jdavid">
+        <comment>insert parameters for Panorama Test Result Delay Notification into scriptparameter table</comment>
+        <sql>
+            INSERT INTO `prodlims`.`scriptparameter` (code, elementtype, islist, name, script_id)
+                VALUES ('[''Panorama Test Result Delay Notification'']', 'java.lang.String', 0, 'gcTemplateName',
+                (SELECT id FROM `prodlims`.`script` WHERE name = 'Panorama Test Result Delay Notification'));
+
+            INSERT INTO `prodlims`.`scriptparameter` (elementtype, islist, name, script_id)
+                VALUES ('java.lang.Long', 1, 'caseFileIds',
+                (SELECT id FROM `prodlims`.`script` WHERE name = 'Panorama Test Result Delay Notification'));
+        </sql>
+        <rollback>
+            delete from `prodlims`.`scriptparameter`
+                where script_id in (SELECT id FROM `prodlims`.`script` WHERE name = 'Panorama Test Result Delay Notification');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-4846-07" author="jdavid">
+        <comment>fixing bug, update script code</comment>
+        <sql splitStatements="false">
+                <![CDATA[
+            update `prodlims`.`script` set code =
+'
+/*
+ * ENG-4846: Ability to send test result delay notification for Horizon cases.
+ */
+
+import com.natera.lims.datamodel.core.*;
+import org.apache.commons.lang.*;
+import com.natera.lims.datamodel.ivf.prod.*;
+import net.genesecurity.mail.util.*;
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName);
+def user = currentUserBean.getCurrentUser();
+def deliveryDestinations = new HashSet<DeliveryMethod>();
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null;
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+
+        caseFile = caseFileDAO.get(caseFileId)
+        if (!caseFile.testType.isCarrierScreening2()) {
+            println "Case " + caseFileId + " is not a CARRIER_SCREENING_2 case. Case is skipped, and note is not sent."
+            return;
+        }
+
+        emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+        if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+            println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for CARRIER_SCREENING_2 test type. Case is skipped, and note is not sent to ordering provider."
+            return;
+        }
+
+        gcReport = new GCReport()
+        gcReport.setGcTemplate(gcTemplate)
+        gcReport.setNotes(gcTemplate.text)
+        gcReport.caseFile = caseFile
+        gcReport.setCreatedBy(user)
+        gcReport.setCreated(new Date())
+
+        GCReportPublisher.publishGCReport(gcReport)
+        GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm);
+        caseFileDAO.update(caseFile);
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+    }
+}
+
+println "Script ran successfully!"
+'
+WHERE name = 'Horizon Test Result Delay Notification';
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-4846-08" author="jdavid">
+        <comment>fixing bug, update script code</comment>
+        <sql splitStatements="false">
+            <![CDATA[
+            update `prodlims`.`script` set code =
+'
+/*
+ * ENG-4846: Ability to send test result delay notification for Panorama cases.
+ */
+
+import com.natera.lims.datamodel.core.*;
+import org.apache.commons.lang.*;
+import com.natera.lims.datamodel.ivf.prod.*;
+import net.genesecurity.mail.util.*;
+
+def gcTemplate = GCTemplateDAO.getByName(gcTemplateName);
+def user = currentUserBean.getCurrentUser();
+def deliveryDestinations = new HashSet<DeliveryMethod>();
+deliveryDestinations.add(DeliveryMethod.SECURE_EMAIL)
+deliveryDestinations.add(DeliveryMethod.FAX)
+
+def caseFile = null;
+def emailAndFaxForm = null
+def gcReport = null
+
+caseFileIds.each { caseFileId ->
+    try {
+        caseFile = caseFileDAO.get(caseFileId)
+        if (!caseFile.testType.isNPT()) {
+            println "Case " + caseFileId + " is not an NPT case. Case is skipped, and note is not sent."
+            return;
+        }
+
+        emailAndFaxForm = new EmailAndFaxForm(caseFile, deliveryDestinations, !gcTemplate.isDelayedNote())
+        if (StringUtils.isBlank(emailAndFaxForm.getSecureEmails()) && StringUtils.isBlank(emailAndFaxForm.getFaxes())) {
+            println "Case " + caseFileId + " has no SECURE_EMAIL and FAX delivery methods for NPT test type. Case is skipped, and note is not sent to ordering provider."
+            return;
+        }
+
+        gcReport = new GCReport()
+        gcReport.setGcTemplate(gcTemplate)
+        gcReport.setNotes(gcTemplate.text)
+        gcReport.caseFile = caseFile
+        gcReport.setCreatedBy(user)
+        gcReport.setCreated(new Date())
+
+        GCReportPublisher.publishGCReport(gcReport)
+        GCReportPublisher.send(caseFile, gcReport, emailAndFaxForm);
+        caseFileDAO.update(caseFile);
+
+    } catch (Exception e) {
+        println "Exception for case " + caseFileId + ": " + e.getMessage()
+
+    }
+}
+
+println "Script ran successfully!"
+'
+WHERE name = 'Panorama Test Result Delay Notification';
+            ]]>
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

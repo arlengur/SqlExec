@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-10146-01" author="mdubrovin">
+        <comment>Add a new field for checking state of handcall</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`npt_handcall_result`
+                ADD COLUMN `status` VARCHAR(20) NOT NULL;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`npt_handcall_result`
+                DROP COLUMN `status`;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-10146-02" author="mdubrovin">
+        <comment>Mark latest handcall results as 'ACTUAL'</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`npt_handcall_result`
+            JOIN (SELECT MAX(hcr.id) handcall_result_id
+            FROM `prodlims`.`alg_sequencinginitfile` sif
+            JOIN `prodlims`.`casefile` cf on sif.casefile_id = cf.id
+            JOIN `prodlims`.`npt_handcallresult_sequencinginitfile` hcr_sif on sif.id=hcr_sif.sequencinginitfile_id
+            JOIN `prodlims`.`npt_handcall_result` hcr on hcr.id = hcr_sif.handcallresult_id
+            GROUP BY cf.id, hcr.handcalled_date, hcr.id
+            ORDER BY hcr.handcalled_date desc, hcr.id desc) source_table ON npt_handcall_result.id = source_table.handcall_result_id
+            SET npt_handcall_result.status = 'ACTUAL';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+    </changeSet>
+
+    <changeSet id="ENG-10146-03" author="mdubrovin">
+        <comment>Mark all empty handcall results statuses as 'SKIPPED'</comment>
+        <sql>
+            SET SQL_SAFE_UPDATES=0;
+
+            UPDATE `prodlims`.`npt_handcall_result` hcr
+            SET hcr.status = 'SKIPPED'
+            WHERE status = '';
+
+            SET SQL_SAFE_UPDATES=1;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

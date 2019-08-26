@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5715-01" author="mdaly">
+        <comment>Create new tables for new entities and extend existing HorizonDisease</comment>
+        <sql>
+            <![CDATA[
+            CREATE TABLE `horizonclassification` (
+              `id` bigint(20) NOT NULL AUTO_INCREMENT,
+              `description` varchar(100) DEFAULT NULL,
+              `nonpathogenic` tinyint(1) NOT NULL,
+              `requiresreview` tinyint(1) NOT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizongene` (
+              `id` bigint(20) NOT NULL AUTO_INCREMENT,
+              `chromosome` varchar(2) DEFAULT NULL,
+              `symbol` varchar(20) DEFAULT NULL,
+              `disease_id` bigint(20) DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `UK_symbol` (`symbol`),
+              KEY `FK_horizongene_horizondisease` (`disease_id`),
+              CONSTRAINT `FK_horizongene_horizondisease` FOREIGN KEY (`disease_id`) REFERENCES `horizondisease` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizonvariant` (
+              `DTYPE` varchar(31) NOT NULL,
+              `id` bigint(20) NOT NULL AUTO_INCREMENT,
+              `position` int(11) DEFAULT NULL,
+              `variantid` varchar(255) DEFAULT NULL,
+              `gene_id` bigint(20) DEFAULT NULL,
+              `referenceValue` varchar(1024) DEFAULT NULL,
+              `coding` varchar(1024) DEFAULT NULL,
+              `protein` varchar(1024) DEFAULT NULL,
+              `allele1CGGCount` int DEFAULT NULL,
+              `allele2CGGCount` int DEFAULT NULL,
+              `allele3CGGCount` int DEFAULT NULL,
+              `copyCount` int DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `UK_horizonvariantid` (`variantid`),
+              KEY `FK_horizongene_horizonvariant` (`gene_id`),
+              CONSTRAINT `FK_horizongene_horizonvariant` FOREIGN KEY (`gene_id`) REFERENCES `horizongene` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizondisease_classifications` (
+              `horizondisease_id` bigint(20) NOT NULL,
+              `classifications_id` bigint(20) NOT NULL,
+              PRIMARY KEY (`horizondisease_id`,`classifications_id`),
+              KEY `FK_horizondisease_classifications__classificationsid` (`classifications_id`),
+              KEY `FK_horizondisease_classifications__horizondiseaseid` (`horizondisease_id`),
+              CONSTRAINT `FK_horizondisease_classifications__horizondiseaseid` FOREIGN KEY (`horizondisease_id`) REFERENCES `horizondisease` (`id`),
+              CONSTRAINT `FK_horizondisease_classifications__classificationsid` FOREIGN KEY (`classifications_id`) REFERENCES `horizonclassification` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            CREATE TABLE `horizondiseases_workflows` (
+              `horizondisease_id` bigint(20) NOT NULL,
+              `workflows` varchar(255) DEFAULT NULL,
+              UNIQUE KEY `UK_horizondiseases_workflows` (`horizondisease_id`,`workflows`),
+              KEY `FK_horizondisease_workflows__horizonid` (`horizondisease_id`),
+              CONSTRAINT `FK_horizondisease_workflows__horizonid` FOREIGN KEY (`horizondisease_id`) REFERENCES `horizondisease` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+            ALTER TABLE `horizondisease` ADD COLUMN `cloudid` varchar(50) DEFAULT NULL, ADD UNIQUE KEY `UK_horizondisease_cloudid` (`cloudid`);
+            ]]>
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            drop table if exists `prodlims`.`horizondiseases_workflows`;
+            drop table if exists `prodlims`.`horizondisease_classifications`;
+            drop table if exists `prodlims`.`horizonvariant`;
+            drop table if exists `prodlims`.`horizongene`;
+            drop table if exists `prodlims`.`horizonclassification`;
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+
+    </changeSet>
+    <changeSet id="ENG-5715-02" author="mdaly">
+        <comment>Set cloudID on Natera HorizonDiseases</comment>
+        <sql>
+            UPDATE `horizondisease` hd, (SELECT `mutation`, `id` FROM `horizondisease` WHERE `provider` = 'NATERA_LAB' AND `name` NOT IN ('Alpha-Thalassemia', 'Tay-Sachs Disease (enzyme only)')) ids SET `cloudID` = `ids`.`mutation` WHERE `hd`.`id` = `ids`.`id`;
+            UPDATE `horizondisease` SET `cloudID` = 'ATHAL' WHERE `provider` = 'NATERA_LAB' AND `name` = 'Alpha-Thalassemia';
+            UPDATE `horizondisease` SET `cloudID` = 'TSE' WHERE `provider` = 'NATERA_LAB' AND `name` = 'Tay-Sachs Disease (enzyme only)';
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>
+
+

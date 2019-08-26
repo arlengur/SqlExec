@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8194-01" author="mdaly">
+        <comment>Associate the "Silent Carrier for Alpha-Thalassemia" supplement with the
+            pathogenic and likely pathogenic Alpha-Thalassemia templates.
+
+            Supplement ID (from HorizonDiseaseSupplement.xml)
+            "Silent Carrier for Alpha-Thalassemia": 136
+
+            Template ID (from HorizonDiseaseResultTemplate.xml)
+            PATHOGENIC: 139
+            LIKELY_PATHOGENIC: 140
+        </comment>
+        <sql>
+            INSERT INTO `prodlims`.`horizondisease_horizondiseasesupplement`
+            (`supplement_id`, `template_id`, `disease_id`)
+            VALUES
+            (136, 139, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL')),
+            (136, 140, (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL'));
+        </sql>
+
+        <rollback>
+            DELETE FROM `prodlims`.`horizondisease_horizondiseasesupplement` WHERE
+            `supplement_id` = 136 AND
+            `template_id` IN (139,140) AND
+            `disease_id` = (SELECT `id` FROM `prodlims`.`horizondisease` WHERE `cloudId` = 'ATHAL');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

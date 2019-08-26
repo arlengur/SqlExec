@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <!--    Adjustments in db schema/data to comply with MySQL 5.7 strict SQL mode in preparation for upgrade.
+            (https://dev.mysql.com/doc/refman/5.7/en/sql-mode.html).
+            Errors unveiled during the test upgrade run:
+            ERROR 1292 (22007) at line 1: Incorrect datetime value: '0000-00-00 00:00:00' for column 'last_update_date' at row 5
+            ERROR 1067 (42000) at line 1: Invalid default value for 'updated'
+            ERROR 1292 (22007) at line 1: Incorrect datetime value: '0000-00-00 00:00:00' for column 'created' at row 1172
+            ERROR 1292 (22007) at line 1: Incorrect datetime value: '0000-00-00 00:00:00' for column 'creationtime' at row 1
+            ERROR 1292 (22007) at line 1: Incorrect datetime value: '0000-00-00 00:00:00' for column 'disposal_time' at row 1
+            ERROR 1292 (22007) at line 1: Incorrect datetime value: '0000-00-00 00:00:00' for column 'senton' at row 405
+
+            Show all zero_date violations in schema:
+            select c.table_schema, c.table_name, c.column_name from information_schema.columns c join
+            information_schema.tables t USING (table_name, table_schema)
+            where c.column_type in ('datetime', 'timestamp', 'date')
+            and c.column_default like '0000-00-00%'
+            and t.table_type in ('BASE TABLE')
+            and c.table_schema not in ('mysql', 'information_schema')
+
+            | table_schema | table_name       | column_name |
+            | gpsync       | accessionhistory | updated     |
+
+            1. gpsync schema is obsolete and will be manually removed from production database
+            2. `care`.`mi_channel_partner`, `illuminamaster`.`sample` - will be managed separately according to the processes established
+            in the owning applications
+            3. prodlims.plate_disposal_temp is obsolete and to be removed
+            4. For other eligible tables either set NULL if column accepts NULLs or '1970-01-01 00:00:01'
+            (works well for both datetime and timestamp data types though datetime can have smaller min value)
+            There is only a few rows to be changed.
+     -->
+
+    <changeSet id="ENG-9050-01" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <tableExists schemaName="prodlims" tableName="plate_disposal_temp"/>
+        </preConditions>
+        <comment>Drop obsolete table used to track disposals prior a new DisposalService design</comment>
+        <dropTable schemaName="prodlims" tableName="plate_disposal_temp" />
+    </changeSet>
+
+    <changeSet id="ENG-9050-02" author="ashabanov">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                <![CDATA[
+                    SELECT COUNT(*) FROM DUAL WHERE version()<'5.7'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Fix two actual prodlims tables data
+        </comment>
+        <sql>
+            SET SQL_SAFE_UPDATES = 0;
+
+            UPDATE `prodlims`.`casefile_insurance_authorize` SET `creationtime` = '1970-01-01 00:00:01' WHERE `creationtime` = '0000-00-00 00:00:00';
+            UPDATE `prodlims`.`reportshipmentrecord` SET `senton` = NULL WHERE `senton` = '0000-00-00 00:00:00';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

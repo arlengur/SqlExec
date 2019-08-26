@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8333-01" author="irazin">
+        <comment>Add run QC types for Signatera WES pipeline</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SEQUENCING_RUN', 'Total number of variants from variant callers', 'TOTAL_VARIANTS', 0),
+            ('SEQUENCING_RUN', 'Total number of germline variants', 'GERMLINE_VARIANTS', 0),
+            ('SEQUENCING_RUN', 'Total number of somatic variants passing our filters', 'SOMATIC_VARIANTS', 0),
+            ('SEQUENCING_RUN', 'Total number of transversions for all somatic variants', 'SOMATIC_TRANSVERSIONS', 0),
+            ('SEQUENCING_RUN', 'Total number of transitions for all somatic variants', 'SOMATIC_TRANSITIONS', 0),
+            ('SEQUENCING_RUN', 'Total number of small insertion/deletion for all somatic variants', 'SOMATIC_INDELS', 0),
+            ('SEQUENCING_RUN', 'Median variant allele frequency for all somatic variants', 'MEDIAN_VAF', 0),
+            ('SEQUENCING_RUN', 'Hotspot mutations', 'HOTSPOT_MUTATIONS', 0),
+            ('SEQUENCING_RUN', 'Concordance rate', 'MATCHED_NORMAL_TISSUE_CONCORDANCE', 0),
+            ('SEQUENCING_RUN', 'Number of good genotyped SNPs', 'MATCHED_NORMAL_TISSUE_GOOD_GENOTYPED_SNPS_COUNT', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'TOTAL_VARIANTS',
+            'GERMLINE_VARIANTS',
+            'SOMATIC_VARIANTS',
+            'SOMATIC_TRANSVERSIONS',
+            'SOMATIC_TRANSITIONS',
+            'SOMATIC_INDELS',
+            'MEDIAN_VAF',
+            'HOTSPOT_MUTATIONS',
+            'MATCHED_NORMAL_TISSUE_CONCORDANCE',
+            'MATCHED_NORMAL_TISSUE_GOOD_GENOTYPED_SNPS_COUNT'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8333-02" author="irazin">
+        <comment>Add sample statistics for Signatera WES pipeline</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) VALUES
+            ('Total number of paired-end reads', 'TOTAL_READS_PAIRED', 'ALL'),
+            ('Average read length for Read 1', 'AVERAGE_READ_LENGTH_R1', 'ALL'),
+            ('Average read length for Read 2', 'AVERAGE_READ_LENGTH_R2', 'ALL'),
+            ('Number of nucleotides got sequenced', 'TOTAL_BASES', 'ALL'),
+            ('Average Phred score for the sequencing run', 'AVERAGE_BASE_QUALITY', 'ALL'),
+            ('Percent of reads with a Phred score > 30 for Read 1', 'ABOVE_Q30_READS_PERCENT_R1', 'ALL'),
+            ('Percent of reads with a Phred score > 30 for Read 2', 'ABOVE_Q30_READS_PERCENT_R2', 'ALL'),
+            ('Average mapping quality value', 'AVERAGE_MAPPING_QUALITY', 'ALL'),
+            ('Percent of reads aligned to the human reference genome', 'MAPPED_READS_PERCENT', 'ALL'),
+            ('Percent of bases that are either G or C', 'GC_PERCENT', 'ALL'),
+            ('Percent of duplicate reads', 'DUPLICATE_READS_PERCENT', 'ALL'),
+            ('Percent of WES panel targets with at least one read', 'EXOME_PANEL_COVERAGE_1X', 'ALL'),
+            ('Percent of reads within WES panel targets', 'ON_TARGET_READS_PERCENT', 'ALL'),
+            ('Average depth of deduplicate reads within WES panel targets', 'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP', 'ALL'),
+            ('Percent of bases within the WES panel targets with at least 30x coverage in matched normal', 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X', 'ALL'),
+            ('Percent of bases within the WES panel targets with at least 100x coverage in tumor', 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'TOTAL_READS_PAIRED',
+            'AVERAGE_READ_LENGTH_R1',
+            'AVERAGE_READ_LENGTH_R2',
+            'TOTAL_BASES',
+            'AVERAGE_BASE_QUALITY',
+            'ABOVE_Q30_READS_PERCENT_R1',
+            'ABOVE_Q30_READS_PERCENT_R2',
+            'AVERAGE_MAPPING_QUALITY',
+            'MAPPED_READS_PERCENT',
+            'GC_PERCENT',
+            'DUPLICATE_READS_PERCENT',
+            'EXOME_PANEL_COVERAGE_1X',
+            'ON_TARGET_READS_PERCENT',
+            'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP',
+            'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X',
+            'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8333-03" author="irazin">
+        <comment>Add sample QC types for Signatera WES pipeline</comment>
+        <sql>
+            INSERT INTO `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) VALUES
+            ('SAMPLE', 'Average mapping quality value', 'AVERAGE_MAPPING_QUALITY', 0),
+            ('SAMPLE', 'Percent of duplicate reads', 'DUPLICATE_READS_PERCENT', 0),
+            ('SAMPLE', 'Average depth of deduplicate reads within WES panel targets', 'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP', 0),
+            ('SAMPLE', 'Percent of bases within the WES panel targets with at least 30x coverage in matched normal', 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X', 0),
+            ('SAMPLE', 'Percent of bases within the WES panel targets with at least 100x coverage in tumor', 'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'AVERAGE_MAPPING_QUALITY',
+            'DUPLICATE_READS_PERCENT',
+            'ON_TARGET_DEDUPLICATED_READS_AVERAGE_DP',
+            'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_30X',
+            'ON_TARGET_DEDUPLICATED_BASES_PERCENT_COVERAGE_100X'
+            );
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

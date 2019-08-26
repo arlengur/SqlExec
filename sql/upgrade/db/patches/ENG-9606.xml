@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-9606-01" author="jdavid">
+        <comment>Add new column sequencingsample_id to resequencingtask</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`resequencingtask` ADD COLUMN `sequencingsample_id` bigint(20) DEFAULT NULL,
+            ADD KEY `FK_RESEQUENCING_TASK_SEQSAMPLEID_idx` (`sequencingsample_id`),
+            ADD CONSTRAINT `FK_RESEQUENCING_TASK_SEQSAMPLEID_idx` FOREIGN KEY (`sequencingsample_id`) REFERENCES `hts`.`sequencingsample` (`id`);
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`resequencingtask` DROP COLUMN `sequencingsample_id`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

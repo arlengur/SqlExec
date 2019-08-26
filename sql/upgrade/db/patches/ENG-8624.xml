@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-8624-01" author="nfleming">
+        <comment>Insert new QC types for Signatera Plasma pipeline</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Efficient Assays', 'EFFICIENT_ASSAYS', 0);
+
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Total Reads', 'TOTAL_READS', 'ALL'),
+            ('Merged Reads', 'MERGED_READS', 'ALL'),
+            ('Number of STAR primer dimer reads', 'STAR_PRIMER_DIMERS', 'ALL'),
+            ('Number of mispaired primer reads', 'MISPAIRED_PRIMER_READS', 'ALL'),
+            ('Number of reads with no forward or reverse primer', 'NO_PRIMER_READS', 'ALL'),
+            ('Number of reads resulting from STAR primer and barcode primer interaction', 'STAR_BARCODE_DIMERS', 'ALL'),
+            ('Number of reads with forward and reverse primer on target', 'ON_TARGET_READS_UNFILTERED', 'ALL'),
+            ('Number of reads with forward and reverse primer off target', 'OFF_TARGET_READS', 'ALL'),
+            ('High quality amplicon reads', 'AMPLICON_READS', 'ALL'),
+            ('Assays with sufficient DOR', 'WORKING_ASSAYS', 'ALL'),
+            ('Assays with efficient DOR', 'EFFICIENT_ASSAYS', 'ALL'),
+            ('Assays with insuffcient DOR', 'DROPOUT_ASSAYS', 'ALL'),
+            ('Number of positions where indel was detected', 'FRACTION_OF_BASES_WITH_INDEL', 'ALL'),
+            ('Median indel rate', 'INDEL_ERROR_MEDIAN', 'ALL'),
+            ('Transition error rate for median position', 'MEDIAN_TRANSITION_ERROR_RATE', 'ALL'),
+            ('Transversion error rate for median position', 'MEDIAN_TRANSVERSION_ERROR_RATE', 'ALL'),
+            ('Post filtering median DOR', 'AMPLICON_DOR_MEDIAN', 'ALL'),
+            ('DOR of 80th percentile divided by 20th percentile', 'AMPLICON_DOR_UNIFORMITY_20_80', 'ALL'),
+            ('Median DOR of all SNP amplicons', 'SNP_TRACER_DOR_MEDIAN', 'ALL'),
+            ('Number of called SNP tracers', 'SNP_TRACER_GENOTYPED', 'ALL'),
+            ('Number of matched SNPs', 'PLASMA_MATCHED_NORMAL_GOOD_GENOTYPED_SNPS_COUNT', 'ALL'),
+            ('Plasma to Match Normal concordance', 'PLASMA_MATCHED_NORMAL_CONCORDANCE', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` = 'EFFICIENT_ASSAYS';
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` IN (
+            'TOTAL_READS',
+            'MERGED_READS',
+            'STAR_PRIMER_DIMERS',
+            'MISPAIRED_PRIMER_READS',
+            'NO_PRIMER_READS',
+            'STAR_BARCODE_DIMERS',
+            'ON_TARGET_READS_UNFILTERED',
+            'OFF_TARGET_READS',
+            'AMPLICON_READS',
+            'WORKING_ASSAYS',
+            'EFFICIENT_ASSAYS',
+            'DROPOUT_ASSAYS',
+            'FRACTION_OF_BASES_WITH_INDEL',
+            'INDEL_ERROR_MEDIAN',
+            'MEDIAN_TRANSITION_ERROR_RATE',
+            'MEDIAN_TRANSVERSION_ERROR_RATE',
+            'AMPLICON_DOR_MEDIAN',
+            'AMPLICON_DOR_UNIFORMITY_20_80',
+            'SNP_TRACER_DOR_MEDIAN',
+            'SNP_TRACER_GENOTYPED',
+            'PLASMA_MATCHED_NORMAL_GOOD_GENOTYPED_SNPS_COUNT',
+            'PLASMA_MATCHED_NORMAL_CONCORDANCE');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8624-02" author="nfleming">
+        <comment>Insert new QC types for Signatera Plasma Run metrics</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SEQUENCING_RUN', 'Total On Target Reads', 'TOTAL_ON_TARGET_READS', 0),
+            ('SEQUENCING_RUN', 'Total Transversion Error Rate', 'TOTAL_TRANSVERSION_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total Transition Error Rate', 'TOTAL_TRANSITION_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total Indel Error Rate', 'TOTAL_INDEL_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total A to C Error Rate', 'TOTAL_A_C_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total A to G Error Rate', 'TOTAL_A_G_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total A to T Error Rate', 'TOTAL_A_T_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total C to A Error Rate', 'TOTAL_C_A_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total C to G Error Rate', 'TOTAL_C_G_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total C to T Error Rate', 'TOTAL_C_T_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total G to A Error Rate', 'TOTAL_G_A_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total G to C Error Rate', 'TOTAL_G_C_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total G to T Error Rate', 'TOTAL_G_T_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total T to A Error Rate', 'TOTAL_T_A_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total T to C Error Rate', 'TOTAL_T_C_ERROR_RATE', 0),
+            ('SEQUENCING_RUN', 'Total T to G Error Rate', 'TOTAL_T_G_ERROR_RATE', 0);
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'TOTAL_ON_TARGET_READS',
+            'TOTAL_TRANSVERSION_ERROR_RATE',
+            'TOTAL_TRANSITION_ERROR_RATE',
+            'TOTAL_INDEL_ERROR_RATE',
+            'TOTAL_A_C_ERROR_RATE',
+            'TOTAL_A_G_ERROR_RATE',
+            'TOTAL_A_T_ERROR_RATE',
+            'TOTAL_C_A_ERROR_RATE',
+            'TOTAL_C_G_ERROR_RATE',
+            'TOTAL_C_T_ERROR_RATE',
+            'TOTAL_G_A_ERROR_RATE',
+            'TOTAL_G_C_ERROR_RATE',
+            'TOTAL_G_T_ERROR_RATE',
+            'TOTAL_T_A_ERROR_RATE',
+            'TOTAL_T_C_ERROR_RATE',
+            'TOTAL_T_G_ERROR_RATE');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8624-03" author="nfleming">
+        <comment>Insert new QC result types for Signatera Plasma Concordance</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Number of matched SNPs', 'PLASMA_MATCHED_NORMAL_GOOD_GENOTYPED_SNPS_COUNT', 0),
+            ('SAMPLE', 'Plasma to Match Normal concordance', 'PLASMA_MATCHED_NORMAL_CONCORDANCE', 0);
+
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` in
+            ('PLASMA_MATCHED_NORMAL_GOOD_GENOTYPED_SNPS_COUNT',
+            'PLASMA_MATCHED_NORMAL_CONCORDANCE');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-8624-04" author="nfleming">
+        <comment>Insert new QC statistic type for Signatera Plasma Mapped Reads</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Mapped Reads', 'MAPPED_READS', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `name` = 'MAPPED_READS';
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

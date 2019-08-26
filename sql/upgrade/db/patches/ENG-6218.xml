@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6218-01" author="mdaly">
+        <comment>Associate HorizonLdtDiseaseResults with the HorizonInitRecord for which the results were downloaded.</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonLdtDiseaseResult`
+                ADD COLUMN `initRecord_id` BIGINT(20),
+                ADD CONSTRAINT `FK_HorizonLdtDiseaseResult_HorizonInitRecord_id` FOREIGN KEY (`initRecord_id`) REFERENCES `prodlims`.`horizoninitrecord` (`id`);
+        </sql>
+        <rollback/>
+    </changeSet>
+    <changeSet id="ENG-6218-02" author="mdaly">
+        <comment>Add flag to ResultCall to indicate that the call should be considered negative (e.g., non-pathogenic). Initialize to 'false' and then
+            update the following calls to 'true': generic negative, Fragile X negative (2-alleles version only), SMA 2 copies and no SNP, and both SMA 3+ copies</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonresultcall`
+                ADD COLUMN `considered_negative` BOOLEAN;
+
+            UPDATE `prodlims`.`horizonresultcall` SET `considered_negative` = FALSE WHERE `id` > -1;
+            UPDATE `prodlims`.`horizonresultcall` SET `considered_negative` = TRUE WHERE `id` IN (1,8,51,52,53);
+        </sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5431" author="tmcfarlin">
+        <comment>Create new linkings from custom panel to natera internal panels</comment>
+        <sql>
+            insert into `prodlims`.`panel` (dtype, shipdestinationtype, name, hl7code, hl7name, description, ce_id, ce_text, ce_system, single_option) VALUES
+            ("HorizonLDTPanel","NA","H106",null,null,"106 (Comprehensive Jewish)","HCS_106","Horizon 106 (COMPREHENSIVE JEWISH)","L",0),
+            ("HorizonLDTPanel","NA","H137",null,null,"137 (Pan-Ethnic Large)","HCS_137","Horizon 137 (PAN-ETHNIC LARGE)","L",0),
+            ("HorizonLDTPanel","NA","H274",null,null,"274 (Pan-ethnic Extended)","HCS_274","Horizon 274 (PAN-ETHNIC EXTENDED)","L",0);
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_3'), (select id from `prodlims`.`panel` where name ='H3' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_4'), (select id from `prodlims`.`panel` where name ='H4' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_27'), (select id from `prodlims`.`panel` where name ='H27' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_CF'), (select id from `prodlims`.`panel` where name ='CF' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_SMA'), (select id from `prodlims`.`panel` where name ='SMA' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_TSE'), (select id from `prodlims`.`panel` where name ='TSE' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_106'), (select id from `prodlims`.`panel` where name ='H106' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_137'), (select id from `prodlims`.`panel` where name ='H137' and DTYPE = 'HorizonLDTPanel'));
+
+            INSERT INTO `prodlims`.`horizoncustompanel_panels` (`horizoncustompanel_id`, `horizonpanel_id`)
+            VALUES ((select id from `prodlims`.`horizoncustompanel` where ce_id = 'HCS_274'), (select id from `prodlims`.`panel` where name ='H274' and DTYPE = 'HorizonLDTPanel'));
+
+
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES = 0;
+
+            delete from `prodlims`.`horizoncustompanel_panels`
+            where horizonpanel_id in (select id from panel where DTYPE = 'HorizonLDTPanel')
+
+            delete from `prodlims`.`panel`
+            where name in ('H106', 'H137', 'H274');
+
+            SET SQL_SAFE_UPDATES = 1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

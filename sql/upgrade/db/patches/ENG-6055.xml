@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6055-01" author="jdavid">
+        <comment>Create stored procedure for migrating combo cases to the case bundling model. Stored procedure written by hharidas</comment>
+        <createProcedure catalogName="cat"
+                         procedureName="migrateComboCases"
+                         relativeToChangelogFile="true"
+                         schemaName="prodlims">
+            CREATE PROCEDURE `migrateComboCases`()
+            BEGIN
+            DECLARE done INT DEFAULT FALSE;
+            DECLARE npt_caseID, horizon_caseID BIGINT(20);
+            DECLARE caseCursor CURSOR FOR
+            select distinct casefile.id, paternity_fields.linkedBundledCase_id
+            from `prodlims`.`casefile`
+            inner join `prodlims`.`paternity_fields` on casefile.paternity_fields_id = paternity_fields.id
+            inner join `prodlims`.`casefile` linked_case on linked_case.id = paternity_fields.linkedBundledCase_id
+            where caseFile.testType = "NPT"
+            AND (linked_case.testType = "CARRIER_SCREENING" OR linked_case.testType = "CARRIER_SCREENING_2");
+
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+            OPEN caseCursor;
+
+            read_loop: LOOP
+
+            FETCH caseCursor INTO npt_caseID, horizon_caseID;
+            IF done THEN
+            LEAVE read_loop;
+            END IF;
+
+            INSERT INTO prodlims.casebundling(casebundlingtype) VALUES ("COMBO");
+            SET @last_insert_casebundling_id = LAST_INSERT_ID();
+
+            INSERT INTO prodlims.casefile_casebundling(casebundling_id, casefile_id) VALUES (@last_insert_casebundling_id,npt_caseID );
+            INSERT INTO prodlims.casefile_casebundling(casebundling_id, casefile_id) VALUES (@last_insert_casebundling_id,horizon_caseID );
+
+
+            END LOOP;
+
+            CLOSE caseCursor;
+            END
+
+        </createProcedure>
+    </changeSet>
+
+</databaseChangeLog>

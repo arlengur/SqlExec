@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6649-01" author="dchettupuzha">
+        <comment>Insert new QC types for Sanger</comment>
+        <sql>
+            insert into `prodlims`.`qc_type` (`category`, `description`, `name`, `ismultisample`) values
+            ('SAMPLE', 'Temperature, measured (degrees C)', 'EPT_TEMPERATURE', 0),
+            ('SAMPLE', 'Voltage, measured (decavolts)', 'EPT_VOLTAGE', 0),
+            ('SAMPLE', 'Current', 'EPT_CURRENT', 0),
+            ('SAMPLE', 'Channel 2 raw data', 'INTENSITY_RAW_DYE2_MEDIAN', 0),
+            ('SAMPLE', 'Channel 2 raw data', 'INTENSITY_RAW_DYE2_MAX', 0),
+            ('SAMPLE', 'Channel 3 raw data', 'INTENSITY_RAW_DYE3_MEDIAN', 0),
+            ('SAMPLE', 'Channel 3 raw data', 'INTENSITY_RAW_DYE3_MAX', 0),
+            ('SAMPLE', 'Channel 4 raw data', 'INTENSITY_RAW_DYE4_MEDIAN', 0),
+            ('SAMPLE', 'Channel 4 raw data', 'INTENSITY_RAW_DYE4_MAX', 0),
+            ('SAMPLE', 'Channel 1 raw data', 'INTENSITY_RAW_DYE1_MEDIAN', 0),
+            ('SAMPLE', 'Channel 1 raw data', 'INTENSITY_RAW_DYE1_MAX', 0),
+            ('SAMPLE', 'Number of Dyes', 'NUMBER_OF_DYES', 0),
+            ('SAMPLE', 'List of scan numbers that are offscale', 'OFFSCALE_PEAK_COUNT', 0),
+            ('SAMPLE', '', 'CRL', 0),
+            ('SAMPLE', '', 'HIGH_QUALITY_PEAK_COUNT', 0),
+            ('SAMPLE', '', 'HETEROZYGOUS_PEAK_COUNT', 0);
+        </sql>
+        <rollback>
+            DELETE FROM `prodlims`.`qc_type` WHERE `name` IN (
+            'EPT_TEMPERATURE',
+            'EPT_VOLTAGE',
+            'EPT_CURRENT',
+            'INTENSITY_RAW_DYE2_MEDIAN',
+            'INTENSITY_RAW_DYE2_MAX',
+            'INTENSITY_RAW_DYE3_MEDIAN',
+            'INTENSITY_RAW_DYE3_MAX',
+            'INTENSITY_RAW_DYE4_MEDIAN',
+            'INTENSITY_RAW_DYE4_MAX',
+            'INTENSITY_RAW_DYE1_MEDIAN',
+            'INTENSITY_RAW_DYE1_MAX',
+            'NUMBER_OF_DYES',
+            'OFFSCALE_PEAK_COUNT',
+            'CRL',
+            'HIGH_QUALITY_PEAK_COUNT',
+            'HETEROZYGOUS_PEAK_COUNT');
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6649-02" author="dchettupuzha">
+        <comment>Insert new QC stats types for Sanger</comment>
+        <sql>
+            insert into `prodlims`.`qc_statistics_type` (`description`, `name`, `applicability`) values
+            ('Temperature, measured (degrees C)', 'EPT_TEMPERATURE', 'ALL'),
+            ('Voltage, measured (decavolts)', 'EPT_VOLTAGE', 'ALL'),
+            ('Current', 'EPT_CURRENT', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE2_MEDIAN', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE2_MAX', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE3_MEDIAN', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE3_MAX', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE4_MEDIAN', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE4_MAX', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE1_MEDIAN', 'ALL'),
+            ('Channel 2 raw data', 'INTENSITY_RAW_DYE1_MAX', 'ALL'),
+            ('Number of Dyes', 'NUMBER_OF_DYES', 'ALL'),
+            ('List of scan numbers that are offscale', 'OFFSCALE_PEAK_COUNT', 'ALL'),
+            ('', 'CRL', 'ALL'),
+            ('', 'HIGH_QUALITY_PEAK_COUNT', 'ALL'),
+            ('', 'HETEROZYGOUS_PEAK_COUNT', 'ALL');
+        </sql>
+        <rollback>
+            SET SQL_SAFE_UPDATES=0;
+
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Temperature, measured (degrees C)' AND `name` = 'EPT_TEMPERATURE' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Voltage, measured (decavolts)' AND `name` = 'EPT_VOLTAGE' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Current' AND `name` = 'EPT_CURRENT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE2_MEDIAN' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE2_MAX' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE3_MEDIAN' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE3_MAX' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE4_MEDIAN' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE4_MAX' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE1_MEDIAN' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Channel 2 raw data' AND `name` = 'INTENSITY_RAW_DYE1_MAX' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'Number of Dyes' AND `name` = 'NUMBER_OF_DYES' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = 'List of scan numbers that are offscale' AND `name` = 'OFFSCALE_PEAK_COUNT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = '' AND `name` = 'CRL' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = '' AND `name` = 'HIGH_QUALITY_PEAK_COUNT' AND `applicability` = 'ALL';
+            DELETE FROM `prodlims`.`qc_statistics_type` WHERE `description` = '' AND `name` = 'HETEROZYGOUS_PEAK_COUNT' AND `applicability` = 'ALL';
+
+            SET SQL_SAFE_UPDATES=1;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

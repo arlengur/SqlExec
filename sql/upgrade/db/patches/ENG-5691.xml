@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5691-01" author="jdavid">
+        <comment>Create HorizonInitRecord table</comment>
+        <sql>
+            CREATE TABLE `prodlims`.`horizoninitrecord` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT,
+            `casefile_id` bigint(255) NOT NULL,
+            `initrecordid` varchar(255) DEFAULT NULL,
+            `status` varchar(255) NOT NULL DEFAULT 'CREATED',
+            `manifest` longtext NOT NULL,
+            `createtime` datetime NOT NULL,
+            `starttime` datetime DEFAULT NULL,
+            `completetime` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            KEY `FKHIRCASEID_idx` (`casefile_id`),
+            CONSTRAINT `FKHIRCASEID_idx` FOREIGN KEY (`casefile_id`) REFERENCES `casefile` (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`horizoninitrecord`;
+        </rollback>
+    </changeSet>
+    <changeSet id="ENG-5691-02" author="jdavid">
+        <comment>Rename initrecordid column to constellationinitrecordid</comment>
+        <sql>
+            alter table `prodlims`.`horizoninitrecord` CHANGE COLUMN `initrecordid` `constellationinitrecordid` varchar(255) DEFAULT NULL;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`horizoninitrecord` CHANGE COLUMN `constellationinitrecordid` `initrecordid` varchar(255) DEFAULT NULL;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

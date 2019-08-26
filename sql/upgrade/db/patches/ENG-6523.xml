@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-6523-01" author="mdaly">
+        <comment>Remove unused columns from Variant class</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`horizonvariant`
+                CHANGE COLUMN `coding` `hgvs` VARCHAR(1024) DEFAULT NULL,
+                CHANGE COLUMN `protein` `proteinChange` VARCHAR(1024) DEFAULT NULL,
+                DROP COLUMN `DTYPE`,
+                DROP COLUMN `allele1CGGCount`,
+                DROP COLUMN `allele2CGGCount`,
+                DROP COLUMN `allele3CGGCount`,
+                DROP COLUMN `copyCount`;
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`horizonvariant`
+                CHANGE COLUMN `hgvs` `coding`  VARCHAR(1024) DEFAULT NULL,
+                CHANGE COLUMN `proteinChange` `protein` VARCHAR(1024) DEFAULT NULL,
+                ADD COLUMN `DTYPE` varchar(31) NOT NULL FIRST,
+                ADD COLUMN `allele1CGGCount` int DEFAULT NULL,
+                ADD COLUMN `allele2CGGCount` int DEFAULT NULL,
+                ADD COLUMN `allele3CGGCount` int DEFAULT NULL,
+                ADD COLUMN `copyCount` int DEFAULT NULL;
+
+            UPDATE `prodlims`.`horizonvariant` SET `DTYPE` = 'SequencedVariant' WHERE `id` > -1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="ENG-6523-02" author="mdaly">
+        <comment>Make HorizonCloudResult.finalCall a required value</comment>
+        <sql>
+            ALTER TABLE `prodlims`.`HorizonCloudResult`
+            CHANGE COLUMN `finalCall_id` `finalCall_id` BIGINT(20) NOT NULL;
+        </sql>
+
+        <rollback>
+            ALTER TABLE `prodlims`.`HorizonCloudResult`
+            CHANGE COLUMN `finalCall_id` `finalCall_id` BIGINT(20);
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
