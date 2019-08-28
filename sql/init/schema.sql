@@ -9064,7 +9064,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_variation_amptargets`()
 BEGIN
 
 insert ignore into variation_amptargets
-(variation_id,amptarget_id,`rank`)
+(variation_id,amptarget_id,rank)
 select v.id,at.id,0 from variation v
 join amptarget at on
 ((v.chr=at.chr) and

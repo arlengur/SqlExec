@@ -41,6 +41,13 @@
         </rollback>
     </changeSet>
 
-
+    <changeSet id="ENG-5428-03" author="dchettupuzha">
+        <comment>Add new insurance carriers to insuranceproviderdetail table</comment>
+        <sql>
+            <![CDATA[
+            alter table `prodlims`.`casefile_insurance_authorize` add column `creationtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+            ]]>
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

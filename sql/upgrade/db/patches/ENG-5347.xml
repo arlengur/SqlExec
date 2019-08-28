@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5347-01" author="hharidas">
+        <comment>Add column to track the value entered by GC for count of negative disease results</comment>
+        <sql>
+            ALTER TABLE  `prodlims`.`horizon_report` ADD COLUMN `gc_negative_results_count` VARCHAR(5) null;
+        </sql>
+        <rollback>
+            ALTER TABLE `prodlims`.`horizon_report` DROP COLUMN `gc_negative_results_count`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -5,7 +5,26 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+    <changeSet id="ENG-5408-01" author="hharidas">
+        <comment>
+            As many disease names are being changed, backup the table before making changes (horizondisease and horizondiseasetemplate tables).
 
+        </comment>
+
+            <sql>
+                CREATE TABLE if not exists `prodlims`.`horizondisease_backup_eng5408` LIKE `prodlims`.`horizondisease`;
+                INSERT `prodlims`.`horizondisease_backup_eng5408` SELECT * FROM `prodlims`.`horizondisease`;
+
+                CREATE TABLE if not exists `prodlims`.`horizondiseasetemplate_backup_eng5408` LIKE `prodlims`.`horizondiseasetemplate`;
+                INSERT `prodlims`.`horizondiseasetemplate_backup_eng5408` SELECT * FROM `prodlims`.`horizondiseasetemplate`;
+
+            </sql>
+
+            <rollback>
+                DROP TABLE IF EXISTS `prodlims`.`horizondisease_backup_eng5408`;
+                DROP TABLE IF EXISTS `prodlims`.`horizondiseasetemplate_backup_eng5408`;
+            </rollback>
+    </changeSet>
 
     <changeSet id="ENG-5408-02" author="hharidas">
         <comment>

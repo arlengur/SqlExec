@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="20160802-01" author="tmcfarlin">
+        <comment>
+            Column to state if clinics use NPI numbers for doctors
+        </comment>
+        <sql>
+            ALTER TABLE `prodlims`.`organization`
+            ADD COLUMN `usesNpiNumbers` BIT(1) NOT NULL DEFAULT b'1';
+
+            UPDATE `prodlims`.`organization`
+            SET usesNpiNumbers = 0
+            WHERE id = 1296;
+        </sql>
+        <rollback>
+            alter table `prodlims`.`paternity_fields` drop column `usesNpiNumbers`;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

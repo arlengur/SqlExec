@@ -146,31 +146,31 @@
             SET SQL_SAFE_UPDATES = 0;
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 5 where `name`='SampleCheckGroup';
+            SET rank = 5 where `name`='SampleCheckGroup';
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 1 where `name`='StateRuleGroup';
+            SET rank = 1 where `name`='StateRuleGroup';
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 2 where `name`='PanelRuleGroup';
+            SET rank = 2 where `name`='PanelRuleGroup';
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 3 where `name`='SampleCheckGroup';
+            SET rank = 3 where `name`='SampleCheckGroup';
 
             SET SQL_SAFE_UPDATES = 1;
         </sql>
         <rollback>
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 6 where `name`='SampleCheckGroup';
+            SET rank = 6 where `name`='SampleCheckGroup';
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 3 where `name`='PanelRuleGroup';
+            SET rank = 3 where `name`='PanelRuleGroup';
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 2 where `name`='StateRuleGroup';
+            SET rank = 2 where `name`='StateRuleGroup';
 
             UPDATE `prodlims`.`horizoncaseroutingrulegroup`
-            SET `rank` = 1 where `name`='SampleCheckGroup';
+            SET rank = 1 where `name`='SampleCheckGroup';
         </rollback>
     </changeSet>
     <changeSet id="ENG-9900-07" author="jdavid">

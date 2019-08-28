@@ -4,7 +4,21 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-
+    <changeSet id="20160526-01" author="dchettupuzha">
+        <comment>Create table insuranceproviderdetail</comment>
+        <sql>
+            create table if not exists `prodlims`.`insuranceproviderdetail` (
+            `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+            `insuranceprovider_name` VARCHAR(255) NOT NULL,
+            `insuranceprovider_states` VARCHAR(255) NULL,
+            `validfromdate` DATE NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        </sql>
+        <rollback>
+            drop table if exists `prodlims`.`insuranceproviderdetail`;
+        </rollback>
+    </changeSet>
 
     <changeSet id="20160526-02" author="dchettupuzha">
         <comment>Populate table insuranceproviderdetail</comment>

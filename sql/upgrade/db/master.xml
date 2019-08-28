@@ -36,20 +36,26 @@
     <include file="patches/ENG-5024.xml" relativeToChangelogFile="true" />
 
     <!-- Maintenance 19 -->
+    <include file="patches/ENG-5245.xml" relativeToChangelogFile="true" />
 
     <!-- Eligibility Service -->
     <include file="patches/ENG-5182.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-4960.xml" relativeToChangelogFile="true"/>
     <include file="patches/ENG-5185.xml" relativeToChangelogFile="true"/>
 
     <!-- Maintenance_20 -->
+<!--    <include file="patches/ENG-5293.xml" relativeToChangelogFile="true" />-->
 
     <!-- Maintenance_21 -->
+    <include file="patches/ENG-5005.xml" relativeToChangelogFile="true" />
+<!--    <include file="patches/ENG-5347.xml" relativeToChangelogFile="true" />-->
 
     <!-- Maintenance 22 -->
     <include file="patches/ENG-5386.xml" relativeToChangelogFile="true" />
     <include file="patches/ENG-5408.xml" relativeToChangelogFile="true" />
     <include file="patches/ENG-5385.xml" relativeToChangelogFile="true" />
-    <include file="patches/ENG-5428.xml" relativeToChangelogFile="true" />
+<!--    <include file="patches/ENG-5428.xml" relativeToChangelogFile="true" />-->
+<!--    <include file="patches/ENG-5379.xml" relativeToChangelogFile="true" />-->
 
     <!-- Maintenance 23 -->
     <include file="patches/ENG-5538.xml" relativeToChangelogFile="true" />
@@ -71,6 +77,7 @@
 
     <!-- Maintenance 30 -->
     <include file="patches/ENG-5898.xml" relativeToChangelogFile="true" />
+    <include file="patches/ENG-5902.xml" relativeToChangelogFile="true" />
 
     <!-- Maintenance 31 -->
     <include file="patches/ENG-5683.xml" relativeToChangelogFile="true" />

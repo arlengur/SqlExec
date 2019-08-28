@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="ENG-5902-01" author="jsheena">
+        <comment>Add order column to outboundshipper_sample join table</comment>
+        <sql>
+
+            SET SQL_SAFE_UPDATES=0;
+
+            ALTER TABLE prodlims.outboundshipper_sample ADD idx INT NOT NULL;
+
+            update prodlims.outboundshipper_sample OSS INNER JOIN
+            (SELECT a.outboundshipper_id, a.sample_id, count(*)-1 as row_number
+            FROM prodlims.outboundshipper_sample a
+            JOIN prodlims.outboundshipper_sample b ON a.outboundshipper_id=b.outboundshipper_id AND a.sample_id >=  b.sample_id
+            GROUP BY a.outboundshipper_id, a.sample_id) TEMP on TEMP.outboundshipper_id = OSS.outboundshipper_id and TEMP.sample_id=OSS.sample_id
+            set OSS.idx = TEMP.row_number;
+
+            SET SQL_SAFE_UPDATES=1;
+
+        </sql>
+        <rollback>
+            ALTER TABLE prodlims.outboundshipper_sample DROP COLUMN idx;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -161,7 +161,7 @@
                                     <tasks>
                                         <echo>Applying liquibase changesets</echo>
                                         <echo></echo>
-                                        <echo>hibernate.connection.url: ${hibernate.connection.url}</echo>
+                                        <echo>hibernate.connection.url: jdbc:mysql://${mysql.hostname}:${mysql.port}/prodlims</echo>
                                         <echo>hibernate.connection.username: ${hibernate.connection.username}</echo>
                                         <echo>hibernate.connection.password: ${hibernate.connection.password}</echo>
                                     </tasks>
