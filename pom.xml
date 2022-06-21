@@ -15,7 +15,7 @@
         <mysql.root.password>root</mysql.root.password>
         <hibernate.connection.username>admin</hibernate.connection.username>
         <hibernate.connection.password>welcome123</hibernate.connection.password>
-        <mysql.connector.version>8.0.17</mysql.connector.version>
+        <mysql.connector.version>8.0.28</mysql.connector.version>
         <driver>com.mysql.cj.jdbc.Driver</driver>
         <liquibase.version>3.4.1</liquibase.version>
     </properties>
